@@ -34,12 +34,9 @@ import {
   MapPin,
   Building2,
   CheckCircle2,
-  AlertCircle,
   XCircle,
   Zap,
-  TrendingUp,
-  Play,
-  Pause
+  TrendingUp
 } from 'lucide-react';
 
 interface ProjectDetailsProps {

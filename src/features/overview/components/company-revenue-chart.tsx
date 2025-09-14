@@ -29,8 +29,7 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
+  ChartTooltip
 } from '@/components/ui/chart';
 import { companyRevenueData } from '@/constants/mock-api';
 
