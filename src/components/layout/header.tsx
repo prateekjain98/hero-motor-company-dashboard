@@ -1,6 +1,7 @@
 import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../search-input';
 import { ThemeSelector } from '../theme-selector';
+import { UserTypeSelector } from '../user-type-selector';
 import { Separator } from '../ui/separator';
 import { SidebarTrigger } from '../ui/sidebar';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
@@ -15,6 +16,7 @@ export default function Header() {
       </div>
 
       <div className='flex items-center gap-2 px-4'>
+        <UserTypeSelector />
         <div className='hidden md:flex'>
           <SearchInput />
         </div>

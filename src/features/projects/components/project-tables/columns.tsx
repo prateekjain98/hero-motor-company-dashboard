@@ -9,8 +9,10 @@ import {
   XCircle,
   Hash,
   Calendar,
-  DollarSign,
-  FileText
+  IndianRupee,
+  FileText,
+  TrendingUp,
+  Clock
 } from 'lucide-react';
 import { CellAction } from './cell-action';
 import { CATEGORY_OPTIONS } from './options';
@@ -24,8 +26,8 @@ export const columns: ColumnDef<Project>[] = [
     ),
     cell: ({ cell }) => (
       <div className='flex items-center gap-2 font-mono text-sm'>
-        <Hash className='text-muted-foreground h-3 w-3' />#
-        {cell.getValue<Project['id']>()}
+        <Hash className='text-muted-foreground h-3 w-3' />
+        HMC-{String(cell.getValue<Project['id']>()).padStart(4, '0')}
       </div>
     ),
     size: 100
@@ -83,6 +85,57 @@ export const columns: ColumnDef<Project>[] = [
     size: 120
   },
   {
+    accessorKey: 'stage',
+    header: ({ column }: { column: Column<Project, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Stage' />
+    ),
+    cell: ({ cell, row }) => {
+      const stage = cell.getValue<Project['stage']>();
+      const project = row.original;
+
+      const getStageColor = (stage: string) => {
+        switch (stage) {
+          case 'L0':
+            return 'bg-gray-100 text-gray-800 border-gray-300';
+          case 'L1':
+            return 'bg-blue-100 text-blue-800 border-blue-300';
+          case 'L2':
+            return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+          case 'L3':
+            return 'bg-orange-100 text-orange-800 border-orange-300';
+          case 'L4':
+            return 'bg-green-100 text-green-800 border-green-300';
+          case 'L5':
+            return 'bg-purple-100 text-purple-800 border-purple-300';
+          default:
+            return 'bg-gray-100 text-gray-800 border-gray-300';
+        }
+      };
+
+      return (
+        <div className='flex items-center gap-2'>
+          <TrendingUp className='text-muted-foreground h-3 w-3' />
+          <Badge className={`${getStageColor(stage)} font-medium`}>
+            {stage}
+          </Badge>
+          {project.pending_approval && (
+            <Badge
+              variant='outline'
+              className='border-amber-200 bg-amber-50 text-xs text-amber-700'
+            >
+              <Clock className='mr-1 h-2 w-2' />
+              Pending
+            </Badge>
+          )}
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+    size: 140
+  },
+  {
     accessorKey: 'created_at',
     header: ({ column }: { column: Column<Project, unknown> }) => (
       <DataTableColumnHeader column={column} title='Created Date' />
@@ -116,17 +169,17 @@ export const columns: ColumnDef<Project>[] = [
       let displayValue = '';
       if (price >= 10000000) {
         // 1 Crore = 10,000,000
-        displayValue = `₹${(price / 10000000).toFixed(2)} Cr`;
+        displayValue = `${(price / 10000000).toFixed(2)} Cr`;
       } else if (price >= 100000) {
         // 1 Lakh = 100,000
-        displayValue = `₹${(price / 100000).toFixed(2)} L`;
+        displayValue = `${(price / 100000).toFixed(2)} L`;
       } else {
-        displayValue = `₹${price.toLocaleString()}`;
+        displayValue = price.toLocaleString();
       }
 
       return (
         <div className='flex items-center gap-2 font-medium'>
-          <DollarSign className='text-muted-foreground h-3 w-3' />
+          <IndianRupee className='text-muted-foreground h-3 w-3' />
           {displayValue}
         </div>
       );

@@ -1,5 +1,29 @@
 import { NavItem } from '@/types';
 
+export type ProjectStage = 'L0' | 'L1' | 'L2' | 'L3' | 'L4' | 'L5';
+
+export type TimelineEventType =
+  | 'project_created'
+  | 'stage_moved'
+  | 'approval_requested'
+  | 'approval_granted'
+  | 'approval_rejected'
+  | 'project_updated';
+
+export type TimelineEvent = {
+  id: string;
+  type: TimelineEventType;
+  timestamp: string;
+  title: string;
+  description: string;
+  user: string;
+  user_role: string;
+  stage?: ProjectStage;
+  from_stage?: ProjectStage;
+  to_stage?: ProjectStage;
+  metadata?: Record<string, any>;
+};
+
 export type Project = {
   photo_url: string;
   name: string;
@@ -9,6 +33,15 @@ export type Project = {
   id: number;
   category: string;
   updated_at: string;
+  stage: ProjectStage;
+  pending_approval?: {
+    from_stage: ProjectStage;
+    to_stage: ProjectStage;
+    requested_by: string;
+    requested_at: string;
+    approver_type: 'business-head' | 'group-cfo';
+  };
+  timeline: TimelineEvent[];
 };
 
 export type ResourceUsageEntry = {

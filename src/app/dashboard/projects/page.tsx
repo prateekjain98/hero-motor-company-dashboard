@@ -33,7 +33,7 @@ export default async function Page(props: pageProps) {
         <div className='flex items-start justify-between'>
           <Heading
             title='Projects'
-            description='Manage projects (Server side table functionalities.)'
+            description='View and manage all your projects with advanced filtering and search capabilities.'
           />
           <Link
             href='/dashboard/projects/new'
