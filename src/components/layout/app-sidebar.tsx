@@ -45,30 +45,19 @@ import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
+import Image from 'next/image';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
 export const company = {
   name: 'Acme Inc',
   logo: IconPhotoUp,
   plan: 'Enterprise'
 };
 
-const tenants = [
-  { id: '1', name: 'Acme Inc' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
-
 export default function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
   const router = useRouter();
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
-  };
-
-  const activeTenant = tenants[0];
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
@@ -77,15 +66,24 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={tenants}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        {/* Organization selector removed as requested */}
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
+          <div className='mb-4 flex items-center px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0'>
+            <div className='mr-2 group-data-[collapsible=icon]:mr-0'>
+              <Image
+                src='/assets/logos/hmc.png'
+                alt='Hero Motors Company'
+                width={32}
+                height={32}
+                className='h-8 w-auto'
+              />
+            </div>
+            <span className='bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-sm font-semibold text-transparent group-data-[collapsible=icon]:hidden'>
+              Hero Motors Company
+            </span>
+          </div>
           <SidebarMenu>
             {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;

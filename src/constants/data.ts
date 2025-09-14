@@ -11,6 +11,26 @@ export type Project = {
   updated_at: string;
 };
 
+export type ResourceUsageEntry = {
+  id: number;
+  plant_name: string;
+  plant_location: string;
+  entry_month: string; // YYYY-MM format
+  paint_consumption: number; // liters
+  energy_consumption: number; // kWh
+  raw_material_usage: number; // kg
+  water_consumption: number; // liters
+  gas_consumption: number; // cubic meters
+  chemical_usage: number; // kg
+  waste_generated: number; // kg
+  production_output: number; // units produced
+  efficiency_rating: number; // percentage
+  cost_total: number;
+  entered_by: string;
+  entry_date: string;
+  notes: string;
+};
+
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
@@ -24,7 +44,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Projects',
     url: '/dashboard/projects',
-    icon: 'settings',
+    icon: 'folder',
     shortcut: ['p', 'p'],
     isActive: false,
     items: [] // No child items
@@ -32,7 +52,7 @@ export const navItems: NavItem[] = [
   {
     title: 'Resources',
     url: '/dashboard/resources',
-    icon: 'help',
+    icon: 'box',
     shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
