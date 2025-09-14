@@ -37,14 +37,15 @@ import { companyRevenueData } from '@/constants/mock-api';
 // Transform data for the chart
 const transformDataForChart = () => {
   return companyRevenueData.monthlyData.map((monthData) => {
-    const chartPoint = { month: monthData.month };
+    const chartPoint: Record<string, string | number> = {
+      month: monthData.month
+    };
 
     // Add achieved revenue for each company
     Object.keys(companyRevenueData.companies).forEach((companyKey) => {
       const companyData = monthData[companyKey as keyof typeof monthData];
       if (typeof companyData === 'object' && companyData !== null) {
-        chartPoint[companyKey as keyof typeof chartPoint] =
-          companyData.achieved;
+        chartPoint[companyKey] = companyData.achieved;
       }
     });
 
@@ -189,9 +190,8 @@ export function CompanyRevenueChart() {
         sum +
         Object.keys(companyRevenueData.companies).reduce(
           (monthSum, company) => {
-            return (
-              monthSum + ((month[company as keyof typeof month] as number) || 0)
-            );
+            const value = month[company];
+            return monthSum + (typeof value === 'number' ? value : 0);
           },
           0
         )
@@ -367,9 +367,10 @@ export function CompanyRevenueChart() {
           {Object.entries(companyRevenueData.companies).map(
             ([key, company]) => {
               const latestMonth = chartData[chartData.length - 1];
-              const latestRevenue = latestMonth[
-                key as keyof typeof latestMonth
-              ] as number;
+              const latestRevenue =
+                typeof latestMonth[key] === 'number'
+                  ? (latestMonth[key] as number)
+                  : 0;
               const monthlyTarget = company.annualTarget / 12;
               const achievement = (
                 (latestRevenue / monthlyTarget) *
