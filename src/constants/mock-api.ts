@@ -938,7 +938,6 @@ function validateProjectConsistency() {
       if (!isValidTransition) {
         // Fixed: Removed invalid pending approval transition for project ${project.id}
         delete project.pending_approval;
-        fixedCount++;
       }
     }
 
@@ -953,7 +952,7 @@ function validateProjectConsistency() {
     }
   });
 
-  // Validation complete. Fixed ${fixedCount} inconsistencies.
+  // Validation complete.
 }
 
 // Initialize projects only once to ensure data consistency

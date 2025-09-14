@@ -91,7 +91,7 @@ export function ResourceUsageForm() {
     }
   };
 
-  const onSubmit = async (data: ResourceUsageFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
 
     try {
