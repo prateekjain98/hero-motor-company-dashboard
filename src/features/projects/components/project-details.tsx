@@ -1,10 +1,27 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Project } from '@/constants/data';
 import { ProjectTimeline } from './project-timeline';
+import { fakeProjects } from '@/constants/mock-api';
+import { useUserTypeStore } from '@/stores/user-type-store';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Calendar,
   Hash,
@@ -30,6 +47,93 @@ interface ProjectDetailsProps {
 }
 
 export default function ProjectDetails({ project }: ProjectDetailsProps) {
+  const { currentUserType } = useUserTypeStore();
+  const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [rejectionComment, setRejectionComment] = useState('');
+  const [isRejectionDialogOpen, setIsRejectionDialogOpen] = useState(false);
+
+  // Check if current user can approve the pending request
+  const canApprove = () => {
+    if (!project.pending_approval) return false;
+
+    const { approver_type } = project.pending_approval;
+
+    return (
+      (approver_type === 'business-head' &&
+        (currentUserType === 'business-head' ||
+          currentUserType === 'super-admin')) ||
+      (approver_type === 'group-cfo' &&
+        (currentUserType === 'group-cfo' || currentUserType === 'super-admin'))
+    );
+  };
+
+  // Handle approval action
+  const handleApproval = async () => {
+    if (!project.pending_approval || isProcessing) return;
+
+    setIsProcessing(true);
+    try {
+      const result = await fakeProjects.approveStageProgression(
+        project.id,
+        currentUserType
+      );
+
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh the page to show updated data
+        router.refresh();
+      } else {
+        toast.error(result.error || 'Failed to approve project');
+      }
+    } catch (error) {
+      console.error('Error approving project:', error);
+      toast.error('An error occurred while approving the project');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Handle rejection action with comments
+  const handleRejection = async () => {
+    if (!project.pending_approval || isProcessing || !rejectionComment.trim()) {
+      if (!rejectionComment.trim()) {
+        toast.error('Please provide feedback about what changes are required');
+      }
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const result = await fakeProjects.rejectStageProgression(
+        project.id,
+        currentUserType,
+        rejectionComment.trim()
+      );
+
+      if (result.success) {
+        toast.success(result.message);
+        setIsRejectionDialogOpen(false);
+        setRejectionComment('');
+        // Refresh the page to show updated data
+        router.refresh();
+      } else {
+        toast.error(result.error || 'Failed to reject project');
+      }
+    } catch (error) {
+      console.error('Error rejecting project:', error);
+      toast.error('An error occurred while rejecting the project');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Open rejection dialog
+  const openRejectionDialog = () => {
+    setRejectionComment('');
+    setIsRejectionDialogOpen(true);
+  };
+
   // Helper function to get department display name
   const getDepartmentName = (department: string) => {
     const departmentMap: Record<string, string> = {
@@ -74,16 +178,7 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
   };
 
   const getStatusInfo = () => {
-    // Determine status based on stage and pending approval
-    if (project.pending_approval) {
-      return {
-        icon: Clock,
-        color: 'text-yellow-600',
-        bg: 'bg-yellow-50',
-        text: 'Pending Approval'
-      };
-    }
-
+    // Determine status based on stage (not pending approval)
     switch (project.stage) {
       case 'L0':
       case 'L1':
@@ -206,6 +301,145 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
           </p>
         </div>
       </div>
+
+      {/* Approval Actions Section */}
+      {project.pending_approval && canApprove() && (
+        <Card className='border-amber-200 bg-amber-50/50'>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2 text-amber-800'>
+              <Clock className='h-5 w-5' />
+              Approval Required
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <p className='text-sm font-medium text-amber-800'>
+                  Stage Progression: {project.pending_approval.from_stage} →{' '}
+                  {project.pending_approval.to_stage}
+                </p>
+                <p className='text-xs text-amber-700'>
+                  Requested by {project.pending_approval.requested_by} on{' '}
+                  {new Date(
+                    project.pending_approval.requested_at
+                  ).toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+              </div>
+              <div className='flex gap-3'>
+                <Dialog
+                  open={isRejectionDialogOpen}
+                  onOpenChange={setIsRejectionDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={openRejectionDialog}
+                      disabled={isProcessing}
+                      className='border-red-200 text-red-700 hover:bg-red-50'
+                    >
+                      <XCircle className='mr-2 h-4 w-4' />
+                      Request Changes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='sm:max-w-md'>
+                    <DialogHeader>
+                      <DialogTitle>Request Changes</DialogTitle>
+                      <DialogDescription>
+                        Please provide specific feedback about what changes are
+                        required for this project to proceed to stage{' '}
+                        {project.pending_approval.to_stage}.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className='space-y-4'>
+                      <div>
+                        <Label htmlFor='rejection-comment'>
+                          Required Changes
+                        </Label>
+                        <Textarea
+                          id='rejection-comment'
+                          placeholder='Describe what changes are needed...'
+                          value={rejectionComment}
+                          onChange={(e) => setRejectionComment(e.target.value)}
+                          className='mt-2'
+                          rows={4}
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        variant='outline'
+                        onClick={() => setIsRejectionDialogOpen(false)}
+                        disabled={isProcessing}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleRejection}
+                        disabled={isProcessing || !rejectionComment.trim()}
+                        className='bg-red-600 text-white hover:bg-red-700'
+                      >
+                        {isProcessing
+                          ? 'Processing...'
+                          : 'Submit Changes Request'}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  size='sm'
+                  onClick={handleApproval}
+                  disabled={isProcessing}
+                  className='bg-green-600 text-white hover:bg-green-700'
+                >
+                  <CheckCircle2 className='mr-2 h-4 w-4' />
+                  {isProcessing ? 'Processing...' : 'Approve'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pending Approval Info Section (for users who cannot approve) */}
+      {project.pending_approval && !canApprove() && (
+        <Card className='border-blue-200 bg-blue-50/50'>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2 text-blue-800'>
+              <Clock className='h-5 w-5' />
+              Awaiting Approval
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-2'>
+              <p className='text-sm font-medium text-blue-800'>
+                Stage Progression: {project.pending_approval.from_stage} →{' '}
+                {project.pending_approval.to_stage}
+              </p>
+              <p className='text-xs text-blue-700'>
+                Requested by {project.pending_approval.requested_by} on{' '}
+                {new Date(
+                  project.pending_approval.requested_at
+                ).toLocaleDateString('en-IN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+              <p className='text-xs text-blue-600'>
+                Waiting for approval from{' '}
+                {project.pending_approval.approver_type === 'business-head'
+                  ? 'Business Head'
+                  : 'Group CFO'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className='grid gap-6 lg:grid-cols-3'>
         {/* Main Content - 2 columns */}

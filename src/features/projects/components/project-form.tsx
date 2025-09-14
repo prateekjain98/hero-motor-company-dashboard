@@ -7,11 +7,12 @@ import { FormTextarea } from '@/components/forms/form-textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { Project } from '@/constants/mock-api';
+import { Project, fakeProjects } from '@/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { toast } from 'sonner';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -66,10 +67,35 @@ export default function ProjectForm({
 
   const router = useRouter();
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Form submission logic would be implemented here
-    console.log(values);
-    router.push('/dashboard/projects');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      if (initialData) {
+        // Update existing project (not implemented yet)
+        console.log('Update project:', values);
+        toast.success('Project updated successfully!');
+      } else {
+        // Create new project - always starts at L0
+        const result = await fakeProjects.createProject({
+          name: values.name,
+          description: values.description,
+          department: values.department as any,
+          company_group: values.company_group as any,
+          price: values.price
+        });
+
+        if (result.success) {
+          toast.success(`Project created successfully! Starting at stage L0.`);
+        } else {
+          toast.error('Failed to create project');
+          return;
+        }
+      }
+
+      router.push('/dashboard/projects');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('An error occurred while saving the project');
+    }
   }
 
   return (

@@ -17,21 +17,27 @@ export const USER_TYPE_LABELS = {
 
 export type UserTypeState = {
   currentUserType: UserType;
+  _hasHydrated: boolean;
 };
 
 export type UserTypeActions = {
   setUserType: (userType: UserType) => void;
+  setHasHydrated: (state: boolean) => void;
 };
 
 export const useUserTypeStore = create<UserTypeState & UserTypeActions>()(
   persist(
     (set) => ({
       currentUserType: UserType.SUPER_ADMIN,
-      setUserType: (userType: UserType) => set({ currentUserType: userType })
+      _hasHydrated: false,
+      setUserType: (userType: UserType) => set({ currentUserType: userType }),
+      setHasHydrated: (state: boolean) => set({ _hasHydrated: state })
     }),
     {
       name: 'user-type-store',
-      skipHydration: true
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      }
     }
   )
 );

@@ -294,5 +294,5 @@ export const createColumns = (
   }
 ];
 
-// Default export for backwards compatibility (uses super admin view)
-export const columns = createColumns(UserType.SUPER_ADMIN);
+// Default export for backwards compatibility (uses project manager view)
+export const columns = createColumns(UserType.PROJECT_MANAGER);

@@ -3,7 +3,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 import { faker } from '@faker-js/faker';
-import { matchSorter } from 'match-sorter'; // For filtering
+import { matchSorter } from 'match-sorter';
+
+// Set a seed for consistent data generation
+faker.seed(12345);
 import { ResourceUsageEntry } from './data';
 
 export const delay = (ms: number) =>
@@ -146,11 +149,16 @@ function generateProjectTimeline(
 
     const updater = faker.helpers.arrayElement(users);
     const updateTypes = [
-      'Updated project description',
-      'Modified project budget',
-      'Updated project timeline',
-      'Added project documentation',
-      'Updated team assignments'
+      'Updated manufacturing specifications',
+      'Modified project budget allocation',
+      'Updated production timeline',
+      'Added compliance documentation',
+      'Updated team assignments',
+      'Revised quality standards',
+      'Updated supplier requirements',
+      'Modified testing protocols',
+      'Added safety documentation',
+      'Updated resource allocation'
     ];
 
     timeline.push({
@@ -235,12 +243,23 @@ export type Project = {
   timeline: TimelineEvent[];
 };
 
+// Global flag to ensure single initialization
+let isInitialized = false;
+
 // Mock project data store
 export const fakeProjects = {
   records: [] as Project[], // Holds the list of project objects
 
   // Initialize with sample data
   initialize() {
+    if (isInitialized) {
+      console.log('Projects already initialized, skipping...');
+      return;
+    }
+
+    console.log('Initializing projects with seed 12345...');
+    // Reset faker seed to ensure consistent generation
+    faker.seed(12345);
     const sampleProjects: Project[] = [];
     function generateRandomProjectData(id: number): Project {
       const departments: Department[] = [
@@ -264,16 +283,121 @@ export const fakeProjects = {
       ];
       const stages: ProjectStage[] = ['L0', 'L1', 'L2', 'L3', 'L4', 'L5'];
 
+      // Realistic manufacturing project names and descriptions
+      const manufacturingProjects = [
+        {
+          name: 'Electric Vehicle Battery Assembly Line',
+          description:
+            'Implementation of automated battery pack assembly line for electric two-wheelers with quality control systems and safety protocols.'
+        },
+        {
+          name: 'Smart Manufacturing IoT Integration',
+          description:
+            'Integration of IoT sensors and real-time monitoring systems across manufacturing plants to optimize production efficiency and predictive maintenance.'
+        },
+        {
+          name: 'Lean Manufacturing Process Optimization',
+          description:
+            'Comprehensive lean manufacturing implementation to reduce waste, improve workflow, and increase overall equipment effectiveness (OEE).'
+        },
+        {
+          name: 'Advanced Paint Shop Automation',
+          description:
+            'Modernization of paint shop facilities with robotic spray systems, environmental controls, and quality inspection automation.'
+        },
+        {
+          name: 'Supply Chain Digital Transformation',
+          description:
+            'Digital transformation of supply chain operations including vendor management, inventory optimization, and logistics automation.'
+        },
+        {
+          name: 'Quality Management System Upgrade',
+          description:
+            'Implementation of advanced quality management systems with statistical process control and automated defect detection.'
+        },
+        {
+          name: 'Energy Efficiency Optimization Program',
+          description:
+            'Plant-wide energy efficiency improvements including LED lighting, HVAC optimization, and renewable energy integration.'
+        },
+        {
+          name: 'Robotic Welding Cell Implementation',
+          description:
+            'Installation of advanced robotic welding cells for chassis and frame manufacturing with precision control systems.'
+        },
+        {
+          name: 'Digital Twin Manufacturing Platform',
+          description:
+            'Development of digital twin technology for virtual manufacturing simulation and process optimization.'
+        },
+        {
+          name: 'Warehouse Management System Overhaul',
+          description:
+            'Complete overhaul of warehouse operations with automated storage and retrieval systems, inventory tracking, and logistics optimization.'
+        },
+        {
+          name: 'Predictive Maintenance AI System',
+          description:
+            'Implementation of AI-powered predictive maintenance system to reduce downtime and optimize equipment lifecycle management.'
+        },
+        {
+          name: 'Sustainable Manufacturing Initiative',
+          description:
+            'Comprehensive sustainability program including waste reduction, water recycling, and carbon footprint minimization across all facilities.'
+        },
+        {
+          name: 'Advanced Engine Testing Facility',
+          description:
+            'Construction of state-of-the-art engine testing facility with dynamometers, emission testing, and performance validation systems.'
+        },
+        {
+          name: 'Manufacturing Execution System (MES)',
+          description:
+            'Implementation of comprehensive MES for real-time production tracking, scheduling, and resource optimization.'
+        },
+        {
+          name: 'Automated Assembly Line Modernization',
+          description:
+            'Modernization of existing assembly lines with collaborative robots, vision systems, and flexible manufacturing capabilities.'
+        },
+        {
+          name: 'Supplier Quality Development Program',
+          description:
+            'Comprehensive supplier development program to enhance quality standards, reduce defects, and improve supply chain reliability.'
+        },
+        {
+          name: 'Smart Factory Analytics Platform',
+          description:
+            'Development of advanced analytics platform for manufacturing intelligence, performance monitoring, and decision support systems.'
+        },
+        {
+          name: 'Additive Manufacturing Integration',
+          description:
+            'Integration of 3D printing and additive manufacturing technologies for rapid prototyping and low-volume production.'
+        },
+        {
+          name: 'Cybersecurity Enhancement Project',
+          description:
+            'Comprehensive cybersecurity enhancement for manufacturing systems including network security, access control, and threat monitoring.'
+        },
+        {
+          name: 'Worker Safety Technology Upgrade',
+          description:
+            'Implementation of advanced safety technologies including wearable devices, hazard detection systems, and emergency response automation.'
+        }
+      ];
+
       const createdDate = faker.date.between({
         from: '2022-01-01',
         to: '2023-12-31'
       });
       const projectStage = faker.helpers.arrayElement(stages);
+      const projectData = faker.helpers.arrayElement(manufacturingProjects);
 
       const project: Project = {
         id,
-        name: faker.commerce.productName(),
-        description: faker.commerce.productDescription(),
+        name: projectData.name,
+        description: projectData.description,
         created_at: createdDate.toISOString(),
         price: parseFloat(
           faker.commerce.price({ min: 500000, max: 50000000, dec: 0 })
@@ -293,21 +417,25 @@ export const fakeProjects = {
         projectStage
       );
 
-      // Add pending approval for some projects (simulate approval workflow)
-      if (Math.random() < 0.2) {
-        // 20% chance of pending approval
+      // Add pending approval ONLY for stages that require approval (L3, L4, L5)
+      // L0, L1, L2 should NEVER have pending approvals
+      if (
+        Math.random() < 0.15 &&
+        (project.stage === 'L3' ||
+          project.stage === 'L4' ||
+          project.stage === 'L5')
+      ) {
+        // 15% chance of pending approval for stages that require it
         const currentStageIndex = stages.indexOf(project.stage);
-        if (currentStageIndex > 0) {
-          const fromStage = stages[currentStageIndex - 1];
-          project.pending_approval = {
-            from_stage: fromStage,
-            to_stage: project.stage,
-            requested_by: faker.person.fullName(),
-            requested_at: faker.date.recent().toISOString(),
-            approver_type:
-              project.stage === 'L3' ? 'business-head' : 'group-cfo'
-          };
-        }
+        const fromStage = stages[currentStageIndex - 1];
+
+        project.pending_approval = {
+          from_stage: fromStage,
+          to_stage: project.stage,
+          requested_by: faker.person.fullName(),
+          requested_at: faker.date.recent().toISOString(),
+          approver_type: project.stage === 'L3' ? 'business-head' : 'group-cfo'
+        };
       }
 
       return project;
@@ -318,7 +446,91 @@ export const fakeProjects = {
       sampleProjects.push(generateRandomProjectData(i));
     }
 
+    // Ensure we have specific projects with pending approvals for testing
+    // Project for L2 to L3 approval (Business Head)
+    if (sampleProjects.length > 2) {
+      const project1 = sampleProjects[2];
+      project1.stage = 'L2';
+      project1.pending_approval = {
+        from_stage: 'L2',
+        to_stage: 'L3',
+        requested_by: 'Rajesh Kumar (Project Manager)',
+        requested_at: new Date(
+          Date.now() - 2 * 24 * 60 * 60 * 1000
+        ).toISOString(), // 2 days ago
+        approver_type: 'business-head'
+      };
+      // Regenerate timeline to match the stage
+      project1.timeline = generateProjectTimeline(
+        project1,
+        new Date(project1.created_at),
+        'L2'
+      );
+    }
+
+    // Project for L3 to L4 approval (Group CFO)
+    if (sampleProjects.length > 5) {
+      const project2 = sampleProjects[5];
+      project2.stage = 'L3';
+      project2.pending_approval = {
+        from_stage: 'L3',
+        to_stage: 'L4',
+        requested_by: 'Priya Sharma (Project Manager)',
+        requested_at: new Date(
+          Date.now() - 1 * 24 * 60 * 60 * 1000
+        ).toISOString(), // 1 day ago
+        approver_type: 'group-cfo'
+      };
+      // Regenerate timeline to match the stage
+      project2.timeline = generateProjectTimeline(
+        project2,
+        new Date(project2.created_at),
+        'L3'
+      );
+    }
+
+    // Project for L4 to L5 approval (Group CFO)
+    if (sampleProjects.length > 8) {
+      const project3 = sampleProjects[8];
+      project3.stage = 'L4';
+      project3.pending_approval = {
+        from_stage: 'L4',
+        to_stage: 'L5',
+        requested_by: 'Amit Patel (Project Manager)',
+        requested_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+        approver_type: 'group-cfo'
+      };
+      // Regenerate timeline to match the stage
+      project3.timeline = generateProjectTimeline(
+        project3,
+        new Date(project3.created_at),
+        'L4'
+      );
+    }
+
     this.records = sampleProjects;
+    isInitialized = true;
+    console.log(`Initialized ${sampleProjects.length} projects`);
+  },
+
+  // Ensure data is initialized and return current state
+  ensureInitialized() {
+    if (!isInitialized || this.records.length === 0) {
+      console.log('Force initializing projects...');
+      this.initialize();
+      validateProjectConsistency();
+    }
+    return this.records;
+  },
+
+  // Force reset and re-initialization (for development)
+  forceReset() {
+    console.log('Force resetting project data...');
+    this.records = [];
+    isInitialized = false;
+    this.initialize();
+    validateProjectConsistency();
+    return this.records;
   },
 
   // Get all projects with optional category filtering and search
@@ -329,6 +541,9 @@ export const fakeProjects = {
     categories?: string[];
     search?: string;
   }) {
+    // Ensure data is initialized
+    this.ensureInitialized();
+
     let projects = [...this.records];
 
     // Filter projects based on selected categories
@@ -361,6 +576,10 @@ export const fakeProjects = {
     search?: string;
   }) {
     await delay(1000);
+
+    // Ensure data is initialized
+    this.ensureInitialized();
+
     const categoriesArray = categories ? categories.split('.') : [];
     const allProjects = await this.getAll({
       categories: categoriesArray,
@@ -391,8 +610,17 @@ export const fakeProjects = {
   async getProjectById(id: number) {
     await delay(1000); // Simulate a delay
 
+    // Ensure data is initialized
+    this.ensureInitialized();
+
     // Find the project by its ID
     const project = this.records.find((project) => project.id === id);
+    console.log(
+      `Getting project ${id}:`,
+      project
+        ? `Found - Stage: ${project.stage}, Pending: ${!!project.pending_approval}`
+        : 'Not found'
+    );
 
     if (!project) {
       return {
@@ -575,8 +803,56 @@ export const fakeProjects = {
     };
   },
 
+  // Create new project (always starts at L0)
+  async createProject(projectData: {
+    name: string;
+    description: string;
+    department: Department;
+    company_group: CompanyGroup;
+    price: number;
+  }) {
+    await delay(500);
+
+    const newId = Math.max(...this.records.map((p) => p.id), 0) + 1;
+    const now = new Date().toISOString();
+
+    const newProject: Project = {
+      id: newId,
+      name: projectData.name,
+      description: projectData.description,
+      department: projectData.department,
+      company_group: projectData.company_group,
+      price: projectData.price,
+      photo_url: `https://api.slingacademy.com/public/sample-projects/${newId}.png`,
+      created_at: now,
+      updated_at: now,
+      stage: 'L0', // Always start at L0
+      timeline: [
+        {
+          id: `${newId}-created`,
+          type: 'project_created',
+          timestamp: now,
+          title: 'Project Created',
+          description:
+            'Project was successfully created and initialized at stage L0.',
+          user: 'Current User', // In real app, get from auth
+          user_role: 'project-manager',
+          stage: 'L0'
+        }
+      ]
+      // No pending_approval - L0 never needs approval
+    };
+
+    this.records.push(newProject);
+    return { success: true, project: newProject };
+  },
+
   // Reject stage progression
-  async rejectStageProgression(projectId: number, userType: string) {
+  async rejectStageProgression(
+    projectId: number,
+    userType: string,
+    rejectionComment?: string
+  ) {
     await delay(500);
     const project = this.records.find((item) => item.id === projectId);
     if (!project || !project.pending_approval) {
@@ -594,16 +870,24 @@ export const fakeProjects = {
     }
 
     // Add timeline event
+    const baseDescription = `Rejected the request to move from ${project.pending_approval.from_stage} to ${project.pending_approval.to_stage}.`;
+    const fullDescription = rejectionComment
+      ? `${baseDescription} Reason: ${rejectionComment}`
+      : baseDescription;
+
     project.timeline.push({
       id: `${project.id}-approval-rejected-${Date.now()}`,
       type: 'approval_rejected',
       timestamp: new Date().toISOString(),
       title: 'Stage Progression Rejected',
-      description: `Rejected the request to move from ${project.pending_approval.from_stage} to ${project.pending_approval.to_stage}.`,
+      description: fullDescription,
       user: 'Current User',
       user_role: userType,
       from_stage: project.pending_approval.from_stage,
-      to_stage: project.pending_approval.to_stage
+      to_stage: project.pending_approval.to_stage,
+      metadata: rejectionComment
+        ? { rejection_reason: rejectionComment }
+        : undefined
     });
 
     delete project.pending_approval;
@@ -613,8 +897,84 @@ export const fakeProjects = {
   }
 };
 
-// Initialize sample projects
-fakeProjects.initialize();
+// Function to validate and fix project data consistency
+function validateProjectConsistency() {
+  console.log('Validating project consistency...');
+  let fixedCount = 0;
+
+  fakeProjects.records.forEach((project) => {
+    // Rule 1: L0, L1 should NEVER have pending approvals
+    // L2 can have pending approval for L2 to L3 transition
+    if (
+      (project.stage === 'L0' || project.stage === 'L1') &&
+      project.pending_approval
+    ) {
+      console.log(
+        `Fixed: Removed invalid pending approval from project ${project.id} at stage ${project.stage}`
+      );
+      delete project.pending_approval;
+      fixedCount++;
+    }
+
+    // Rule 1b: L2 can only have pending approval for L2 to L3 transition
+    if (
+      project.stage === 'L2' &&
+      project.pending_approval &&
+      !(
+        project.pending_approval.from_stage === 'L2' &&
+        project.pending_approval.to_stage === 'L3'
+      )
+    ) {
+      console.log(
+        `Fixed: Removed invalid L2 pending approval from project ${project.id} (not L2->L3)`
+      );
+      delete project.pending_approval;
+      fixedCount++;
+    }
+
+    // Rule 2: Only L2, L3, L4 can have pending approvals, and only for valid transitions
+    if (project.pending_approval) {
+      const validTransitions = [
+        { from: 'L2', to: 'L3', approver: 'business-head' },
+        { from: 'L3', to: 'L4', approver: 'group-cfo' },
+        { from: 'L4', to: 'L5', approver: 'group-cfo' }
+      ];
+
+      const isValidTransition = validTransitions.some(
+        (t) =>
+          t.from === project.pending_approval?.from_stage &&
+          t.to === project.pending_approval?.to_stage &&
+          t.approver === project.pending_approval?.approver_type
+      );
+
+      if (!isValidTransition) {
+        console.log(
+          `Fixed: Removed invalid pending approval transition for project ${project.id}`
+        );
+        delete project.pending_approval;
+        fixedCount++;
+      }
+    }
+
+    // Rule 3: Ensure timeline is consistent with current stage
+    if (project.timeline.length === 0) {
+      // Regenerate timeline if missing
+      project.timeline = generateProjectTimeline(
+        project,
+        new Date(project.created_at),
+        project.stage
+      );
+    }
+  });
+
+  console.log(`Validation complete. Fixed ${fixedCount} inconsistencies.`);
+}
+
+// Initialize projects only once to ensure data consistency
+if (fakeProjects.records.length === 0) {
+  fakeProjects.initialize();
+  validateProjectConsistency();
+}
 
 // Mock resource usage entries data store for manufacturing
 export const fakeResourceUsage = {
@@ -804,3 +1164,401 @@ export const fakeResourceUsage = {
 
 // Initialize sample usage entries
 fakeResourceUsage.initialize();
+
+// Financial Overview Data for Super Admin and Group CFO
+export const financialOverviewData = {
+  // Overall target allocated to all companies for financial year (in crores)
+  overallTarget: 2500, // 2500 crores
+
+  // Total revenue of all group companies (in crores) - for percentage calculation
+  totalGroupRevenue: 12000, // 12000 crores
+
+  // Amount achieved till now by all group companies (in crores)
+  achievedAmount: 1875, // 1875 crores
+
+  // Delayed projects data
+  delayedProjects: {
+    totalValue: 450, // 450 crores worth of delayed projects
+    projectCount: 23 // 23 projects are delayed
+  },
+
+  // Budget target for comparison (200% threshold)
+  budgetTarget: 1250, // 1250 crores (200% of this would be 2500 crores)
+
+  // Calculate derived values
+  get targetPercentageOfRevenue() {
+    return ((this.overallTarget / this.totalGroupRevenue) * 100).toFixed(1);
+  },
+
+  get achievementPercentage() {
+    return ((this.achievedAmount / this.overallTarget) * 100).toFixed(1);
+  },
+
+  get remainingToAchieve() {
+    return this.overallTarget - this.achievedAmount;
+  },
+
+  get isRemainingCritical() {
+    // Red if remaining is less than 200% of budget target
+    return this.remainingToAchieve < this.budgetTarget * 2;
+  }
+};
+
+// Company Revenue Chart Data for Group Performance
+export const companyRevenueData = {
+  // Company information with colors and details
+  companies: {
+    'hero-cycles': {
+      name: 'Hero Cycles',
+      color: '#3b82f6', // Blue
+      annualTarget: 800, // 800 crores
+      logo: '/assets/logos/hero-cycles.png'
+    },
+    'hero-motors': {
+      name: 'Hero Motors',
+      color: '#ef4444', // Red
+      annualTarget: 1200, // 1200 crores
+      logo: '/assets/logos/hero-motors.png'
+    },
+    'hmc-hive': {
+      name: 'HMC Hive',
+      color: '#10b981', // Green
+      annualTarget: 300, // 300 crores
+      logo: '/assets/logos/hmc-hive.png'
+    },
+    munjal: {
+      name: 'Munjal Kiru',
+      color: '#f59e0b', // Amber
+      annualTarget: 200, // 200 crores
+      logo: '/assets/logos/munjal.png'
+    }
+  },
+
+  // Monthly revenue data for financial year (April to March)
+  monthlyData: [
+    {
+      month: 'Apr 2024',
+      'hero-cycles': {
+        achieved: 58,
+        target: 67,
+        projectsInPipeline: 12,
+        projectsDelivered: 8
+      },
+      'hero-motors': {
+        achieved: 85,
+        target: 100,
+        projectsInPipeline: 18,
+        projectsDelivered: 15
+      },
+      'hmc-hive': {
+        achieved: 18,
+        target: 25,
+        projectsInPipeline: 6,
+        projectsDelivered: 4
+      },
+      munjal: {
+        achieved: 12,
+        target: 17,
+        projectsInPipeline: 4,
+        projectsDelivered: 3
+      }
+    },
+    {
+      month: 'May 2024',
+      'hero-cycles': {
+        achieved: 62,
+        target: 67,
+        projectsInPipeline: 10,
+        projectsDelivered: 9
+      },
+      'hero-motors': {
+        achieved: 92,
+        target: 100,
+        projectsInPipeline: 16,
+        projectsDelivered: 17
+      },
+      'hmc-hive': {
+        achieved: 21,
+        target: 25,
+        projectsInPipeline: 5,
+        projectsDelivered: 5
+      },
+      munjal: {
+        achieved: 14,
+        target: 17,
+        projectsInPipeline: 3,
+        projectsDelivered: 4
+      }
+    },
+    {
+      month: 'Jun 2024',
+      'hero-cycles': {
+        achieved: 65,
+        target: 67,
+        projectsInPipeline: 9,
+        projectsDelivered: 10
+      },
+      'hero-motors': {
+        achieved: 96,
+        target: 100,
+        projectsInPipeline: 14,
+        projectsDelivered: 18
+      },
+      'hmc-hive': {
+        achieved: 23,
+        target: 25,
+        projectsInPipeline: 4,
+        projectsDelivered: 6
+      },
+      munjal: {
+        achieved: 15,
+        target: 17,
+        projectsInPipeline: 2,
+        projectsDelivered: 5
+      }
+    },
+    {
+      month: 'Jul 2024',
+      'hero-cycles': {
+        achieved: 71,
+        target: 67,
+        projectsInPipeline: 8,
+        projectsDelivered: 12
+      },
+      'hero-motors': {
+        achieved: 105,
+        target: 100,
+        projectsInPipeline: 12,
+        projectsDelivered: 21
+      },
+      'hmc-hive': {
+        achieved: 27,
+        target: 25,
+        projectsInPipeline: 3,
+        projectsDelivered: 7
+      },
+      munjal: {
+        achieved: 18,
+        target: 17,
+        projectsInPipeline: 2,
+        projectsDelivered: 6
+      }
+    },
+    {
+      month: 'Aug 2024',
+      'hero-cycles': {
+        achieved: 68,
+        target: 67,
+        projectsInPipeline: 7,
+        projectsDelivered: 11
+      },
+      'hero-motors': {
+        achieved: 98,
+        target: 100,
+        projectsInPipeline: 13,
+        projectsDelivered: 19
+      },
+      'hmc-hive': {
+        achieved: 24,
+        target: 25,
+        projectsInPipeline: 4,
+        projectsDelivered: 6
+      },
+      munjal: {
+        achieved: 16,
+        target: 17,
+        projectsInPipeline: 3,
+        projectsDelivered: 5
+      }
+    },
+    {
+      month: 'Sep 2024',
+      'hero-cycles': {
+        achieved: 73,
+        target: 67,
+        projectsInPipeline: 6,
+        projectsDelivered: 13
+      },
+      'hero-motors': {
+        achieved: 102,
+        target: 100,
+        projectsInPipeline: 11,
+        projectsDelivered: 20
+      },
+      'hmc-hive': {
+        achieved: 26,
+        target: 25,
+        projectsInPipeline: 3,
+        projectsDelivered: 7
+      },
+      munjal: {
+        achieved: 17,
+        target: 17,
+        projectsInPipeline: 2,
+        projectsDelivered: 5
+      }
+    },
+    {
+      month: 'Oct 2024',
+      'hero-cycles': {
+        achieved: 76,
+        target: 67,
+        projectsInPipeline: 5,
+        projectsDelivered: 14
+      },
+      'hero-motors': {
+        achieved: 108,
+        target: 100,
+        projectsInPipeline: 9,
+        projectsDelivered: 22
+      },
+      'hmc-hive': {
+        achieved: 28,
+        target: 25,
+        projectsInPipeline: 2,
+        projectsDelivered: 8
+      },
+      munjal: {
+        achieved: 19,
+        target: 17,
+        projectsInPipeline: 1,
+        projectsDelivered: 6
+      }
+    },
+    {
+      month: 'Nov 2024',
+      'hero-cycles': {
+        achieved: 64,
+        target: 67,
+        projectsInPipeline: 8,
+        projectsDelivered: 10
+      },
+      'hero-motors': {
+        achieved: 94,
+        target: 100,
+        projectsInPipeline: 15,
+        projectsDelivered: 18
+      },
+      'hmc-hive': {
+        achieved: 22,
+        target: 25,
+        projectsInPipeline: 5,
+        projectsDelivered: 5
+      },
+      munjal: {
+        achieved: 15,
+        target: 17,
+        projectsInPipeline: 4,
+        projectsDelivered: 4
+      }
+    },
+    {
+      month: 'Dec 2024',
+      'hero-cycles': {
+        achieved: 85,
+        target: 67,
+        projectsInPipeline: 4,
+        projectsDelivered: 17
+      },
+      'hero-motors': {
+        achieved: 118,
+        target: 100,
+        projectsInPipeline: 8,
+        projectsDelivered: 25
+      },
+      'hmc-hive': {
+        achieved: 32,
+        target: 25,
+        projectsInPipeline: 2,
+        projectsDelivered: 9
+      },
+      munjal: {
+        achieved: 22,
+        target: 17,
+        projectsInPipeline: 1,
+        projectsDelivered: 7
+      }
+    },
+    {
+      month: 'Jan 2025',
+      'hero-cycles': {
+        achieved: 69,
+        target: 67,
+        projectsInPipeline: 7,
+        projectsDelivered: 12
+      },
+      'hero-motors': {
+        achieved: 101,
+        target: 100,
+        projectsInPipeline: 12,
+        projectsDelivered: 20
+      },
+      'hmc-hive': {
+        achieved: 25,
+        target: 25,
+        projectsInPipeline: 4,
+        projectsDelivered: 6
+      },
+      munjal: {
+        achieved: 17,
+        target: 17,
+        projectsInPipeline: 3,
+        projectsDelivered: 5
+      }
+    },
+    {
+      month: 'Feb 2025',
+      'hero-cycles': {
+        achieved: 74,
+        target: 67,
+        projectsInPipeline: 6,
+        projectsDelivered: 13
+      },
+      'hero-motors': {
+        achieved: 106,
+        target: 100,
+        projectsInPipeline: 10,
+        projectsDelivered: 21
+      },
+      'hmc-hive': {
+        achieved: 27,
+        target: 25,
+        projectsInPipeline: 3,
+        projectsDelivered: 7
+      },
+      munjal: {
+        achieved: 18,
+        target: 17,
+        projectsInPipeline: 2,
+        projectsDelivered: 6
+      }
+    },
+    {
+      month: 'Mar 2025',
+      'hero-cycles': {
+        achieved: 78,
+        target: 67,
+        projectsInPipeline: 5,
+        projectsDelivered: 15
+      },
+      'hero-motors': {
+        achieved: 112,
+        target: 100,
+        projectsInPipeline: 8,
+        projectsDelivered: 23
+      },
+      'hmc-hive': {
+        achieved: 29,
+        target: 25,
+        projectsInPipeline: 2,
+        projectsDelivered: 8
+      },
+      munjal: {
+        achieved: 19,
+        target: 17,
+        projectsInPipeline: 2,
+        projectsDelivered: 6
+      }
+    }
+  ]
+};
