@@ -19,7 +19,6 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ResourceUsageEntry } from '@/constants/data';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, SaveIcon, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -84,8 +83,6 @@ export function ResourceUsageForm() {
     }
   });
 
-  const selectedPlant = form.watch('plant_name');
-
   // Auto-set location when plant is selected
   const handlePlantChange = (plantName: string) => {
     const plant = plants.find((p) => p.name === plantName);
@@ -99,15 +96,13 @@ export function ResourceUsageForm() {
 
     try {
       // TODO: Implement API call to save the resource usage entry
-      console.log('Saving resource usage entry:', data);
-
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Redirect to resources list
       router.push('/dashboard/resources');
     } catch (error) {
-      console.error('Error saving entry:', error);
+      // TODO: Implement proper error logging
     } finally {
       setIsLoading(false);
     }

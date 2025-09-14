@@ -3,9 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { ResourceUsageEntry } from '@/constants/data';
 import { Column, ColumnDef } from '@tanstack/react-table';
-import { Building, Calendar, Text, User } from 'lucide-react';
+import { Calendar, Text, User } from 'lucide-react';
 import { CellAction } from './cell-action';
-import { PLANT_OPTIONS } from './options';
 
 export const columns: ColumnDef<ResourceUsageEntry>[] = [
   {
@@ -40,7 +39,6 @@ export const columns: ColumnDef<ResourceUsageEntry>[] = [
     ),
     cell: ({ cell }) => {
       const month = cell.getValue<string>();
-      const [year, monthNum] = month.split('-');
       const monthName = new Date(`${month}-01`).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short'

@@ -253,11 +253,11 @@ export const fakeProjects = {
   // Initialize with sample data
   initialize() {
     if (isInitialized) {
-      console.log('Projects already initialized, skipping...');
+      // Projects already initialized, skipping...
       return;
     }
 
-    console.log('Initializing projects with seed 12345...');
+    // Initializing projects with seed 12345...
     // Reset faker seed to ensure consistent generation
     faker.seed(12345);
     const sampleProjects: Project[] = [];
@@ -510,13 +510,13 @@ export const fakeProjects = {
 
     this.records = sampleProjects;
     isInitialized = true;
-    console.log(`Initialized ${sampleProjects.length} projects`);
+    // Initialized ${sampleProjects.length} projects
   },
 
   // Ensure data is initialized and return current state
   ensureInitialized() {
     if (!isInitialized || this.records.length === 0) {
-      console.log('Force initializing projects...');
+      // Force initializing projects...
       this.initialize();
       validateProjectConsistency();
     }
@@ -525,7 +525,7 @@ export const fakeProjects = {
 
   // Force reset and re-initialization (for development)
   forceReset() {
-    console.log('Force resetting project data...');
+    // Force resetting project data...
     this.records = [];
     isInitialized = false;
     this.initialize();
@@ -615,12 +615,7 @@ export const fakeProjects = {
 
     // Find the project by its ID
     const project = this.records.find((project) => project.id === id);
-    console.log(
-      `Getting project ${id}:`,
-      project
-        ? `Found - Stage: ${project.stage}, Pending: ${!!project.pending_approval}`
-        : 'Not found'
-    );
+    // Getting project ${id}: ${project ? `Found - Stage: ${project.stage}, Pending: ${!!project.pending_approval}` : 'Not found'}
 
     if (!project) {
       return {
@@ -899,8 +894,7 @@ export const fakeProjects = {
 
 // Function to validate and fix project data consistency
 function validateProjectConsistency() {
-  console.log('Validating project consistency...');
-  let fixedCount = 0;
+  // Validating project consistency...
 
   fakeProjects.records.forEach((project) => {
     // Rule 1: L0, L1 should NEVER have pending approvals
@@ -909,11 +903,8 @@ function validateProjectConsistency() {
       (project.stage === 'L0' || project.stage === 'L1') &&
       project.pending_approval
     ) {
-      console.log(
-        `Fixed: Removed invalid pending approval from project ${project.id} at stage ${project.stage}`
-      );
+      // Fixed: Removed invalid pending approval from project ${project.id} at stage ${project.stage}
       delete project.pending_approval;
-      fixedCount++;
     }
 
     // Rule 1b: L2 can only have pending approval for L2 to L3 transition
@@ -925,11 +916,8 @@ function validateProjectConsistency() {
         project.pending_approval.to_stage === 'L3'
       )
     ) {
-      console.log(
-        `Fixed: Removed invalid L2 pending approval from project ${project.id} (not L2->L3)`
-      );
+      // Fixed: Removed invalid L2 pending approval from project ${project.id} (not L2->L3)
       delete project.pending_approval;
-      fixedCount++;
     }
 
     // Rule 2: Only L2, L3, L4 can have pending approvals, and only for valid transitions
@@ -948,9 +936,7 @@ function validateProjectConsistency() {
       );
 
       if (!isValidTransition) {
-        console.log(
-          `Fixed: Removed invalid pending approval transition for project ${project.id}`
-        );
+        // Fixed: Removed invalid pending approval transition for project ${project.id}
         delete project.pending_approval;
         fixedCount++;
       }
@@ -967,7 +953,7 @@ function validateProjectConsistency() {
     }
   });
 
-  console.log(`Validation complete. Fixed ${fixedCount} inconsistencies.`);
+  // Validation complete. Fixed ${fixedCount} inconsistencies.
 }
 
 // Initialize projects only once to ensure data consistency

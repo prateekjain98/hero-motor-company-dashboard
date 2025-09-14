@@ -84,7 +84,7 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
         toast.error(result.error || 'Failed to approve project');
       }
     } catch (error) {
-      console.error('Error approving project:', error);
+      // TODO: Implement proper error logging
       toast.error('An error occurred while approving the project');
     } finally {
       setIsProcessing(false);
@@ -118,7 +118,7 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
         toast.error(result.error || 'Failed to reject project');
       }
     } catch (error) {
-      console.error('Error rejecting project:', error);
+      // TODO: Implement proper error logging
       toast.error('An error occurred while rejecting the project');
     } finally {
       setIsProcessing(false);

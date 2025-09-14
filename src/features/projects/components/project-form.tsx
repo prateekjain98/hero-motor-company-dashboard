@@ -70,8 +70,7 @@ export default function ProjectForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (initialData) {
-        // Update existing project (not implemented yet)
-        console.log('Update project:', values);
+        // TODO: Implement project update functionality
         toast.success('Project updated successfully!');
       } else {
         // Create new project - always starts at L0
@@ -93,7 +92,7 @@ export default function ProjectForm({
 
       router.push('/dashboard/projects');
     } catch (error) {
-      console.error('Error submitting form:', error);
+      // TODO: Implement proper error logging
       toast.error('An error occurred while saving the project');
     }
   }

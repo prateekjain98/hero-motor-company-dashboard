@@ -6,7 +6,6 @@ import {
   Timeline,
   TimelineItem,
   TimelineConnector,
-  TimelineHeader,
   TimelineIcon,
   TimelineContent,
   TimelineTitle,
@@ -22,8 +21,6 @@ import {
   TrendingUp,
   User,
   XCircle,
-  AlertTriangle,
-  Zap,
   GitBranch
 } from 'lucide-react';
 
