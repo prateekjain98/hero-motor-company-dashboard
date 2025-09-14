@@ -438,19 +438,20 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
         </Card>
       )}
 
+      {/* Cards Grid - Full Height Layout */}
       <div className='grid gap-6 lg:grid-cols-3'>
         {/* Main Content - 2 columns */}
-        <div className='space-y-6 lg:col-span-2'>
+        <div className='flex flex-col gap-6 lg:col-span-2'>
           {/* Project Overview */}
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Briefcase className='h-5 w-5' />
                 Project Overview
               </CardTitle>
             </CardHeader>
-            <CardContent className='space-y-4'>
-              <div>
+            <CardContent className='flex h-full flex-col space-y-4'>
+              <div className='flex-1'>
                 <h3 className='text-muted-foreground mb-2 text-sm font-semibold tracking-wide uppercase'>
                   Description
                 </h3>
@@ -509,15 +510,15 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
           </Card>
 
           {/* Manufacturing Details */}
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Factory className='h-5 w-5' />
                 Manufacturing Details
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-2 gap-6'>
+            <CardContent className='flex h-full flex-col'>
+              <div className='grid flex-1 grid-cols-2 gap-6'>
                 <div className='space-y-4'>
                   <div className='flex items-center gap-3'>
                     <Building2 className='text-muted-foreground h-4 w-4' />
@@ -573,19 +574,16 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
             </CardContent>
           </Card>
 
-          {/* Project Timeline */}
-          <ProjectTimeline timeline={project.timeline} />
-
           {/* Compliance & Standards */}
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Zap className='h-5 w-5' />
                 Compliance & Standards
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className='flex flex-wrap gap-2'>
+            <CardContent className='flex h-full flex-col'>
+              <div className='flex flex-1 flex-wrap content-start gap-2'>
                 {manufacturingData.compliance.map((standard, index) => (
                   <Badge key={index} variant='outline' className='text-xs'>
                     {standard}
@@ -597,16 +595,16 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-6'>
+        <div className='flex flex-col gap-6'>
           {/* Budget Card */}
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <IndianRupee className='h-5 w-5' />
                 Project Budget
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className='flex h-full flex-col justify-center'>
               <div className='text-primary mb-2 text-3xl font-bold'>
                 {budgetDisplay}
               </div>
@@ -616,42 +614,16 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
             </CardContent>
           </Card>
 
-          {/* Resource Allocation */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Factory className='h-5 w-5' />
-                Resources
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-3'>
-              <div className='flex items-center justify-between'>
-                <span className='text-muted-foreground text-sm'>
-                  Allocated Resources
-                </span>
-                <span className='font-semibold'>
-                  {manufacturingData.resourcesAllocated}%
-                </span>
-              </div>
-              <div className='h-2 w-full rounded-full bg-gray-200'>
-                <div
-                  className='bg-primary h-2 rounded-full'
-                  style={{ width: `${manufacturingData.resourcesAllocated}%` }}
-                ></div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Timeline */}
-          <Card>
+          <Card className='flex-1'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Calendar className='h-5 w-5' />
                 Timeline
               </CardTitle>
             </CardHeader>
-            <CardContent className='space-y-4'>
-              <div>
+            <CardContent className='flex h-full flex-col space-y-4'>
+              <div className='flex-1'>
                 <div className='mb-1 flex items-center gap-2'>
                   <Calendar className='text-muted-foreground h-4 w-4' />
                   <span className='text-muted-foreground text-xs font-semibold tracking-wide uppercase'>
@@ -663,7 +635,7 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
 
               <Separator />
 
-              <div>
+              <div className='flex-1'>
                 <div className='mb-1 flex items-center gap-2'>
                   <Clock className='text-muted-foreground h-4 w-4' />
                   <span className='text-muted-foreground text-xs font-semibold tracking-wide uppercase'>
@@ -675,6 +647,11 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Project Timeline - Full Width */}
+      <div className='mt-8'>
+        <ProjectTimeline timeline={project.timeline} />
       </div>
     </div>
   );

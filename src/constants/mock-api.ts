@@ -1547,3 +1547,289 @@ export const companyRevenueData = {
     }
   ]
 };
+
+// Delayed Projects Data - Top value delayed projects across group companies
+export const delayedProjectsData = [
+  {
+    id: 2847,
+    name: 'Electric Vehicle Battery Assembly Line',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'Manufacturing',
+    value: 125.8,
+    delayedDays: 45,
+    projectManager: 'Rajesh Kumar'
+  },
+  {
+    id: 1923,
+    name: 'Smart Manufacturing IoT Platform',
+    company: 'Hero Cycles',
+    companyLogo: '/assets/logos/hero-cycles.png',
+    department: 'IT',
+    value: 89.2,
+    delayedDays: 32,
+    projectManager: 'Priya Sharma'
+  },
+  {
+    id: 3156,
+    name: 'Advanced Paint Shop Automation',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'Operations',
+    value: 76.5,
+    delayedDays: 28,
+    projectManager: 'Amit Patel'
+  },
+  {
+    id: 4281,
+    name: 'Digital Twin Manufacturing Hub',
+    company: 'HMC Hive',
+    companyLogo: '/assets/logos/hmc-hive.png',
+    department: 'R&D',
+    value: 64.3,
+    delayedDays: 21,
+    projectManager: 'Sunita Verma'
+  },
+  {
+    id: 1674,
+    name: 'Warehouse Management System',
+    company: 'Hero Cycles',
+    companyLogo: '/assets/logos/hero-cycles.png',
+    department: 'Supply Chain',
+    value: 52.7,
+    delayedDays: 18,
+    projectManager: 'Vikash Gupta'
+  },
+  {
+    id: 3892,
+    name: 'Predictive Maintenance AI',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'IT',
+    value: 41.9,
+    delayedDays: 15,
+    projectManager: 'Meera Agarwal'
+  },
+  {
+    id: 2145,
+    name: 'Quality Assurance Automation',
+    company: 'Munjal Kiru',
+    companyLogo: '/assets/logos/munjal.png',
+    department: 'Quality',
+    value: 35.6,
+    delayedDays: 12,
+    projectManager: 'Rohit Verma'
+  }
+].sort((a, b) => b.value - a.value);
+
+// Business Excellence Dashboard Data
+
+// Project Lifecycle Distribution Data (for Bar Chart)
+export const projectLifecycleData = [
+  {
+    stage: 'L0',
+    stageName: 'Concept',
+    projects: 45,
+    description: 'Initial concept and feasibility',
+    averageDuration: '2-4 weeks',
+    totalBudget: 125.5
+  },
+  {
+    stage: 'L1',
+    stageName: 'Planning',
+    projects: 38,
+    description: 'Detailed planning and design',
+    averageDuration: '4-8 weeks',
+    totalBudget: 289.3
+  },
+  {
+    stage: 'L2',
+    stageName: 'Development',
+    projects: 42,
+    description: 'Active development and prototyping',
+    averageDuration: '8-16 weeks',
+    totalBudget: 456.7
+  },
+  {
+    stage: 'L3',
+    stageName: 'Testing',
+    projects: 29,
+    description: 'Testing and validation',
+    averageDuration: '4-8 weeks',
+    totalBudget: 234.8
+  },
+  {
+    stage: 'L4',
+    stageName: 'Implementation',
+    projects: 18,
+    description: 'Implementation and deployment',
+    averageDuration: '6-12 weeks',
+    totalBudget: 187.2
+  },
+  {
+    stage: 'L5',
+    stageName: 'Completed',
+    projects: 24,
+    description: 'Project completed and delivered',
+    averageDuration: 'N/A',
+    totalBudget: 298.4
+  }
+];
+
+// Resource Consumption Trends Data (for Area Chart)
+export const resourceConsumptionData = [
+  {
+    month: 'Apr 2024',
+    paint: 12500,
+    energy: 89000,
+    rawMaterial: 156000,
+    water: 45000,
+    gas: 23000,
+    chemicals: 8900,
+    totalCost: 2.8
+  },
+  {
+    month: 'May 2024',
+    paint: 13200,
+    energy: 92000,
+    rawMaterial: 162000,
+    water: 47000,
+    gas: 24500,
+    chemicals: 9200,
+    totalCost: 3.1
+  },
+  {
+    month: 'Jun 2024',
+    paint: 11800,
+    energy: 87000,
+    rawMaterial: 148000,
+    water: 43000,
+    gas: 22000,
+    chemicals: 8500,
+    totalCost: 2.6
+  },
+  {
+    month: 'Jul 2024',
+    paint: 14100,
+    energy: 95000,
+    rawMaterial: 168000,
+    water: 49000,
+    gas: 25500,
+    chemicals: 9800,
+    totalCost: 3.4
+  },
+  {
+    month: 'Aug 2024',
+    paint: 13800,
+    energy: 91000,
+    rawMaterial: 159000,
+    water: 46000,
+    gas: 24000,
+    chemicals: 9400,
+    totalCost: 3.2
+  },
+  {
+    month: 'Sep 2024',
+    paint: 15200,
+    energy: 98000,
+    rawMaterial: 175000,
+    water: 52000,
+    gas: 27000,
+    chemicals: 10500,
+    totalCost: 3.7
+  }
+];
+
+// Resource Allocation by Category Data (for Pie Chart)
+export const resourceAllocationData = [
+  {
+    category: 'Raw Materials',
+    value: 42.5,
+    cost: 425.8,
+    fill: 'var(--chart-1)',
+    description: 'Steel, aluminum, plastics, components'
+  },
+  {
+    category: 'Energy',
+    value: 23.2,
+    cost: 232.4,
+    fill: 'var(--chart-2)',
+    description: 'Electricity, fuel, power consumption'
+  },
+  {
+    category: 'Labor',
+    value: 18.7,
+    cost: 187.3,
+    fill: 'var(--chart-3)',
+    description: 'Manufacturing workforce, operations'
+  },
+  {
+    category: 'Paint & Chemicals',
+    value: 8.9,
+    cost: 89.2,
+    fill: 'var(--chart-4)',
+    description: 'Paint, solvents, chemical treatments'
+  },
+  {
+    category: 'Water & Utilities',
+    value: 4.2,
+    cost: 42.1,
+    fill: 'var(--chart-5)',
+    description: 'Water consumption, waste management'
+  },
+  {
+    category: 'Gas & Fuel',
+    value: 2.5,
+    cost: 25.2,
+    fill: 'var(--chart-6)',
+    description: 'Natural gas, industrial fuel'
+  }
+];
+
+// Project Performance Metrics by Company
+export const companyPerformanceData = [
+  {
+    company: 'Hero Motors',
+    l0: 18,
+    l1: 15,
+    l2: 19,
+    l3: 12,
+    l4: 8,
+    l5: 11,
+    efficiency: 87.5,
+    budget: 456.7
+  },
+  {
+    company: 'Hero Cycles',
+    l0: 12,
+    l1: 10,
+    l2: 14,
+    l3: 9,
+    l4: 6,
+    l5: 8,
+    efficiency: 82.3,
+    budget: 298.4
+  },
+  {
+    company: 'HMC Hive',
+    l0: 9,
+    l1: 8,
+    l2: 6,
+    l3: 5,
+    l4: 3,
+    l5: 4,
+    efficiency: 91.2,
+    budget: 187.2
+  },
+  {
+    company: 'Munjal Kiru',
+    l0: 6,
+    l1: 5,
+    l2: 3,
+    l3: 3,
+    l4: 1,
+    l5: 1,
+    efficiency: 78.9,
+    budget: 89.6
+  }
+];
