@@ -17,7 +17,7 @@ export default function Providers({
 
   return (
     <>
-      <ActiveThemeProvider initialTheme={activeThemeValue}>
+      <ActiveThemeProvider initialTheme={activeThemeValue || 'red'}>
         <ClerkProvider
           appearance={{
             baseTheme: resolvedTheme === 'dark' ? dark : undefined

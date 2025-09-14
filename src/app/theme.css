@@ -70,6 +70,17 @@ body {
   }
 }
 
+.theme-red,
+.theme-red-scaled {
+  --primary: var(--color-red-600);
+  --primary-foreground: var(--color-red-50);
+
+  @variant dark {
+    --primary: var(--color-red-500);
+    --primary-foreground: var(--color-red-50);
+  }
+}
+
 .theme-mono,
 .theme-mono-scaled {
   --font-sans: var(--font-mono);

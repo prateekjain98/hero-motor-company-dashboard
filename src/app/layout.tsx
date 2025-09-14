@@ -51,7 +51,7 @@ export default async function RootLayout({
       <body
         className={cn(
           'bg-background overflow-hidden overscroll-none font-sans antialiased',
-          activeThemeValue ? `theme-${activeThemeValue}` : '',
+          activeThemeValue ? `theme-${activeThemeValue}` : 'theme-red',
           isScaled ? 'theme-scaled' : '',
           fontVariables
         )}
@@ -60,7 +60,7 @@ export default async function RootLayout({
         <NuqsAdapter>
           <ThemeProvider
             attribute='class'
-            defaultTheme='system'
+            defaultTheme='light'
             enableSystem
             disableTransitionOnChange
             enableColorScheme

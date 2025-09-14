@@ -7,7 +7,7 @@ import { FormTextarea } from '@/components/forms/form-textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { Product } from '@/constants/mock-api';
+import { Project } from '@/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -34,7 +34,7 @@ const formSchema = z.object({
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
   name: z.string().min(2, {
-    message: 'Product name must be at least 2 characters.'
+    message: 'Project name must be at least 2 characters.'
   }),
   category: z.string(),
   price: z.number(),
@@ -43,11 +43,11 @@ const formSchema = z.object({
   })
 });
 
-export default function ProductForm({
+export default function ProjectForm({
   initialData,
   pageTitle
 }: {
-  initialData: Product | null;
+  initialData: Project | null;
   pageTitle: string;
 }) {
   const defaultValues = {
@@ -67,7 +67,7 @@ export default function ProductForm({
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Form submission logic would be implemented here
     console.log(values);
-    router.push('/dashboard/product');
+    router.push('/dashboard/projects');
   }
 
   return (
@@ -86,8 +86,8 @@ export default function ProductForm({
           <FormFileUpload
             control={form.control}
             name='image'
-            label='Product Image'
-            description='Upload a product image'
+            label='Project Image'
+            description='Upload a project image'
             config={{
               maxSize: 5 * 1024 * 1024,
               maxFiles: 4
@@ -98,8 +98,8 @@ export default function ProductForm({
             <FormInput
               control={form.control}
               name='name'
-              label='Product Name'
-              placeholder='Enter product name'
+              label='Project Name'
+              placeholder='Enter project name'
               required
             />
 
@@ -145,7 +145,7 @@ export default function ProductForm({
             control={form.control}
             name='description'
             label='Description'
-            placeholder='Enter product description'
+            placeholder='Enter project description'
             required
             config={{
               maxLength: 500,
@@ -154,7 +154,7 @@ export default function ProductForm({
             }}
           />
 
-          <Button type='submit'>Add Product</Button>
+          <Button type='submit'>Add Project</Button>
         </Form>
       </CardContent>
     </Card>
