@@ -24,6 +24,24 @@ export type TimelineEvent = {
   metadata?: Record<string, any>;
 };
 
+export type CompanyGroup =
+  | 'hero-cycles'
+  | 'hero-motors'
+  | 'hmc-hive'
+  | 'munjal';
+
+export type Department =
+  | 'supply-chain'
+  | 'hr'
+  | 'finance'
+  | 'rd'
+  | 'manufacturing'
+  | 'quality-assurance'
+  | 'sales-marketing'
+  | 'it'
+  | 'procurement'
+  | 'operations';
+
 export type Project = {
   photo_url: string;
   name: string;
@@ -31,7 +49,8 @@ export type Project = {
   created_at: string;
   price: number;
   id: number;
-  category: string;
+  department: Department;
+  company_group: CompanyGroup;
   updated_at: string;
   stage: ProjectStage;
   pending_approval?: {

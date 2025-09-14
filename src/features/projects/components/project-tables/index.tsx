@@ -14,6 +14,8 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Project } from '@/constants/data';
+import { useUserTypeStore } from '@/stores/user-type-store';
+import { createColumns } from './columns';
 
 import { ColumnDef, flexRender } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
@@ -22,14 +24,19 @@ import { useRouter } from 'next/navigation';
 interface ProjectTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
-  columns: ColumnDef<TData, TValue>[];
+  columns?: ColumnDef<TData, TValue>[];
 }
 
 export function ProjectTable<TData, TValue>({
   data,
   totalItems,
-  columns
+  columns: providedColumns
 }: ProjectTableParams<TData, TValue>) {
+  const { currentUserType } = useUserTypeStore();
+
+  // Use provided columns or create columns based on user type
+  const dynamicColumns = createColumns(currentUserType);
+  const columns = providedColumns || dynamicColumns;
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
   const router = useRouter();
 

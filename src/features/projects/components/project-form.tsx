@@ -36,7 +36,8 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Project name must be at least 2 characters.'
   }),
-  category: z.string(),
+  department: z.string().min(1, 'Please select a department.'),
+  company_group: z.string().min(1, 'Please select a company group.'),
   price: z.number(),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
@@ -52,7 +53,8 @@ export default function ProjectForm({
 }) {
   const defaultValues = {
     name: initialData?.name || '',
-    category: initialData?.category || '',
+    department: initialData?.department || '',
+    company_group: initialData?.company_group || '',
     price: initialData?.price || undefined,
     description: initialData?.description || ''
   };
@@ -105,27 +107,35 @@ export default function ProjectForm({
 
             <FormSelect
               control={form.control}
-              name='category'
-              label='Category'
-              placeholder='Select category'
+              name='department'
+              label='Department'
+              placeholder='Select department'
               required
               options={[
-                {
-                  label: 'Beauty Products',
-                  value: 'beauty'
-                },
-                {
-                  label: 'Electronics',
-                  value: 'electronics'
-                },
-                {
-                  label: 'Home & Garden',
-                  value: 'home'
-                },
-                {
-                  label: 'Sports & Outdoors',
-                  value: 'sports'
-                }
+                { label: 'Supply Chain', value: 'supply-chain' },
+                { label: 'Human Resources', value: 'hr' },
+                { label: 'Finance', value: 'finance' },
+                { label: 'R&D', value: 'rd' },
+                { label: 'Manufacturing', value: 'manufacturing' },
+                { label: 'Quality Assurance', value: 'quality-assurance' },
+                { label: 'Sales & Marketing', value: 'sales-marketing' },
+                { label: 'Information Technology', value: 'it' },
+                { label: 'Procurement', value: 'procurement' },
+                { label: 'Operations', value: 'operations' }
+              ]}
+            />
+
+            <FormSelect
+              control={form.control}
+              name='company_group'
+              label='Company Group'
+              placeholder='Select company group'
+              required
+              options={[
+                { label: 'Hero Cycles', value: 'hero-cycles' },
+                { label: 'Hero Motors', value: 'hero-motors' },
+                { label: 'HMC Hive', value: 'hmc-hive' },
+                { label: 'Munjal', value: 'munjal' }
               ]}
             />
 

@@ -30,12 +30,40 @@ interface ProjectDetailsProps {
 }
 
 export default function ProjectDetails({ project }: ProjectDetailsProps) {
+  // Helper function to get department display name
+  const getDepartmentName = (department: string) => {
+    const departmentMap: Record<string, string> = {
+      'supply-chain': 'Supply Chain',
+      hr: 'Human Resources',
+      finance: 'Finance',
+      rd: 'Research & Development',
+      manufacturing: 'Manufacturing',
+      'quality-assurance': 'Quality Assurance',
+      'sales-marketing': 'Sales & Marketing',
+      it: 'Information Technology',
+      procurement: 'Procurement',
+      operations: 'Operations'
+    };
+    return departmentMap[department] || department;
+  };
+
+  // Helper function to get company group name
+  const getCompanyGroupName = (companyGroup: string) => {
+    const companyMap: Record<string, string> = {
+      'hero-cycles': 'Hero Cycles',
+      'hero-motors': 'Hero Motors',
+      'hmc-hive': 'HMC Hive',
+      munjal: 'Munjal'
+    };
+    return companyMap[companyGroup] || companyGroup;
+  };
+
   // Mock manufacturing-specific data (in real app, this would come from API)
   const manufacturingData = {
-    subsidiary: 'Hero MotoCorp Ltd.',
+    subsidiary: getCompanyGroupName(project.company_group),
     plant: 'Gurgaon Manufacturing Plant',
     projectManager: 'Rajesh Kumar',
-    department: 'R&D - Product Development',
+    department: getDepartmentName(project.department),
     priority: 'High',
     phase: 'Design & Prototyping',
     targetMarket: 'Domestic & Export',
@@ -46,27 +74,45 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
   };
 
   const getStatusInfo = () => {
-    const status = project.category.toLowerCase();
-    switch (status) {
-      case 'active':
+    // Determine status based on stage and pending approval
+    if (project.pending_approval) {
+      return {
+        icon: Clock,
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-50',
+        text: 'Pending Approval'
+      };
+    }
+
+    switch (project.stage) {
+      case 'L0':
+      case 'L1':
+        return {
+          icon: Clock,
+          color: 'text-blue-600',
+          bg: 'bg-blue-50',
+          text: 'In Planning'
+        };
+      case 'L2':
+      case 'L3':
         return {
           icon: CheckCircle2,
           color: 'text-green-600',
           bg: 'bg-green-50',
-          text: 'Active'
+          text: 'In Progress'
         };
-      case 'pending':
+      case 'L4':
         return {
-          icon: AlertCircle,
-          color: 'text-yellow-600',
-          bg: 'bg-yellow-50',
-          text: 'Pending'
+          icon: TrendingUp,
+          color: 'text-orange-600',
+          bg: 'bg-orange-50',
+          text: 'Near Completion'
         };
-      case 'completed':
+      case 'L5':
         return {
           icon: CheckCircle2,
-          color: 'text-blue-600',
-          bg: 'bg-blue-50',
+          color: 'text-purple-600',
+          bg: 'bg-purple-50',
           text: 'Completed'
         };
       default:
@@ -74,7 +120,7 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
           icon: XCircle,
           color: 'text-gray-600',
           bg: 'bg-gray-50',
-          text: 'Inactive'
+          text: 'Unknown'
         };
     }
   };

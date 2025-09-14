@@ -196,6 +196,24 @@ export type TimelineEvent = {
   metadata?: Record<string, any>;
 };
 
+export type CompanyGroup =
+  | 'hero-cycles'
+  | 'hero-motors'
+  | 'hmc-hive'
+  | 'munjal';
+
+export type Department =
+  | 'supply-chain'
+  | 'hr'
+  | 'finance'
+  | 'rd'
+  | 'manufacturing'
+  | 'quality-assurance'
+  | 'sales-marketing'
+  | 'it'
+  | 'procurement'
+  | 'operations';
+
 export type Project = {
   photo_url: string;
   name: string;
@@ -203,7 +221,8 @@ export type Project = {
   created_at: string;
   price: number;
   id: number;
-  category: string;
+  department: Department;
+  company_group: CompanyGroup;
   updated_at: string;
   stage: ProjectStage;
   pending_approval?: {
@@ -224,8 +243,25 @@ export const fakeProjects = {
   initialize() {
     const sampleProjects: Project[] = [];
     function generateRandomProjectData(id: number): Project {
-      const categories = ['active', 'inactive', 'pending', 'completed'];
+      const departments: Department[] = [
+        'supply-chain',
+        'hr',
+        'finance',
+        'rd',
+        'manufacturing',
+        'quality-assurance',
+        'sales-marketing',
+        'it',
+        'procurement',
+        'operations'
+      ];
 
+      const companyGroups: CompanyGroup[] = [
+        'hero-cycles',
+        'hero-motors',
+        'hmc-hive',
+        'munjal'
+      ];
       const stages: ProjectStage[] = ['L0', 'L1', 'L2', 'L3', 'L4', 'L5'];
 
       const createdDate = faker.date.between({
@@ -243,7 +279,8 @@ export const fakeProjects = {
           faker.commerce.price({ min: 500000, max: 50000000, dec: 0 })
         ),
         photo_url: `https://api.slingacademy.com/public/sample-projects/${id}.png`,
-        category: faker.helpers.arrayElement(categories),
+        department: faker.helpers.arrayElement(departments),
+        company_group: faker.helpers.arrayElement(companyGroups),
         updated_at: faker.date.recent().toISOString(),
         stage: projectStage,
         timeline: []
@@ -297,14 +334,14 @@ export const fakeProjects = {
     // Filter projects based on selected categories
     if (categories.length > 0) {
       projects = projects.filter((project) =>
-        categories.includes(project.category)
+        categories.includes(project.department)
       );
     }
 
     // Search functionality across multiple fields
     if (search) {
       projects = matchSorter(projects, search, {
-        keys: ['name', 'description', 'category']
+        keys: ['name', 'description', 'department']
       });
     }
 

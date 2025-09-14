@@ -2,7 +2,6 @@ import { Project } from '@/constants/data';
 import { fakeProjects } from '@/constants/mock-api';
 import { searchParamsCache } from '@/lib/searchparams';
 import { ProjectTable } from './project-tables';
-import { columns } from './project-tables/columns';
 
 type ProjectListingPage = {};
 
@@ -24,11 +23,5 @@ export default async function ProjectListingPage({}: ProjectListingPage) {
   const totalProjects = data.total_projects;
   const projects: Project[] = data.projects;
 
-  return (
-    <ProjectTable
-      data={projects}
-      totalItems={totalProjects}
-      columns={columns}
-    />
-  );
+  return <ProjectTable data={projects} totalItems={totalProjects} />;
 }
