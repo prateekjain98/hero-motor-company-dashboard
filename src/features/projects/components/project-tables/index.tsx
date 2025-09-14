@@ -21,17 +21,17 @@ import { ColumnDef, flexRender } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { useRouter } from 'next/navigation';
 
-interface ProjectTableParams<TData, TValue> {
-  data: TData[];
+interface ProjectTableParams {
+  data: Project[];
   totalItems: number;
-  columns?: ColumnDef<TData, TValue>[];
+  columns?: ColumnDef<Project>[];
 }
 
-export function ProjectTable<TData, TValue>({
+export function ProjectTable({
   data,
   totalItems,
   columns: providedColumns
-}: ProjectTableParams<TData, TValue>) {
+}: ProjectTableParams) {
   const { currentUserType } = useUserTypeStore();
 
   // Use provided columns or create columns based on user type
@@ -50,10 +50,8 @@ export function ProjectTable<TData, TValue>({
     debounceMs: 500
   });
 
-  const handleRowClick = (project: TData) => {
-    // Type assertion to access project id
-    const projectData = project as unknown as Project;
-    router.push(`/dashboard/projects/${projectData.id}`);
+  const handleRowClick = (project: Project) => {
+    router.push(`/dashboard/projects/${project.id}`);
   };
 
   return (
