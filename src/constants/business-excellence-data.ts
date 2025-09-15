@@ -94,42 +94,42 @@ export const oeeMetricsData = {
   },
   byPlant: [
     {
-      plant: 'Gurgaon',
+      plant: 'Plant Alpha',
       oee: 72.3,
       availability: 89.1,
       performance: 93.2,
       quality: 87.1
     },
     {
-      plant: 'Dharuhera',
+      plant: 'Plant Beta',
       oee: 68.9,
       availability: 86.5,
       performance: 91.8,
       quality: 86.8
     },
     {
-      plant: 'Haridwar',
+      plant: 'Plant Gamma',
       oee: 71.2,
       availability: 88.3,
       performance: 92.5,
       quality: 87.4
     },
     {
-      plant: 'Neemrana',
+      plant: 'Plant Delta',
       oee: 65.4,
       availability: 85.2,
       performance: 90.1,
       quality: 84.8
     },
     {
-      plant: 'Chittoor',
+      plant: 'Plant Epsilon',
       oee: 64.8,
       availability: 84.9,
       performance: 91.3,
       quality: 83.5
     },
     {
-      plant: 'Halol',
+      plant: 'Plant Zeta',
       oee: 69.2,
       availability: 87.8,
       performance: 92.9,
@@ -335,7 +335,7 @@ export const cycleTimeAnalysisData = {
 // 7. Plant Performance Comparison (for Radar Chart)
 export const plantPerformanceData = [
   {
-    plant: 'Gurgaon',
+    plant: 'Plant Alpha',
     metrics: {
       productivity: 88,
       quality: 92,
@@ -346,7 +346,7 @@ export const plantPerformanceData = [
     }
   },
   {
-    plant: 'Dharuhera',
+    plant: 'Plant Beta',
     metrics: {
       productivity: 85,
       quality: 89,
@@ -357,7 +357,7 @@ export const plantPerformanceData = [
     }
   },
   {
-    plant: 'Haridwar',
+    plant: 'Plant Gamma',
     metrics: {
       productivity: 87,
       quality: 91,
@@ -368,7 +368,7 @@ export const plantPerformanceData = [
     }
   },
   {
-    plant: 'Neemrana',
+    plant: 'Plant Delta',
     metrics: {
       productivity: 82,
       quality: 87,

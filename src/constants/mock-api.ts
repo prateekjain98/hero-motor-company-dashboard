@@ -971,12 +971,12 @@ export const fakeResourceUsage = {
 
     function generateRandomUsageData(id: number): ResourceUsageEntry {
       const plants = [
-        { name: 'Hero MotoCorp Plant 1', location: 'Gurgaon, Haryana' },
-        { name: 'Hero MotoCorp Plant 2', location: 'Dharuhera, Haryana' },
-        { name: 'Hero MotoCorp Plant 3', location: 'Haridwar, Uttarakhand' },
-        { name: 'Hero MotoCorp Plant 4', location: 'Neemrana, Rajasthan' },
-        { name: 'Hero MotoCorp Plant 5', location: 'Chittoor, Andhra Pradesh' },
-        { name: 'Hero MotoCorp Plant 6', location: 'Halol, Gujarat' }
+        { name: 'Manufacturing Plant Alpha', location: 'North Region' },
+        { name: 'Manufacturing Plant Beta', location: 'West Region' },
+        { name: 'Manufacturing Plant Gamma', location: 'East Region' },
+        { name: 'Manufacturing Plant Delta', location: 'South Region' },
+        { name: 'Manufacturing Plant Epsilon', location: 'Central Region' },
+        { name: 'Manufacturing Plant Zeta', location: 'Coastal Region' }
       ];
 
       const employees = [
@@ -1167,8 +1167,8 @@ export const financialOverviewData = {
     projectCount: 23 // 23 projects are delayed
   },
 
-  // Budget target for comparison (200% threshold)
-  budgetTarget: 1250, // 1250 crores (200% of this would be 2500 crores)
+  // Budget target for comparison
+  budgetTarget: 1250, // 1250 crores
 
   // Calculate derived values
   get targetPercentageOfRevenue() {
@@ -1183,9 +1183,21 @@ export const financialOverviewData = {
     return this.overallTarget - this.achievedAmount;
   },
 
-  get isRemainingCritical() {
-    // Red if remaining is less than 200% of budget target
-    return this.remainingToAchieve < this.budgetTarget * 2;
+  get ideaBankPercentage() {
+    // Calculate percentage of remaining relative to budget target
+    return (this.remainingToAchieve / this.budgetTarget) * 100;
+  },
+
+  get isIdeaBankCritical() {
+    // Red if remaining is between 150% and 200% of budget target
+    // Green if less than 150%
+    const percentage = this.ideaBankPercentage;
+    return percentage >= 150 && percentage <= 200;
+  },
+
+  get isIdeaBankGood() {
+    // Green if less than 150%
+    return this.ideaBankPercentage < 150;
   }
 };
 

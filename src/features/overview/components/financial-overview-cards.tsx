@@ -105,59 +105,79 @@ export function FinancialOverviewCards() {
         </CardFooter>
       </Card>
 
-      {/* Card 4: Remaining to Achieve */}
+      {/* Card 4: Idea Bank */}
       <Card
         className={cn(
           '@container/card transition-all duration-200 hover:shadow-md',
-          data.isRemainingCritical && 'border-destructive bg-destructive/5'
+          data.isIdeaBankCritical && 'border-destructive bg-destructive/5',
+          data.isIdeaBankGood &&
+            'border-green-500 bg-green-50/50 dark:bg-green-950/10'
         )}
       >
         <CardHeader className='pb-4'>
           <CardDescription className='text-sm font-medium'>
-            Remaining to Achieve
+            Idea Bank
           </CardDescription>
           <CardTitle
             className={cn(
               'text-2xl font-semibold tabular-nums @[250px]/card:text-3xl',
-              data.isRemainingCritical && 'text-destructive'
+              data.isIdeaBankCritical && 'text-destructive',
+              data.isIdeaBankGood && 'text-green-600 dark:text-green-500'
             )}
           >
             ₹{data.remainingToAchieve.toLocaleString()} Cr
           </CardTitle>
           <CardAction>
             <Badge
-              variant={data.isRemainingCritical ? 'destructive' : 'outline'}
-            >
-              {data.isRemainingCritical ? (
-                <IconTrendingDown />
-              ) : (
-                <IconTrendingUp />
+              variant={
+                data.isIdeaBankCritical
+                  ? 'destructive'
+                  : data.isIdeaBankGood
+                    ? 'outline'
+                    : 'secondary'
+              }
+              className={cn(
+                data.isIdeaBankGood && 'border-green-500 text-green-600'
               )}
-              {((data.remainingToAchieve / data.budgetTarget) * 100).toFixed(0)}
-              %
+            >
+              {data.isIdeaBankCritical ? (
+                <IconAlertTriangle />
+              ) : data.isIdeaBankGood ? (
+                <IconTrendingUp />
+              ) : (
+                <IconTrendingDown />
+              )}
+              {data.ideaBankPercentage.toFixed(0)}%
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className='flex-col items-start gap-2 pt-0 text-sm'>
           <div className='line-clamp-1 flex gap-2 font-medium'>
-            {data.isRemainingCritical
-              ? 'Critical threshold reached'
-              : 'On track to achieve'}
-            {data.isRemainingCritical ? (
-              <IconTrendingDown className='size-4' />
-            ) : (
+            {data.isIdeaBankCritical
+              ? 'Critical range - Action needed'
+              : data.isIdeaBankGood
+                ? 'Healthy pipeline'
+                : 'Above critical range'}
+            {data.isIdeaBankCritical ? (
+              <IconAlertTriangle className='size-4' />
+            ) : data.isIdeaBankGood ? (
               <IconTrendingUp className='size-4' />
+            ) : (
+              <IconTrendingDown className='size-4' />
             )}
           </div>
           <div
             className={cn(
               'text-muted-foreground',
-              data.isRemainingCritical && 'text-destructive/70'
+              data.isIdeaBankCritical && 'text-destructive/70',
+              data.isIdeaBankGood && 'text-green-600/70'
             )}
           >
-            {data.isRemainingCritical
-              ? 'Below 200% of budget target - requires attention'
-              : 'Amount needed to reach FY target'}
+            {data.isIdeaBankCritical
+              ? '150-200% of budget - requires attention'
+              : data.isIdeaBankGood
+                ? 'Below 150% of budget - optimal range'
+                : 'Above 200% of budget'}
           </div>
         </CardFooter>
       </Card>
