@@ -209,6 +209,19 @@ export function BusinessExcellenceChart() {
   const chartData = transformDataForChart();
   const chartConfig = createChartConfig();
 
+  // Custom tick formatter to show years properly
+  const formatXAxisTick = (value: string, index: number) => {
+    const [month, year] = value.split(' ');
+    const prevValue = index > 0 ? chartData[index - 1]?.month : null;
+    const prevYear = prevValue ? prevValue.toString().split(' ')[1] : null;
+
+    // Show year only when it changes or for the first item
+    if (index === 0 || year !== prevYear) {
+      return `${month}\n${year}`;
+    }
+    return month;
+  };
+
   // Calculate total revenue for the period
   const totalRevenue = React.useMemo(() => {
     return chartData.reduce((sum, month) => {
@@ -358,6 +371,7 @@ export function BusinessExcellenceChart() {
                 height={80}
                 className='text-xs font-medium'
                 tick={{ fontSize: 11 }}
+                tickFormatter={formatXAxisTick}
               />
 
               <YAxis

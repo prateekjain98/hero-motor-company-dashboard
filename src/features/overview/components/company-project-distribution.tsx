@@ -147,9 +147,9 @@ export function CompanyProjectDistribution() {
       <CardHeader className='pb-4'>
         <div className='flex items-start justify-between'>
           <div>
-            <CardTitle>Project Distribution</CardTitle>
+            <CardTitle>Total Project Distribution</CardTitle>
             <CardDescription>
-              Active projects across group companies
+              All projects across group companies (including completed)
             </CardDescription>
           </div>
           <div className='flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 dark:border-blue-900/20 dark:bg-blue-950/10'>

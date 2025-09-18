@@ -354,7 +354,7 @@ export function ProjectVelocityChart() {
                 className='bg-blue-50 dark:bg-blue-950/20'
               >
                 <Activity className='mr-1 h-3 w-3 text-blue-600' />
-                {totalProjects} Active
+                {totalProjects} In Pipeline
               </Badge>
               {pendingApprovalProjects > 0 && (
                 <Badge

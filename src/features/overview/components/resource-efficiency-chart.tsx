@@ -37,6 +37,20 @@ export function ResourceEfficiencyChart() {
   const previousData =
     resourceEfficiencyData[resourceEfficiencyData.length - 2];
 
+  // Custom tick formatter to show years properly
+  const formatXAxisTick = (value: string, index: number) => {
+    const [month, year] = value.split(' ');
+    const prevValue =
+      index > 0 ? resourceEfficiencyData[index - 1]?.month : null;
+    const prevYear = prevValue ? prevValue.split(' ')[1] : null;
+
+    // Show year only when it changes or for the first item
+    if (index === 0 || year !== prevYear) {
+      return `${month}\n${year}`;
+    }
+    return month;
+  };
+
   const calculateTrend = (
     current: number,
     previous: number,
@@ -118,24 +132,9 @@ export function ResourceEfficiencyChart() {
               Operational performance and sustainability indicators
             </CardDescription>
           </div>
-          <div
-            className={cn(
-              'flex items-center gap-1.5 rounded-md px-2.5 py-1',
-              costTrend.isPositive
-                ? 'border-green-200 bg-green-50 dark:border-green-900/20 dark:bg-green-950/10'
-                : 'border-red-200 bg-red-50 dark:border-red-900/20 dark:bg-red-950/10'
-            )}
-          >
-            <IndianRupee className='h-3.5 w-3.5' />
-            <span
-              className={cn(
-                'text-sm font-medium',
-                costTrend.isPositive ? 'text-green-600' : 'text-red-600'
-              )}
-            >
-              {costTrend.isPositive ? '-' : '+'}
-              {Math.abs(parseFloat(costTrend.value))}%
-            </span>
+          <div className='text-right'>
+            <div className='text-sm font-semibold text-blue-600'>12 months</div>
+            <div className='text-muted-foreground text-xs'>Historical Data</div>
           </div>
         </div>
       </CardHeader>
@@ -300,7 +299,7 @@ export function ResourceEfficiencyChart() {
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
+                    tickFormatter={formatXAxisTick}
                   />
                   <YAxis
                     tick={{ fontSize: 11 }}
@@ -334,7 +333,7 @@ export function ResourceEfficiencyChart() {
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
+                    tickFormatter={formatXAxisTick}
                   />
                   <YAxis
                     tick={{ fontSize: 11 }}
@@ -369,7 +368,7 @@ export function ResourceEfficiencyChart() {
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
+                    tickFormatter={formatXAxisTick}
                   />
                   <YAxis
                     tick={{ fontSize: 11 }}
@@ -404,7 +403,7 @@ export function ResourceEfficiencyChart() {
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
+                    tickFormatter={formatXAxisTick}
                   />
                   <YAxis
                     tick={{ fontSize: 11 }}
