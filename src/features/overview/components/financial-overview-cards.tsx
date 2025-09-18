@@ -359,9 +359,8 @@ export function FinancialOverviewCards() {
                       Q1
                     </p>
                     <p className='text-xs font-semibold text-green-600'>
-                      ₹19.7
+                      ₹19.7 CR
                     </p>
-                    <p className='text-muted-foreground text-[9px]'>CR</p>
                   </div>
                 </div>
                 <div className='text-center'>
@@ -370,20 +369,18 @@ export function FinancialOverviewCards() {
                       Q2
                     </p>
                     <p className='text-xs font-semibold text-green-600'>
-                      ₹27.4
+                      ₹27.4 CR
                     </p>
-                    <p className='text-muted-foreground text-[9px]'>CR</p>
                   </div>
                 </div>
                 <div className='text-center'>
                   <div className='rounded border border-amber-200 bg-amber-50 px-1 py-1 dark:border-amber-900/20 dark:bg-amber-950/10'>
                     <p className='text-muted-foreground text-[10px] font-medium'>
-                      Q3
+                      Q3 (ongoing)
                     </p>
                     <p className='text-xs font-semibold text-amber-600'>
-                      ₹26.7
+                      ₹26.7 CR
                     </p>
-                    <p className='text-muted-foreground text-[9px]'>ongoing</p>
                   </div>
                 </div>
               </div>

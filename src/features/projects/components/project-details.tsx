@@ -43,6 +43,15 @@ interface ProjectDetailsProps {
   project: Project;
 }
 
+// Function to get the actual name of the approver based on their role
+function getApproverName(approverType: 'function-head' | 'bu-cfo'): string {
+  const approverNames = {
+    'function-head': 'Priya Sharma (Function Head)',
+    'bu-cfo': 'Amit Patel (BU CFO)'
+  };
+  return approverNames[approverType];
+}
+
 export default function ProjectDetails({ project }: ProjectDetailsProps) {
   const { currentUserType } = useUserTypeStore();
   const router = useRouter();
@@ -455,14 +464,12 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
                     const completed = completed_approvers || [];
 
                     const pendingNames = pending.map((approver) =>
-                      approver === 'function-head' ? 'Function Head' : 'BU CFO'
+                      getApproverName(approver as 'function-head' | 'bu-cfo')
                     );
 
                     if (completed.length > 0) {
                       const completedNames = completed.map((approver) =>
-                        approver === 'function-head'
-                          ? 'Function Head'
-                          : 'BU CFO'
+                        getApproverName(approver as 'function-head' | 'bu-cfo')
                       );
                       return `${pendingNames.join(', ')} (${completedNames.join(', ')} already approved)`;
                     }

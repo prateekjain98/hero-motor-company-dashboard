@@ -1269,7 +1269,7 @@ export const financialOverviewData = {
   fy26Target: 156.8, // 156.8 crores
 
   // Achieved Year to Date - realistic 70.4% achievement rate
-  achievedYTD: 110.4, // 110.4 crores
+  achievedYTD: 70.4, // 70.4 crores
 
   // Identified Pipelines (Idea Bank) - less than Achieved YTD
   identifiedPipeline: 67.4, // 67.4 crores (less than achieved)
@@ -1354,7 +1354,7 @@ export const businessExcellenceData = {
   // Monthly cost savings achievement for financial year (April to March)
   // FY26 Total Target: 156.8 Cr (aligned with financialOverviewData)
   fy26Target: 156.8, // Total FY26 target from financialOverviewData
-  achievedYTD: 110.4, // Current achievement from financialOverviewData
+  achievedYTD: 70.4, // Current achievement from financialOverviewData
 
   // Calculate required monthly rate to achieve target
   get requiredMonthlyRate() {
