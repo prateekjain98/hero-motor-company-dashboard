@@ -1272,10 +1272,10 @@ export const financialOverviewData = {
   achievedYTD: 70.4, // 70.4 crores
 
   // Identified Pipelines (Idea Bank) - less than Achieved YTD
-  identifiedPipeline: 67.4, // 67.4 crores (less than achieved)
+  identifiedPipeline: 95.2, // 95.2 crores (less than achieved)
 
   // Yet to Identify
-  yetToIdentify: 11.1, // 11.1 crores
+  yetToIdentify: 40.7, // 40.7 crores
 
   // Delayed projects data - less than FY26 Target or Achieved YTD
   delayedProjects: {

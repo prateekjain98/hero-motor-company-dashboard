@@ -477,10 +477,9 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
                     return pendingNames.join(' and ');
                   } else {
                     // Single approval scenario
-                    return project.pending_approval!.approver_type ===
-                      'function-head'
-                      ? 'Function Head'
-                      : 'BU CFO';
+                    return getApproverName(
+                      project.pending_approval!.approver_type
+                    );
                   }
                 })()}
               </p>
