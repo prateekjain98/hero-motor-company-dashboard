@@ -68,7 +68,7 @@ export const createColumns = (
   currentUserType: UserType
 ): ColumnDef<Project>[] => [
   // Company Group column (only for PMO)
-  ...(currentUserType === UserType.SUPER_ADMIN
+  ...(currentUserType === UserType.PMO
     ? [
         {
           id: 'company_group',

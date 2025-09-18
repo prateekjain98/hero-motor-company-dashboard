@@ -366,8 +366,8 @@ export function BusinessExcellenceChart() {
                 tickMargin={12}
                 className='text-xs font-medium'
                 tick={{ fontSize: 11 }}
-                domain={[0, 'dataMax + 2']}
-                ticks={[0, 2, 4, 6, 8, 10]}
+                domain={[0, 6]}
+                ticks={[0, 1, 2, 3, 4, 5, 6]}
                 label={{
                   value: 'Cost Savings (₹ Crores)',
                   angle: -90,

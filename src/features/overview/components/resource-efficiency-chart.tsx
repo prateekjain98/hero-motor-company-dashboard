@@ -2,16 +2,13 @@
 
 import * as React from 'react';
 import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
-  Legend
+  Tooltip
 } from 'recharts';
 import {
   Card,
@@ -20,22 +17,22 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { resourceEfficiencyData } from '@/constants/business-excellence-data';
 import {
   TrendingUp,
   TrendingDown,
   Zap,
-  Droplet,
   Package,
   Paintbrush,
   IndianRupee,
-  Activity,
   Wind
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function ResourceEfficiencyChart() {
+  const [selectedMetric, setSelectedMetric] = React.useState<string | null>(
+    'paint'
+  );
   const latestData = resourceEfficiencyData[resourceEfficiencyData.length - 1];
   const previousData =
     resourceEfficiencyData[resourceEfficiencyData.length - 2];
@@ -53,6 +50,30 @@ export function ResourceEfficiencyChart() {
   const costTrend = calculateTrend(
     latestData.costPerUnit,
     previousData.costPerUnit,
+    true
+  );
+
+  const paintTrend = calculateTrend(
+    latestData.paintConsumption,
+    previousData.paintConsumption,
+    true
+  );
+
+  const powderTrend = calculateTrend(
+    latestData.powderConsumption,
+    previousData.powderConsumption,
+    true
+  );
+
+  const powerTrend = calculateTrend(
+    latestData.powerCost,
+    previousData.powerCost,
+    true
+  );
+
+  const gasTrend = calculateTrend(
+    latestData.gasConsumption,
+    previousData.gasConsumption,
     true
   );
 
@@ -120,79 +141,156 @@ export function ResourceEfficiencyChart() {
       </CardHeader>
 
       <CardContent className='pb-6'>
-        <Tabs defaultValue='paint' className='w-full'>
-          <TabsList className='grid w-full grid-cols-4'>
-            <TabsTrigger value='paint'>Paint</TabsTrigger>
-            <TabsTrigger value='powder'>Powder</TabsTrigger>
-            <TabsTrigger value='power'>Power</TabsTrigger>
-            <TabsTrigger value='gases'>Gases</TabsTrigger>
-          </TabsList>
+        <div className='space-y-4'>
+          {/* Instruction text */}
+          <div className='mb-4 text-center'>
+            <p className='text-muted-foreground text-sm'>
+              Click on any metric card below to view its 12-month trend in the
+              chart
+            </p>
+          </div>
 
-          <TabsContent value='paint' className='mt-4 space-y-4'>
-            {/* KPI Cards */}
-            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Paintbrush className='h-4 w-4 text-blue-500' />
-                  <span className='text-muted-foreground text-xs'>Paint</span>
+          {/* Clickable KPI Cards */}
+          <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
+            <div
+              className={cn(
+                'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
+                selectedMetric === 'paint' &&
+                  'bg-blue-50/50 ring-2 ring-blue-500 dark:bg-blue-950/10'
+              )}
+              onClick={() =>
+                setSelectedMetric(selectedMetric === 'paint' ? null : 'paint')
+              }
+            >
+              <div className='mb-1 flex items-center gap-2'>
+                <Paintbrush className='h-4 w-4 text-blue-500' />
+                <span className='text-muted-foreground text-xs'>Paint</span>
+                <div
+                  className={cn(
+                    'ml-auto flex items-center text-xs',
+                    paintTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                  )}
+                >
+                  {paintTrend.isPositive ? (
+                    <TrendingDown className='mr-1 h-3 w-3' />
+                  ) : (
+                    <TrendingUp className='mr-1 h-3 w-3' />
+                  )}
+                  {Math.abs(parseFloat(paintTrend.value))}%
                 </div>
-                <div className='text-xl font-bold'>
-                  {latestData.paintConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>ml/sqm</div>
               </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Package className='h-4 w-4 text-green-500' />
-                  <span className='text-muted-foreground text-xs'>Powder</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.powderConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>gm/sqm</div>
+              <div className='text-xl font-bold'>
+                {latestData.paintConsumption}
               </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Zap className='h-4 w-4 text-yellow-500' />
-                  <span className='text-muted-foreground text-xs'>Power</span>
-                </div>
-                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
-                <div className='text-muted-foreground text-xs'>INR/units</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Wind className='h-4 w-4 text-cyan-500' />
-                  <span className='text-muted-foreground text-xs'>Gases</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.gasConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>m3/sqm</div>
-              </div>
+              <div className='text-muted-foreground text-xs'>ml/sqm</div>
             </div>
 
-            {/* Paint Chart */}
-            <div className='h-[280px] w-full'>
+            <div
+              className={cn(
+                'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
+                selectedMetric === 'powder' &&
+                  'bg-green-50/50 ring-2 ring-green-500 dark:bg-green-950/10'
+              )}
+              onClick={() =>
+                setSelectedMetric(selectedMetric === 'powder' ? null : 'powder')
+              }
+            >
+              <div className='mb-1 flex items-center gap-2'>
+                <Package className='h-4 w-4 text-green-500' />
+                <span className='text-muted-foreground text-xs'>Powder</span>
+                <div
+                  className={cn(
+                    'ml-auto flex items-center text-xs',
+                    powderTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                  )}
+                >
+                  {powderTrend.isPositive ? (
+                    <TrendingDown className='mr-1 h-3 w-3' />
+                  ) : (
+                    <TrendingUp className='mr-1 h-3 w-3' />
+                  )}
+                  {Math.abs(parseFloat(powderTrend.value))}%
+                </div>
+              </div>
+              <div className='text-xl font-bold'>
+                {latestData.powderConsumption}
+              </div>
+              <div className='text-muted-foreground text-xs'>gm/sqm</div>
+            </div>
+
+            <div
+              className={cn(
+                'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
+                selectedMetric === 'power' &&
+                  'bg-yellow-50/50 ring-2 ring-yellow-500 dark:bg-yellow-950/10'
+              )}
+              onClick={() =>
+                setSelectedMetric(selectedMetric === 'power' ? null : 'power')
+              }
+            >
+              <div className='mb-1 flex items-center gap-2'>
+                <Zap className='h-4 w-4 text-yellow-500' />
+                <span className='text-muted-foreground text-xs'>Power</span>
+                <div
+                  className={cn(
+                    'ml-auto flex items-center text-xs',
+                    powerTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                  )}
+                >
+                  {powerTrend.isPositive ? (
+                    <TrendingDown className='mr-1 h-3 w-3' />
+                  ) : (
+                    <TrendingUp className='mr-1 h-3 w-3' />
+                  )}
+                  {Math.abs(parseFloat(powerTrend.value))}%
+                </div>
+              </div>
+              <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
+              <div className='text-muted-foreground text-xs'>INR/units</div>
+            </div>
+
+            <div
+              className={cn(
+                'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
+                selectedMetric === 'gases' &&
+                  'bg-cyan-50/50 ring-2 ring-cyan-500 dark:bg-cyan-950/10'
+              )}
+              onClick={() =>
+                setSelectedMetric(selectedMetric === 'gases' ? null : 'gases')
+              }
+            >
+              <div className='mb-1 flex items-center gap-2'>
+                <Wind className='h-4 w-4 text-cyan-500' />
+                <span className='text-muted-foreground text-xs'>Gases</span>
+                <div
+                  className={cn(
+                    'ml-auto flex items-center text-xs',
+                    gasTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                  )}
+                >
+                  {gasTrend.isPositive ? (
+                    <TrendingDown className='mr-1 h-3 w-3' />
+                  ) : (
+                    <TrendingUp className='mr-1 h-3 w-3' />
+                  )}
+                  {Math.abs(parseFloat(gasTrend.value))}%
+                </div>
+              </div>
+              <div className='text-xl font-bold'>
+                {latestData.gasConsumption}
+              </div>
+              <div className='text-muted-foreground text-xs'>m3/sqm</div>
+            </div>
+          </div>
+
+          {/* Dynamic Chart - Only shows when a card is clicked */}
+          {selectedMetric === 'paint' && (
+            <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart
+                <BarChart
                   data={resourceEfficiencyData}
                   margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
                 >
-                  <defs>
-                    <linearGradient
-                      id='paintGradient'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
-                    >
-                      <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
-                      <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid
                     strokeDasharray='3 3'
                     stroke='hsl(var(--border))'
@@ -210,84 +308,23 @@ export function ResourceEfficiencyChart() {
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    type='monotone'
+                  <Bar
                     dataKey='paintConsumption'
-                    stroke='#3b82f6'
-                    strokeWidth={2}
-                    fill='url(#paintGradient)'
+                    fill='#3b82f6'
                     name='Paint Consumption (ml/sqm)'
+                    radius={[2, 2, 0, 0]}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-          </TabsContent>
-
-          <TabsContent value='powder' className='mt-4 space-y-4'>
-            {/* KPI Cards */}
-            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Paintbrush className='h-4 w-4 text-blue-500' />
-                  <span className='text-muted-foreground text-xs'>Paint</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.paintConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>ml/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Package className='h-4 w-4 text-green-500' />
-                  <span className='text-muted-foreground text-xs'>Powder</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.powderConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>gm/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Zap className='h-4 w-4 text-yellow-500' />
-                  <span className='text-muted-foreground text-xs'>Power</span>
-                </div>
-                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
-                <div className='text-muted-foreground text-xs'>INR/units</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Wind className='h-4 w-4 text-cyan-500' />
-                  <span className='text-muted-foreground text-xs'>Gases</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.gasConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>m3/sqm</div>
-              </div>
-            </div>
-
-            {/* Powder Chart */}
-            <div className='h-[280px] w-full'>
+          )}
+          {selectedMetric === 'powder' && (
+            <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart
+                <BarChart
                   data={resourceEfficiencyData}
                   margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
                 >
-                  <defs>
-                    <linearGradient
-                      id='powderGradient'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
-                    >
-                      <stop offset='5%' stopColor='#22c55e' stopOpacity={0.3} />
-                      <stop offset='95%' stopColor='#22c55e' stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid
                     strokeDasharray='3 3'
                     stroke='hsl(var(--border))'
@@ -305,84 +342,24 @@ export function ResourceEfficiencyChart() {
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    type='monotone'
+                  <Bar
                     dataKey='powderConsumption'
-                    stroke='#22c55e'
-                    strokeWidth={2}
-                    fill='url(#powderGradient)'
+                    fill='#22c55e'
                     name='Powder Consumption (gm/sqm)'
+                    radius={[2, 2, 0, 0]}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-          </TabsContent>
+          )}
 
-          <TabsContent value='power' className='mt-4 space-y-4'>
-            {/* KPI Cards */}
-            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Paintbrush className='h-4 w-4 text-blue-500' />
-                  <span className='text-muted-foreground text-xs'>Paint</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.paintConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>ml/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Package className='h-4 w-4 text-green-500' />
-                  <span className='text-muted-foreground text-xs'>Powder</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.powderConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>gm/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Zap className='h-4 w-4 text-yellow-500' />
-                  <span className='text-muted-foreground text-xs'>Power</span>
-                </div>
-                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
-                <div className='text-muted-foreground text-xs'>INR/units</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Wind className='h-4 w-4 text-cyan-500' />
-                  <span className='text-muted-foreground text-xs'>Gases</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.gasConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>m3/sqm</div>
-              </div>
-            </div>
-
-            {/* Power Chart */}
-            <div className='h-[280px] w-full'>
+          {selectedMetric === 'power' && (
+            <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart
+                <BarChart
                   data={resourceEfficiencyData}
                   margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
                 >
-                  <defs>
-                    <linearGradient
-                      id='powerGradient'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
-                    >
-                      <stop offset='5%' stopColor='#eab308' stopOpacity={0.3} />
-                      <stop offset='95%' stopColor='#eab308' stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid
                     strokeDasharray='3 3'
                     stroke='hsl(var(--border))'
@@ -400,84 +377,24 @@ export function ResourceEfficiencyChart() {
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    type='monotone'
+                  <Bar
                     dataKey='powerCost'
-                    stroke='#eab308'
-                    strokeWidth={2}
-                    fill='url(#powerGradient)'
+                    fill='#eab308'
                     name='Power Cost (INR/units)'
+                    radius={[2, 2, 0, 0]}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-          </TabsContent>
+          )}
 
-          <TabsContent value='gases' className='mt-4 space-y-4'>
-            {/* KPI Cards */}
-            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Paintbrush className='h-4 w-4 text-blue-500' />
-                  <span className='text-muted-foreground text-xs'>Paint</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.paintConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>ml/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Package className='h-4 w-4 text-green-500' />
-                  <span className='text-muted-foreground text-xs'>Powder</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.powderConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>gm/sqm</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Zap className='h-4 w-4 text-yellow-500' />
-                  <span className='text-muted-foreground text-xs'>Power</span>
-                </div>
-                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
-                <div className='text-muted-foreground text-xs'>INR/units</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Wind className='h-4 w-4 text-cyan-500' />
-                  <span className='text-muted-foreground text-xs'>Gases</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.gasConsumption}
-                </div>
-                <div className='text-muted-foreground text-xs'>m3/sqm</div>
-              </div>
-            </div>
-
-            {/* Gases Chart */}
-            <div className='h-[280px] w-full'>
+          {selectedMetric === 'gases' && (
+            <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart
+                <BarChart
                   data={resourceEfficiencyData}
                   margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
                 >
-                  <defs>
-                    <linearGradient
-                      id='gasGradient'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
-                    >
-                      <stop offset='5%' stopColor='#06b6d4' stopOpacity={0.3} />
-                      <stop offset='95%' stopColor='#06b6d4' stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid
                     strokeDasharray='3 3'
                     stroke='hsl(var(--border))'
@@ -495,19 +412,32 @@ export function ResourceEfficiencyChart() {
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    type='monotone'
+                  <Bar
                     dataKey='gasConsumption'
-                    stroke='#06b6d4'
-                    strokeWidth={2}
-                    fill='url(#gasGradient)'
+                    fill='#06b6d4'
                     name='Gas Consumption (m3/sqm)'
+                    radius={[2, 2, 0, 0]}
                   />
-                </AreaChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+
+          {/* Instructions when no card is selected */}
+          {!selectedMetric && (
+            <div className='flex h-[200px] items-center justify-center text-center'>
+              <div className='space-y-2'>
+                <p className='text-muted-foreground text-lg'>
+                  Select a resource card above to view its trend
+                </p>
+                <p className='text-muted-foreground text-sm'>
+                  Click on Paint, Powder, Power, or Gases to see detailed
+                  analytics
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

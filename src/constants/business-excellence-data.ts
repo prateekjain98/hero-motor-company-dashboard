@@ -144,55 +144,103 @@ export const oeeMetricsData = {
   ]
 };
 
-// 3. Resource Efficiency Trends (for Line Chart with Multiple Metrics)
+// 3. Resource Efficiency Trends (for Bar Chart with Multiple Metrics - 12 months data)
 export const resourceEfficiencyData = [
   {
+    month: 'Oct 2023',
+    paintConsumption: 215.4, // ml/sqm - Post-monsoon production restart
+    powderConsumption: 158.2, // gm/sqm - Higher consumption due to seasonal adjustments
+    powerCost: 11.45, // INR/units - Festive season power rates
+    gasConsumption: 0.058, // m3/sqm - Compressed air and process gases
+    costPerUnit: 1318 // INR
+  },
+  {
+    month: 'Nov 2023',
+    paintConsumption: 198.6, // Process stabilization after seasonal changes
+    powderConsumption: 142.3, // Gradual efficiency improvements
+    powerCost: 10.98,
+    gasConsumption: 0.051,
+    costPerUnit: 1289
+  },
+  {
+    month: 'Dec 2023',
+    paintConsumption: 188.9, // Year-end production optimization
+    powderConsumption: 136.7, // Best practices implementation
+    powerCost: 10.76,
+    gasConsumption: 0.048,
+    costPerUnit: 1254
+  },
+  {
+    month: 'Jan 2024',
+    paintConsumption: 221.3, // New year production ramp-up
+    powderConsumption: 164.8, // Higher consumption due to new product lines
+    powerCost: 11.28, // Winter heating costs
+    gasConsumption: 0.059,
+    costPerUnit: 1334
+  },
+  {
+    month: 'Feb 2024',
+    paintConsumption: 189.7, // Process optimization initiatives
+    powderConsumption: 138.4, // Efficiency measures taking effect
+    powerCost: 10.84,
+    gasConsumption: 0.049,
+    costPerUnit: 1267
+  },
+  {
+    month: 'Mar 2024',
+    paintConsumption: 194.2, // End of fiscal year production push
+    powderConsumption: 144.6, // Increased volume but controlled usage
+    powerCost: 10.95,
+    gasConsumption: 0.052,
+    costPerUnit: 1278
+  },
+  {
     month: 'Apr 2024',
-    paintConsumption: 185.2, // ml/sqm - Standard industrial coating
-    powderConsumption: 142.8, // gm/sqm - Medium thickness coating
-    powerCost: 10.85, // INR/units - Industrial electricity rate
-    gasConsumption: 0.045, // m3/sqm - Compressed air and process gases
-    costPerUnit: 1250 // INR
+    paintConsumption: 206.7, // ml/sqm - Spring production peak, maintenance completed
+    powderConsumption: 149.8, // gm/sqm - Slight increase due to higher production volume
+    powerCost: 10.89, // INR/units - Moderate electricity rates
+    gasConsumption: 0.054, // m3/sqm - Compressed air and process gases
+    costPerUnit: 1295 // INR
   },
   {
     month: 'May 2024',
-    paintConsumption: 178.4,
-    powderConsumption: 138.6,
-    powerCost: 10.92,
-    gasConsumption: 0.043,
-    costPerUnit: 1235
+    paintConsumption: 178.3, // Process optimization showing results
+    powderConsumption: 132.6, // Efficiency improvements maintained
+    powerCost: 10.67,
+    gasConsumption: 0.047,
+    costPerUnit: 1245
   },
   {
     month: 'Jun 2024',
-    paintConsumption: 182.1,
-    powderConsumption: 145.3,
-    powerCost: 11.15,
-    gasConsumption: 0.047,
-    costPerUnit: 1242
+    paintConsumption: 195.8, // Summer production ramp, quality improvements
+    powderConsumption: 145.9, // Higher volume but controlled consumption
+    powerCost: 11.23, // AC loads increase power costs
+    gasConsumption: 0.052,
+    costPerUnit: 1268
   },
   {
     month: 'Jul 2024',
-    paintConsumption: 172.9,
-    powderConsumption: 135.7,
-    powerCost: 10.78,
-    gasConsumption: 0.041,
-    costPerUnit: 1218
+    paintConsumption: 234.2, // Equipment malfunction caused spike
+    powderConsumption: 171.4, // Maintenance issues affected efficiency
+    powerCost: 11.85, // Summer peak rates
+    gasConsumption: 0.065, // Higher usage due to temperature control
+    costPerUnit: 1356
   },
   {
     month: 'Aug 2024',
-    paintConsumption: 168.5,
-    powderConsumption: 132.4,
-    powerCost: 10.65,
-    gasConsumption: 0.039,
-    costPerUnit: 1205
+    paintConsumption: 172.1, // Post-maintenance optimization
+    powderConsumption: 128.7, // Best efficiency achieved
+    powerCost: 10.42, // Improved processes reduce energy
+    gasConsumption: 0.043,
+    costPerUnit: 1198
   },
   {
     month: 'Sep 2024',
-    paintConsumption: 165.3,
-    powderConsumption: 129.8,
-    powerCost: 10.58,
-    gasConsumption: 0.038,
-    costPerUnit: 1195
+    paintConsumption: 165.3, // Sustained improvements
+    powderConsumption: 125.4, // Continued efficiency gains
+    powerCost: 10.28,
+    gasConsumption: 0.041,
+    costPerUnit: 1175
   }
 ];
 

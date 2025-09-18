@@ -17,7 +17,7 @@ export default function OverViewLayout({
 }) {
   const { currentUserType } = useUserTypeStore();
 
-  const renderSuperAdminDashboard = () => (
+  const renderPMODashboard = () => (
     <div className='space-y-6'>
       {/* Financial Overview Cards */}
       <FinancialOverviewCards />
@@ -50,9 +50,9 @@ export default function OverViewLayout({
 
   const renderDashboardContent = () => {
     switch (currentUserType) {
-      case UserType.SUPER_ADMIN:
-        return renderSuperAdminDashboard();
-      case UserType.GROUP_CFO:
+      case UserType.PMO:
+        return renderPMODashboard();
+      case UserType.BU_CFO:
         return (
           <div className='space-y-6'>
             {/* Financial Overview Cards */}
@@ -74,12 +74,12 @@ export default function OverViewLayout({
             {area_stats}
           </div>
         );
-      case UserType.BUSINESS_HEAD:
+      case UserType.FUNCTION_HEAD:
         return renderPlaceholderDashboard('Function Head Dashboard');
       case UserType.PROJECT_MANAGER:
         return renderPlaceholderDashboard('Project Manager Dashboard');
       default:
-        return renderSuperAdminDashboard();
+        return renderPMODashboard();
     }
   };
 

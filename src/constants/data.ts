@@ -58,7 +58,10 @@ export type Project = {
     to_stage: ProjectStage;
     requested_by: string;
     requested_at: string;
-    approver_type: 'business-head' | 'group-cfo';
+    approver_type: 'function-head' | 'bu-cfo';
+    // For L4 transitions that need both approvers
+    required_approvers?: Array<'function-head' | 'bu-cfo'>;
+    completed_approvers?: Array<'function-head' | 'bu-cfo'>;
   };
   timeline: TimelineEvent[];
 };

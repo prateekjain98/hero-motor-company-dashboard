@@ -21,7 +21,19 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { projectVelocityData } from '@/constants/business-excellence-data';
+import {
+  fakeProjects,
+  companyPerformanceData,
+  type CompanyGroup
+} from '@/constants/mock-api';
 import {
   AlertCircle,
   Activity,
@@ -33,22 +45,178 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const companyNames = {
+  all: 'HMC',
+  'hero-motors': 'Hero Motors',
+  'hero-cycles': 'Hero Cycles',
+  'hmc-hive': 'HMC Hive',
+  munjal: 'Munjal'
+};
+
 export function ProjectVelocityChart() {
-  const totalProjects = projectVelocityData.reduce(
+  const [selectedCompany, setSelectedCompany] = React.useState<
+    CompanyGroup | 'all'
+  >('all');
+
+  // Initialize projects data
+  React.useEffect(() => {
+    fakeProjects.ensureInitialized();
+  }, []);
+
+  // Get filtered projects based on selected company
+  const allProjects = fakeProjects.records;
+  const filteredProjects =
+    selectedCompany === 'all'
+      ? allProjects
+      : allProjects.filter(
+          (project) => project.company_group === selectedCompany
+        );
+
+  // Calculate stage-based data from filtered projects
+  const getProjectsByStage = (stage: string) => {
+    return filteredProjects.filter((project) => project.stage === stage);
+  };
+
+  // Generate stage distribution based on companyPerformanceData for consistency
+  const getRealisticStageData = () => {
+    if (selectedCompany === 'all') {
+      // Sum all projects from companyPerformanceData by stage
+      const stageTotals = {
+        L0: 0,
+        L1: 0,
+        L2: 0,
+        L3: 0,
+        L4: 0,
+        L5: 0
+      };
+
+      companyPerformanceData.forEach((company) => {
+        stageTotals.L0 += company.l0;
+        stageTotals.L1 += company.l1;
+        stageTotals.L2 += company.l2;
+        stageTotals.L3 += company.l3;
+        stageTotals.L4 += company.l4;
+        stageTotals.L5 += company.l5;
+      });
+
+      return [
+        {
+          stage: 'L0',
+          activeProjects: stageTotals.L0,
+          pendingApprovalProjects: Math.floor(stageTotals.L0 * 0.08),
+          delayedProjects: Math.floor(stageTotals.L0 * 0.05)
+        },
+        {
+          stage: 'L1',
+          activeProjects: stageTotals.L1,
+          pendingApprovalProjects: Math.floor(stageTotals.L1 * 0.12),
+          delayedProjects: Math.floor(stageTotals.L1 * 0.08)
+        },
+        {
+          stage: 'L2',
+          activeProjects: stageTotals.L2,
+          pendingApprovalProjects: Math.floor(stageTotals.L2 * 0.15),
+          delayedProjects: Math.floor(stageTotals.L2 * 0.1)
+        },
+        {
+          stage: 'L3',
+          activeProjects: stageTotals.L3,
+          pendingApprovalProjects: Math.floor(stageTotals.L3 * 0.1),
+          delayedProjects: Math.floor(stageTotals.L3 * 0.12)
+        },
+        {
+          stage: 'L4',
+          activeProjects: stageTotals.L4,
+          pendingApprovalProjects: Math.floor(stageTotals.L4 * 0.08),
+          delayedProjects: Math.floor(stageTotals.L4 * 0.15)
+        },
+        {
+          stage: 'L5',
+          activeProjects: stageTotals.L5,
+          pendingApprovalProjects: 0,
+          delayedProjects: 0
+        }
+      ];
+    } else {
+      // Get individual company data from companyPerformanceData
+      const companyData = companyPerformanceData.find(
+        (company) =>
+          company.company.toLowerCase().replace(' ', '-') === selectedCompany ||
+          (company.company === 'Munjal Kiru' && selectedCompany === 'munjal')
+      );
+
+      if (!companyData) return [];
+
+      return [
+        {
+          stage: 'L0',
+          activeProjects: companyData.l0,
+          pendingApprovalProjects: Math.floor(companyData.l0 * 0.08),
+          delayedProjects: Math.floor(companyData.l0 * 0.05)
+        },
+        {
+          stage: 'L1',
+          activeProjects: companyData.l1,
+          pendingApprovalProjects: Math.floor(companyData.l1 * 0.12),
+          delayedProjects: Math.floor(companyData.l1 * 0.08)
+        },
+        {
+          stage: 'L2',
+          activeProjects: companyData.l2,
+          pendingApprovalProjects: Math.floor(companyData.l2 * 0.15),
+          delayedProjects: Math.floor(companyData.l2 * 0.1)
+        },
+        {
+          stage: 'L3',
+          activeProjects: companyData.l3,
+          pendingApprovalProjects: Math.floor(companyData.l3 * 0.1),
+          delayedProjects: Math.floor(companyData.l3 * 0.12)
+        },
+        {
+          stage: 'L4',
+          activeProjects: companyData.l4,
+          pendingApprovalProjects: Math.floor(companyData.l4 * 0.08),
+          delayedProjects: Math.floor(companyData.l4 * 0.15)
+        },
+        {
+          stage: 'L5',
+          activeProjects: companyData.l5,
+          pendingApprovalProjects: 0,
+          delayedProjects: 0
+        }
+      ];
+    }
+  };
+
+  const realisticData = getRealisticStageData();
+
+  // Generate dynamic data based on realistic distributions
+  const dynamicProjectData = projectVelocityData.map((stageData) => {
+    const stageInfo = realisticData.find((d) => d.stage === stageData.stage);
+
+    return {
+      ...stageData,
+      activeProjects: stageInfo?.activeProjects || 0,
+      pendingApprovalProjects: stageInfo?.pendingApprovalProjects || 0,
+      delayedProjects: stageInfo?.delayedProjects || 0
+    };
+  });
+
+  const totalProjects = dynamicProjectData.reduce(
     (sum, d) => sum + d.activeProjects,
     0
   );
-  const pendingApprovalProjects = projectVelocityData.reduce(
+  const pendingApprovalProjects = dynamicProjectData.reduce(
     (sum, d) => sum + d.pendingApprovalProjects,
     0
   );
-  const delayedProjects = projectVelocityData.reduce(
+  const delayedProjects = dynamicProjectData.reduce(
     (sum, d) => sum + d.delayedProjects,
     0
   );
 
   // Enhanced data with calculated metrics
-  const enhancedData = projectVelocityData.map((stage) => ({
+  const enhancedData = dynamicProjectData.map((stage) => ({
     ...stage,
     healthyProjects:
       stage.activeProjects -
@@ -169,36 +337,57 @@ export function ProjectVelocityChart() {
     <Card className='flex h-full flex-col overflow-hidden'>
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>
-          <div>
-            <CardTitle className='flex items-center gap-2 text-base'>
-              <ChevronRight className='h-4 w-4 text-gray-600' />
-              Project Pipeline Analytics
-            </CardTitle>
-            <CardDescription className='mt-1 text-xs'>
-              {totalProjects} active projects • {pendingApprovalProjects}{' '}
-              pending approval • {delayedProjects} delayed
-            </CardDescription>
-          </div>
-          <div className='flex gap-2'>
-            <Badge variant='outline' className='bg-blue-50 dark:bg-blue-950/20'>
-              <Activity className='mr-1 h-3 w-3 text-blue-600' />
-              {totalProjects} Active
-            </Badge>
-            {pendingApprovalProjects > 0 && (
+          <div className='flex-1'>
+            <div className='flex items-center justify-between'>
+              <CardTitle className='flex items-center gap-2 text-base'>
+                <ChevronRight className='h-4 w-4 text-gray-600' />
+                Project Pipeline Analytics
+              </CardTitle>
+              <Select
+                value={selectedCompany}
+                onValueChange={(value: CompanyGroup | 'all') =>
+                  setSelectedCompany(value)
+                }
+              >
+                <SelectTrigger className='w-48'>
+                  <SelectValue placeholder='Select company group' />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(companyNames).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className='mt-3 flex gap-2'>
               <Badge
                 variant='outline'
-                className='bg-yellow-50 dark:bg-yellow-950/20'
+                className='bg-blue-50 dark:bg-blue-950/20'
               >
-                <HourglassIcon className='mr-1 h-3 w-3 text-yellow-600' />
-                {pendingApprovalProjects} Pending
+                <Activity className='mr-1 h-3 w-3 text-blue-600' />
+                {totalProjects} Active
               </Badge>
-            )}
-            {delayedProjects > 0 && (
-              <Badge variant='outline' className='bg-red-50 dark:bg-red-950/20'>
-                <AlertCircle className='mr-1 h-3 w-3 text-red-600' />
-                {delayedProjects} Delayed
-              </Badge>
-            )}
+              {pendingApprovalProjects > 0 && (
+                <Badge
+                  variant='outline'
+                  className='bg-yellow-50 dark:bg-yellow-950/20'
+                >
+                  <HourglassIcon className='mr-1 h-3 w-3 text-yellow-600' />
+                  {pendingApprovalProjects} Pending
+                </Badge>
+              )}
+              {delayedProjects > 0 && (
+                <Badge
+                  variant='outline'
+                  className='bg-red-50 dark:bg-red-950/20'
+                >
+                  <AlertCircle className='mr-1 h-3 w-3 text-red-600' />
+                  {delayedProjects} Delayed
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
       </CardHeader>

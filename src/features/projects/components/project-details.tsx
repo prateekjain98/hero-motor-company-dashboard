@@ -54,14 +54,27 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
   const canApprove = () => {
     if (!project.pending_approval) return false;
 
-    const { approver_type } = project.pending_approval;
+    const { approver_type, required_approvers, completed_approvers } =
+      project.pending_approval;
 
+    // PMO can always approve
+    if (currentUserType === 'pmo') return true;
+
+    // For multi-approval scenarios
+    if (required_approvers && required_approvers.length > 1) {
+      // Check if user is in required approvers and hasn't already approved
+      const userRole = currentUserType as 'function-head' | 'bu-cfo';
+      return (
+        required_approvers.includes(userRole) &&
+        !(completed_approvers || []).includes(userRole)
+      );
+    }
+
+    // Single approval scenario
     return (
-      (approver_type === 'business-head' &&
-        (currentUserType === 'business-head' ||
-          currentUserType === 'super-admin')) ||
-      (approver_type === 'group-cfo' &&
-        (currentUserType === 'group-cfo' || currentUserType === 'super-admin'))
+      (approver_type === 'function-head' &&
+        currentUserType === 'function-head') ||
+      (approver_type === 'bu-cfo' && currentUserType === 'bu-cfo')
     );
   };
 
@@ -428,10 +441,41 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
                 })}
               </p>
               <p className='text-xs text-blue-600'>
-                Waiting for approval from{' '}
-                {project.pending_approval.approver_type === 'business-head'
-                  ? 'Function Head'
-                  : 'BU CFO'}
+                Waiting for approval from:{' '}
+                {(() => {
+                  const { required_approvers, completed_approvers } =
+                    project.pending_approval!;
+
+                  if (required_approvers && required_approvers.length > 1) {
+                    // Multi-approval scenario - show pending and completed
+                    const pending = required_approvers.filter(
+                      (approver) =>
+                        !(completed_approvers || []).includes(approver)
+                    );
+                    const completed = completed_approvers || [];
+
+                    const pendingNames = pending.map((approver) =>
+                      approver === 'function-head' ? 'Function Head' : 'BU CFO'
+                    );
+
+                    if (completed.length > 0) {
+                      const completedNames = completed.map((approver) =>
+                        approver === 'function-head'
+                          ? 'Function Head'
+                          : 'BU CFO'
+                      );
+                      return `${pendingNames.join(', ')} (${completedNames.join(', ')} already approved)`;
+                    }
+
+                    return pendingNames.join(' and ');
+                  } else {
+                    // Single approval scenario
+                    return project.pending_approval!.approver_type ===
+                      'function-head'
+                      ? 'Function Head'
+                      : 'BU CFO';
+                  }
+                })()}
               </p>
             </div>
           </CardContent>

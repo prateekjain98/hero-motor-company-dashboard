@@ -24,8 +24,8 @@ function generateProjectTimeline(
 
   const users = [
     { name: 'Rajesh Kumar', role: 'project-manager' },
-    { name: 'Priya Sharma', role: 'business-head' },
-    { name: 'Amit Patel', role: 'group-cfo' },
+    { name: 'Priya Sharma', role: 'function-head' },
+    { name: 'Amit Patel', role: 'bu-cfo' },
     { name: 'Sunita Verma', role: 'project-manager' }
   ];
 
@@ -82,7 +82,7 @@ function generateProjectTimeline(
         requestDate.getTime() +
           faker.number.int({ min: 1, max: 7 }) * 24 * 60 * 60 * 1000
       );
-      const approverRole = toStage === 'L3' ? 'business-head' : 'group-cfo';
+      const approverRole = toStage === 'L3' ? 'function-head' : 'bu-cfo';
       const approver = faker.helpers.arrayElement(
         users.filter((u) => u.role === approverRole)
       );
@@ -238,7 +238,10 @@ export type Project = {
     to_stage: ProjectStage;
     requested_by: string;
     requested_at: string;
-    approver_type: 'business-head' | 'group-cfo';
+    approver_type: 'function-head' | 'bu-cfo';
+    // For L4 transitions that need both approvers
+    required_approvers?: Array<'function-head' | 'bu-cfo'>;
+    completed_approvers?: Array<'function-head' | 'bu-cfo'>;
   };
   timeline: TimelineEvent[];
 };
@@ -434,7 +437,7 @@ export const fakeProjects = {
           to_stage: project.stage,
           requested_by: faker.person.fullName(),
           requested_at: faker.date.recent().toISOString(),
-          approver_type: project.stage === 'L3' ? 'business-head' : 'group-cfo'
+          approver_type: project.stage === 'L3' ? 'function-head' : 'bu-cfo'
         };
       }
 
@@ -447,7 +450,7 @@ export const fakeProjects = {
     }
 
     // Ensure we have specific projects with pending approvals for testing
-    // Project for L2 to L3 approval (Business Head)
+    // Project for L2 to L3 approval (Function Head)
     if (sampleProjects.length > 2) {
       const project1 = sampleProjects[2];
       project1.stage = 'L2';
@@ -458,7 +461,7 @@ export const fakeProjects = {
         requested_at: new Date(
           Date.now() - 2 * 24 * 60 * 60 * 1000
         ).toISOString(), // 2 days ago
-        approver_type: 'business-head'
+        approver_type: 'function-head'
       };
       // Regenerate timeline to match the stage
       project1.timeline = generateProjectTimeline(
@@ -468,7 +471,7 @@ export const fakeProjects = {
       );
     }
 
-    // Project for L3 to L4 approval (Group CFO)
+    // Project for L3 to L4 approval (Function Head and BU CFO)
     if (sampleProjects.length > 5) {
       const project2 = sampleProjects[5];
       project2.stage = 'L3';
@@ -479,7 +482,9 @@ export const fakeProjects = {
         requested_at: new Date(
           Date.now() - 1 * 24 * 60 * 60 * 1000
         ).toISOString(), // 1 day ago
-        approver_type: 'group-cfo'
+        approver_type: 'function-head',
+        required_approvers: ['function-head', 'bu-cfo'],
+        completed_approvers: []
       };
       // Regenerate timeline to match the stage
       project2.timeline = generateProjectTimeline(
@@ -489,7 +494,7 @@ export const fakeProjects = {
       );
     }
 
-    // Project for L4 to L5 approval (Group CFO)
+    // Project for L4 to L5 approval (BU CFO)
     if (sampleProjects.length > 8) {
       const project3 = sampleProjects[8];
       project3.stage = 'L4';
@@ -498,7 +503,7 @@ export const fakeProjects = {
         to_stage: 'L5',
         requested_by: 'Amit Patel (Project Manager)',
         requested_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
-        approver_type: 'group-cfo'
+        approver_type: 'bu-cfo'
       };
       // Regenerate timeline to match the stage
       project3.timeline = generateProjectTimeline(
@@ -653,16 +658,16 @@ export const fakeProjects = {
     // Check approval requirements
     if (
       nextStage === 'L3' &&
-      userType !== 'business-head' &&
-      userType !== 'super-admin'
+      userType !== 'function-head' &&
+      userType !== 'pmo'
     ) {
-      // Request approval from business head
+      // Request approval from function head
       project.pending_approval = {
         from_stage: project.stage,
         to_stage: nextStage,
         requested_by: 'Current User', // In real app, get from auth
         requested_at: new Date().toISOString(),
-        approver_type: 'business-head'
+        approver_type: 'function-head'
       };
 
       // Add timeline event
@@ -671,7 +676,7 @@ export const fakeProjects = {
         type: 'approval_requested',
         timestamp: new Date().toISOString(),
         title: `Approval Requested for Stage ${nextStage}`,
-        description: `Requested Business Head approval to move from ${project.stage} to ${nextStage}.`,
+        description: `Requested Function Head approval to move from ${project.stage} to ${nextStage}.`,
         user: 'Current User',
         user_role: userType,
         from_stage: project.stage,
@@ -680,22 +685,20 @@ export const fakeProjects = {
 
       return {
         success: true,
-        message: 'Approval requested from Business Head'
+        message: 'Approval requested from Function Head'
       };
     }
 
-    if (
-      (nextStage === 'L4' || nextStage === 'L5') &&
-      userType !== 'group-cfo' &&
-      userType !== 'super-admin'
-    ) {
-      // Request approval from group CFO
+    if (nextStage === 'L4' && userType !== 'pmo') {
+      // L3->L4 requires both Function Head and BU CFO approval
       project.pending_approval = {
         from_stage: project.stage,
         to_stage: nextStage,
         requested_by: 'Current User',
         requested_at: new Date().toISOString(),
-        approver_type: 'group-cfo'
+        approver_type: 'function-head', // Start with function-head as primary
+        required_approvers: ['function-head', 'bu-cfo'],
+        completed_approvers: []
       };
 
       // Add timeline event
@@ -704,14 +707,43 @@ export const fakeProjects = {
         type: 'approval_requested',
         timestamp: new Date().toISOString(),
         title: `Approval Requested for Stage ${nextStage}`,
-        description: `Requested Group CFO approval to move from ${project.stage} to ${nextStage}.`,
+        description: `Requested approval from both Function Head and BU CFO to move from ${project.stage} to ${nextStage}.`,
         user: 'Current User',
         user_role: userType,
         from_stage: project.stage,
         to_stage: nextStage
       });
 
-      return { success: true, message: 'Approval requested from Group CFO' };
+      return {
+        success: true,
+        message: 'Approval requested from both Function Head and BU CFO'
+      };
+    }
+
+    if (nextStage === 'L5' && userType !== 'bu-cfo' && userType !== 'pmo') {
+      // Request approval from BU CFO for L5
+      project.pending_approval = {
+        from_stage: project.stage,
+        to_stage: nextStage,
+        requested_by: 'Current User',
+        requested_at: new Date().toISOString(),
+        approver_type: 'bu-cfo'
+      };
+
+      // Add timeline event
+      project.timeline.push({
+        id: `${project.id}-approval-request-${nextStage}-${Date.now()}`,
+        type: 'approval_requested',
+        timestamp: new Date().toISOString(),
+        title: `Approval Requested for Stage ${nextStage}`,
+        description: `Requested BU CFO approval to move from ${project.stage} to ${nextStage}.`,
+        user: 'Current User',
+        user_role: userType,
+        from_stage: project.stage,
+        to_stage: nextStage
+      });
+
+      return { success: true, message: 'Approval requested from BU CFO' };
     }
 
     // Direct progression (L0->L1, L1->L2, or user has approval rights)
@@ -745,37 +777,118 @@ export const fakeProjects = {
       return { success: false, error: 'No pending approval found' };
     }
 
-    const canApprove =
-      (project.pending_approval.approver_type === 'business-head' &&
-        (userType === 'business-head' || userType === 'super-admin')) ||
-      (project.pending_approval.approver_type === 'group-cfo' &&
-        (userType === 'group-cfo' || userType === 'super-admin'));
+    const { pending_approval } = project;
+    const isMultiApprovalRequired =
+      pending_approval.required_approvers &&
+      pending_approval.required_approvers.length > 1;
+
+    // Check if user can approve
+    let canApprove = false;
+    let currentApproverRole = '';
+
+    if (userType === 'pmo') {
+      // PMO can approve anything
+      canApprove = true;
+      currentApproverRole = 'pmo';
+    } else if (
+      userType === 'function-head' &&
+      (pending_approval.approver_type === 'function-head' ||
+        (isMultiApprovalRequired &&
+          pending_approval.required_approvers?.includes('function-head')))
+    ) {
+      canApprove = true;
+      currentApproverRole = 'function-head';
+    } else if (
+      userType === 'bu-cfo' &&
+      (pending_approval.approver_type === 'bu-cfo' ||
+        (isMultiApprovalRequired &&
+          pending_approval.required_approvers?.includes('bu-cfo')))
+    ) {
+      canApprove = true;
+      currentApproverRole = 'bu-cfo';
+    }
 
     if (!canApprove) {
       return { success: false, error: 'Insufficient permissions to approve' };
     }
 
+    // For multi-approval scenarios
+    if (isMultiApprovalRequired && userType !== 'pmo') {
+      // Check if this approver has already approved
+      if (
+        pending_approval.completed_approvers?.includes(
+          currentApproverRole as 'function-head' | 'bu-cfo'
+        )
+      ) {
+        return {
+          success: false,
+          error: 'You have already approved this request'
+        };
+      }
+
+      // Add current approver to completed list
+      pending_approval.completed_approvers =
+        pending_approval.completed_approvers || [];
+      pending_approval.completed_approvers.push(
+        currentApproverRole as 'function-head' | 'bu-cfo'
+      );
+
+      // Check if all required approvals are completed
+      const allApproved = pending_approval.required_approvers?.every(
+        (approver) => pending_approval.completed_approvers?.includes(approver)
+      );
+
+      // Add approval event
+      const approvalTimestamp = new Date().toISOString();
+      project.timeline.push({
+        id: `${project.id}-partial-approval-${currentApproverRole}-${Date.now()}`,
+        type: 'approval_granted',
+        timestamp: approvalTimestamp,
+        title: `Approved by ${currentApproverRole === 'function-head' ? 'Function Head' : 'BU CFO'}`,
+        description: `${currentApproverRole === 'function-head' ? 'Function Head' : 'BU CFO'} approved the progression from ${pending_approval.from_stage} to ${pending_approval.to_stage}.`,
+        user: 'Current User',
+        user_role: userType,
+        from_stage: pending_approval.from_stage,
+        to_stage: pending_approval.to_stage
+      });
+
+      if (!allApproved) {
+        // Still waiting for more approvals
+        const remainingApprovers = pending_approval.required_approvers?.filter(
+          (approver) =>
+            !pending_approval.completed_approvers?.includes(approver)
+        );
+        return {
+          success: true,
+          message: `Your approval has been recorded. Still waiting for approval from: ${remainingApprovers?.map((a) => (a === 'function-head' ? 'Function Head' : 'BU CFO')).join(', ')}`
+        };
+      }
+    }
+
+    // All approvals received or single approval - proceed with stage movement
     const fromStage = project.stage;
-    const toStage = project.pending_approval.to_stage;
+    const toStage = pending_approval.to_stage;
 
     project.stage = toStage;
     project.updated_at = new Date().toISOString();
 
-    // Add approval event first
-    const approvalTimestamp = new Date().toISOString();
-    project.timeline.push({
-      id: `${project.id}-approval-granted-${toStage}-${Date.now()}`,
-      type: 'approval_granted',
-      timestamp: approvalTimestamp,
-      title: `Stage ${toStage} Approved`,
-      description: `Approved the progression from ${fromStage} to ${toStage}.`,
-      user: 'Current User',
-      user_role: userType,
-      from_stage: fromStage,
-      to_stage: toStage
-    });
+    // Add final approval event if single approval or PMO override
+    if (!isMultiApprovalRequired || userType === 'pmo') {
+      const approvalTimestamp = new Date().toISOString();
+      project.timeline.push({
+        id: `${project.id}-approval-granted-${toStage}-${Date.now()}`,
+        type: 'approval_granted',
+        timestamp: approvalTimestamp,
+        title: `Stage ${toStage} Approved`,
+        description: `Approved the progression from ${fromStage} to ${toStage}.`,
+        user: 'Current User',
+        user_role: userType,
+        from_stage: fromStage,
+        to_stage: toStage
+      });
+    }
 
-    // Add stage movement event after approval (slightly later timestamp)
+    // Add stage movement event
     const movementTimestamp = new Date(Date.now() + 1000).toISOString(); // 1 second later
     project.timeline.push({
       id: `${project.id}-stage-moved-${toStage}-${Date.now() + 1}`,
@@ -855,10 +968,10 @@ export const fakeProjects = {
     }
 
     const canReject =
-      (project.pending_approval.approver_type === 'business-head' &&
-        (userType === 'business-head' || userType === 'super-admin')) ||
-      (project.pending_approval.approver_type === 'group-cfo' &&
-        (userType === 'group-cfo' || userType === 'super-admin'));
+      (project.pending_approval.approver_type === 'function-head' &&
+        (userType === 'function-head' || userType === 'pmo')) ||
+      (project.pending_approval.approver_type === 'bu-cfo' &&
+        (userType === 'bu-cfo' || userType === 'pmo'));
 
     if (!canReject) {
       return { success: false, error: 'Insufficient permissions to reject' };
@@ -923,9 +1036,9 @@ function validateProjectConsistency() {
     // Rule 2: Only L2, L3, L4 can have pending approvals, and only for valid transitions
     if (project.pending_approval) {
       const validTransitions = [
-        { from: 'L2', to: 'L3', approver: 'business-head' },
-        { from: 'L3', to: 'L4', approver: 'group-cfo' },
-        { from: 'L4', to: 'L5', approver: 'group-cfo' }
+        { from: 'L2', to: 'L3', approver: 'function-head' },
+        { from: 'L3', to: 'L4', approver: 'function-head' },
+        { from: 'L4', to: 'L5', approver: 'bu-cfo' }
       ];
 
       const isValidTransition = validTransitions.some(
@@ -1155,8 +1268,8 @@ export const financialOverviewData = {
   // FY26 Target (in crores)
   fy26Target: 156.8, // 156.8 crores
 
-  // Achieved Year to Date - around 50% of FY26 Target
-  achievedYTD: 78.3, // 78.3 crores
+  // Achieved Year to Date - realistic 70.4% achievement rate
+  achievedYTD: 110.4, // 110.4 crores
 
   // Identified Pipelines (Idea Bank) - less than Achieved YTD
   identifiedPipeline: 67.4, // 67.4 crores (less than achieved)
@@ -1241,7 +1354,7 @@ export const businessExcellenceData = {
   // Monthly cost savings achievement for financial year (April to March)
   // FY26 Total Target: 156.8 Cr (aligned with financialOverviewData)
   fy26Target: 156.8, // Total FY26 target from financialOverviewData
-  achievedYTD: 78.3, // Current achievement from financialOverviewData
+  achievedYTD: 110.4, // Current achievement from financialOverviewData
 
   // Calculate required monthly rate to achieve target
   get requiredMonthlyRate() {
@@ -1258,28 +1371,28 @@ export const businessExcellenceData = {
     {
       month: 'Apr 2024',
       'hero-cycles': {
-        achieved: 2.8,
+        achieved: 2.1,
         target: 3.5,
         projectsInPipeline: 12,
         projectsDelivered: 8,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 4.1,
+        achieved: 3.2,
         target: 5.4,
         projectsInPipeline: 18,
         projectsDelivered: 15,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 1.9,
+        achieved: 1.6,
         target: 2.4,
         projectsInPipeline: 6,
         projectsDelivered: 4,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.3,
+        achieved: 0.9,
         target: 1.7,
         projectsInPipeline: 4,
         projectsDelivered: 3,
@@ -1289,28 +1402,28 @@ export const businessExcellenceData = {
     {
       month: 'May 2024',
       'hero-cycles': {
-        achieved: 3.4,
+        achieved: 2.7,
         target: 3.5,
         projectsInPipeline: 10,
         projectsDelivered: 9,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 5.8,
+        achieved: 4.1,
         target: 5.4,
         projectsInPipeline: 16,
         projectsDelivered: 17,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.2,
+        achieved: 1.8,
         target: 2.4,
         projectsInPipeline: 5,
         projectsDelivered: 5,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.6,
+        achieved: 1.1,
         target: 1.7,
         projectsInPipeline: 3,
         projectsDelivered: 4,
@@ -1320,28 +1433,28 @@ export const businessExcellenceData = {
     {
       month: 'Jun 2024',
       'hero-cycles': {
-        achieved: 3.7,
+        achieved: 2.3,
         target: 3.5,
         projectsInPipeline: 9,
         projectsDelivered: 10,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 6.1,
+        achieved: 3.8,
         target: 5.4,
         projectsInPipeline: 14,
         projectsDelivered: 18,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.6,
+        achieved: 1.9,
         target: 2.4,
         projectsInPipeline: 4,
         projectsDelivered: 6,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.8,
+        achieved: 1.3,
         target: 1.7,
         projectsInPipeline: 2,
         projectsDelivered: 5,
@@ -1351,28 +1464,28 @@ export const businessExcellenceData = {
     {
       month: 'Jul 2024',
       'hero-cycles': {
-        achieved: 4.2,
+        achieved: 3.1,
         target: 3.5,
         projectsInPipeline: 8,
         projectsDelivered: 12,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 6.8,
+        achieved: 4.5,
         target: 5.4,
         projectsInPipeline: 12,
         projectsDelivered: 21,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 3.1,
+        achieved: 2.2,
         target: 2.4,
         projectsInPipeline: 3,
         projectsDelivered: 7,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.9,
+        achieved: 1.4,
         target: 1.7,
         projectsInPipeline: 2,
         projectsDelivered: 6,
@@ -1382,28 +1495,28 @@ export const businessExcellenceData = {
     {
       month: 'Aug 2024',
       'hero-cycles': {
-        achieved: 2.9,
+        achieved: 1.8,
         target: 3.5,
         projectsInPipeline: 7,
         projectsDelivered: 11,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 4.8,
+        achieved: 3.1,
         target: 5.4,
         projectsInPipeline: 13,
         projectsDelivered: 19,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.0,
+        achieved: 1.4,
         target: 2.4,
         projectsInPipeline: 4,
         projectsDelivered: 6,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.4,
+        achieved: 0.8,
         target: 1.7,
         projectsInPipeline: 3,
         projectsDelivered: 5,
@@ -1413,28 +1526,28 @@ export const businessExcellenceData = {
     {
       month: 'Sep 2024',
       'hero-cycles': {
-        achieved: 3.8,
+        achieved: 2.6,
         target: 3.5,
         projectsInPipeline: 6,
         projectsDelivered: 13,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 5.6,
+        achieved: 3.9,
         target: 5.4,
         projectsInPipeline: 11,
         projectsDelivered: 20,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.3,
+        achieved: 1.7,
         target: 2.4,
         projectsInPipeline: 3,
         projectsDelivered: 7,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.7,
+        achieved: 1.2,
         target: 1.7,
         projectsInPipeline: 2,
         projectsDelivered: 5,
@@ -1444,28 +1557,28 @@ export const businessExcellenceData = {
     {
       month: 'Oct 2024',
       'hero-cycles': {
-        achieved: 3.2,
+        achieved: 2.4,
         target: 3.5,
         projectsInPipeline: 5,
         projectsDelivered: 14,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 5.0,
+        achieved: 3.7,
         target: 5.4,
         projectsInPipeline: 9,
         projectsDelivered: 22,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.6,
+        achieved: 2.0,
         target: 2.4,
         projectsInPipeline: 2,
         projectsDelivered: 8,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.5,
+        achieved: 1.1,
         target: 1.7,
         projectsInPipeline: 1,
         projectsDelivered: 6,
@@ -1475,28 +1588,28 @@ export const businessExcellenceData = {
     {
       month: 'Nov 2024',
       'hero-cycles': {
-        achieved: 2.5,
+        achieved: 1.9,
         target: 3.5,
         projectsInPipeline: 8,
         projectsDelivered: 10,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 4.2,
+        achieved: 2.8,
         target: 5.4,
         projectsInPipeline: 15,
         projectsDelivered: 18,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 1.8,
+        achieved: 1.3,
         target: 2.4,
         projectsInPipeline: 5,
         projectsDelivered: 5,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.3,
+        achieved: 0.9,
         target: 1.7,
         projectsInPipeline: 4,
         projectsDelivered: 4,
@@ -1506,28 +1619,28 @@ export const businessExcellenceData = {
     {
       month: 'Dec 2024',
       'hero-cycles': {
-        achieved: 4.1,
+        achieved: 3.2,
         target: 3.5,
         projectsInPipeline: 4,
         projectsDelivered: 17,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 7.2,
+        achieved: 4.8,
         target: 5.4,
         projectsInPipeline: 8,
         projectsDelivered: 25,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 3.0,
+        achieved: 2.1,
         target: 2.4,
         projectsInPipeline: 2,
         projectsDelivered: 9,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.9,
+        achieved: 1.5,
         target: 1.7,
         projectsInPipeline: 1,
         projectsDelivered: 7,
@@ -1537,28 +1650,28 @@ export const businessExcellenceData = {
     {
       month: 'Jan 2025',
       'hero-cycles': {
-        achieved: 2.7,
+        achieved: 2.0,
         target: 3.5,
         projectsInPipeline: 7,
         projectsDelivered: 12,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 4.6,
+        achieved: 3.4,
         target: 5.4,
         projectsInPipeline: 12,
         projectsDelivered: 20,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.1,
+        achieved: 1.6,
         target: 2.4,
         projectsInPipeline: 4,
         projectsDelivered: 6,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.4,
+        achieved: 1.0,
         target: 1.7,
         projectsInPipeline: 3,
         projectsDelivered: 5,
@@ -1568,28 +1681,28 @@ export const businessExcellenceData = {
     {
       month: 'Feb 2025',
       'hero-cycles': {
-        achieved: 3.3,
+        achieved: 2.8,
         target: 3.5,
         projectsInPipeline: 6,
         projectsDelivered: 13,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 5.3,
+        achieved: 4.2,
         target: 5.4,
         projectsInPipeline: 10,
         projectsDelivered: 21,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.4,
+        achieved: 1.9,
         target: 2.4,
         projectsInPipeline: 3,
         projectsDelivered: 7,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.6,
+        achieved: 1.3,
         target: 1.7,
         projectsInPipeline: 2,
         projectsDelivered: 6,
@@ -1599,28 +1712,28 @@ export const businessExcellenceData = {
     {
       month: 'Mar 2025',
       'hero-cycles': {
-        achieved: 3.5,
+        achieved: 2.9,
         target: 3.5,
         projectsInPipeline: 5,
         projectsDelivered: 15,
         savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 5.9,
+        achieved: 4.1,
         target: 5.4,
         projectsInPipeline: 8,
         projectsDelivered: 23,
         savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 2.5,
+        achieved: 1.8,
         target: 2.4,
         projectsInPipeline: 2,
         projectsDelivered: 8,
         savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 1.7,
+        achieved: 1.2,
         target: 1.7,
         projectsInPipeline: 2,
         projectsDelivered: 6,

@@ -2,16 +2,16 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export enum UserType {
-  SUPER_ADMIN = 'super-admin',
-  GROUP_CFO = 'group-cfo',
-  BUSINESS_HEAD = 'business-head',
+  PMO = 'pmo',
+  BU_CFO = 'bu-cfo',
+  FUNCTION_HEAD = 'function-head',
   PROJECT_MANAGER = 'project-manager'
 }
 
 export const USER_TYPE_LABELS = {
-  [UserType.SUPER_ADMIN]: 'Super Admin',
-  [UserType.GROUP_CFO]: 'Group CFO',
-  [UserType.BUSINESS_HEAD]: 'Business Head',
+  [UserType.PMO]: 'PMO',
+  [UserType.BU_CFO]: 'BU CFO',
+  [UserType.FUNCTION_HEAD]: 'Function Head',
   [UserType.PROJECT_MANAGER]: 'Project Manager'
 } as const;
 
@@ -28,7 +28,7 @@ export type UserTypeActions = {
 export const useUserTypeStore = create<UserTypeState & UserTypeActions>()(
   persist(
     (set) => ({
-      currentUserType: UserType.SUPER_ADMIN,
+      currentUserType: UserType.PMO,
       _hasHydrated: false,
       setUserType: (userType: UserType) => set({ currentUserType: userType }),
       setHasHydrated: (state: boolean) => set({ _hasHydrated: state })

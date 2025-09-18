@@ -105,12 +105,28 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const canApprove = () => {
     if (!data.pending_approval) return false;
+
+    const { approver_type, required_approvers, completed_approvers } =
+      data.pending_approval;
+
+    // PMO can always approve
+    if (currentUserType === 'pmo') return true;
+
+    // For multi-approval scenarios
+    if (required_approvers && required_approvers.length > 1) {
+      // Check if user is in required approvers and hasn't already approved
+      const userRole = currentUserType as 'function-head' | 'bu-cfo';
+      return (
+        required_approvers.includes(userRole) &&
+        !(completed_approvers || []).includes(userRole)
+      );
+    }
+
+    // Single approval scenario
     return (
-      (data.pending_approval.approver_type === 'business-head' &&
-        (currentUserType === 'business-head' ||
-          currentUserType === 'super-admin')) ||
-      (data.pending_approval.approver_type === 'group-cfo' &&
-        (currentUserType === 'group-cfo' || currentUserType === 'super-admin'))
+      (approver_type === 'function-head' &&
+        currentUserType === 'function-head') ||
+      (approver_type === 'bu-cfo' && currentUserType === 'bu-cfo')
     );
   };
 
