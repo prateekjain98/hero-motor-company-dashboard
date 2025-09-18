@@ -430,8 +430,8 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
               <p className='text-xs text-blue-600'>
                 Waiting for approval from{' '}
                 {project.pending_approval.approver_type === 'business-head'
-                  ? 'Business Head'
-                  : 'Group CFO'}
+                  ? 'Function Head'
+                  : 'BU CFO'}
               </p>
             </div>
           </CardContent>

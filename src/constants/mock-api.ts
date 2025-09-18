@@ -1150,54 +1150,61 @@ export const fakeResourceUsage = {
 // Initialize sample usage entries
 fakeResourceUsage.initialize();
 
-// Financial Overview Data for Super Admin and Group CFO
+// Financial Overview Data for PMO and BU CFO
 export const financialOverviewData = {
-  // Overall target allocated to all companies for financial year (in crores)
-  overallTarget: 2500, // 2500 crores
+  // FY26 Target (in crores)
+  fy26Target: 156.8, // 156.8 crores
 
-  // Total revenue of all group companies (in crores) - for percentage calculation
-  totalGroupRevenue: 12000, // 12000 crores
+  // Achieved Year to Date - around 50% of FY26 Target
+  achievedYTD: 78.3, // 78.3 crores
 
-  // Amount achieved till now by all group companies (in crores)
-  achievedAmount: 1875, // 1875 crores
+  // Identified Pipelines (Idea Bank) - less than Achieved YTD
+  identifiedPipeline: 67.4, // 67.4 crores (less than achieved)
 
-  // Delayed projects data
+  // Yet to Identify
+  yetToIdentify: 11.1, // 11.1 crores
+
+  // Delayed projects data - less than FY26 Target or Achieved YTD
   delayedProjects: {
-    totalValue: 450, // 450 crores worth of delayed projects
-    projectCount: 23 // 23 projects are delayed
+    totalValue: 31.7, // 31.7 crores worth of delayed projects
+    projectCount: 14 // 14 projects are delayed
   },
-
-  // Budget target for comparison
-  budgetTarget: 1250, // 1250 crores
 
   // Calculate derived values
-  get targetPercentageOfRevenue() {
-    return ((this.overallTarget / this.totalGroupRevenue) * 100).toFixed(1);
-  },
-
   get achievementPercentage() {
-    return ((this.achievedAmount / this.overallTarget) * 100).toFixed(1);
+    return ((this.achievedYTD / this.fy26Target) * 100).toFixed(0);
   },
 
-  get remainingToAchieve() {
-    return this.overallTarget - this.achievedAmount;
+  get pipelinePercentage() {
+    return ((this.identifiedPipeline / this.fy26Target) * 100).toFixed(0);
   },
 
-  get ideaBankPercentage() {
-    // Calculate percentage of remaining relative to budget target
-    return (this.remainingToAchieve / this.budgetTarget) * 100;
+  get yetToIdentifyPercentage() {
+    return ((this.yetToIdentify / this.fy26Target) * 100).toFixed(0);
   },
 
-  get isIdeaBankCritical() {
-    // Red if remaining is between 150% and 200% of budget target
-    // Green if less than 150%
-    const percentage = this.ideaBankPercentage;
-    return percentage >= 150 && percentage <= 200;
+  get delayedPercentage() {
+    return ((this.delayedProjects.totalValue / this.fy26Target) * 100).toFixed(
+      0
+    );
   },
 
-  get isIdeaBankGood() {
-    // Green if less than 150%
-    return this.ideaBankPercentage < 150;
+  // Validation: Identified Pipeline + Yet to Identify ≈ FY26 Target - Achieved YTD
+  get remainingTarget() {
+    return this.fy26Target - this.achievedYTD;
+  },
+
+  get pipelineCoverage() {
+    // How much of the remaining target is covered by pipeline + yet to identify
+    return this.identifiedPipeline + this.yetToIdentify;
+  },
+
+  get isPipelineHealthy() {
+    // Check if pipeline + yet to identify approximately equals remaining target
+    const coverage = this.pipelineCoverage;
+    const target = this.remainingTarget;
+    const ratio = coverage / target;
+    return ratio >= 0.9 && ratio <= 1.1; // Within 10% variance
   }
 };
 

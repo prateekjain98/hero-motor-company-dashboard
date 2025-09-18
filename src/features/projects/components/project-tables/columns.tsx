@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/tooltip';
 import Image from 'next/image';
 
-// Company Group component for super admin view
+// Company Group component for PMO view
 const CompanyGroupIcon = ({ companyGroup }: { companyGroup: string }) => {
   const getCompanyInfo = (group: string) => {
     switch (group) {
@@ -67,7 +67,7 @@ const CompanyGroupIcon = ({ companyGroup }: { companyGroup: string }) => {
 export const createColumns = (
   currentUserType: UserType
 ): ColumnDef<Project>[] => [
-  // Company Group column (only for super admin)
+  // Company Group column (only for PMO)
   ...(currentUserType === UserType.SUPER_ADMIN
     ? [
         {
