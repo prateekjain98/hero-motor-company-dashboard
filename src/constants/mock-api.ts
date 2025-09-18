@@ -1208,360 +1208,423 @@ export const financialOverviewData = {
   }
 };
 
-// Company Revenue Chart Data for Group Performance
-export const companyRevenueData = {
-  // Company information with colors and details
-  companies: {
+// Business Excellence Performance Data - Cost Savings Achievement
+export const businessExcellenceData = {
+  // Business Unit information with cost saving targets
+  businessUnits: {
     'hero-cycles': {
       name: 'Hero Cycles',
       color: '#3b82f6', // Blue
-      annualTarget: 800, // 800 crores
+      annualTarget: 42.5, // 42.5 crores cost savings target
       logo: '/assets/logos/hero-cycles.png'
     },
     'hero-motors': {
       name: 'Hero Motors',
       color: '#ef4444', // Red
-      annualTarget: 1200, // 1200 crores
+      annualTarget: 65.2, // 65.2 crores cost savings target
       logo: '/assets/logos/hero-motors.png'
     },
     'hmc-hive': {
       name: 'HMC Hive',
       color: '#10b981', // Green
-      annualTarget: 300, // 300 crores
+      annualTarget: 28.8, // 28.8 crores cost savings target
       logo: '/assets/logos/hmc-hive.png'
     },
     munjal: {
       name: 'Munjal Kiru',
       color: '#f59e0b', // Amber
-      annualTarget: 200, // 200 crores
+      annualTarget: 20.3, // 20.3 crores cost savings target
       logo: '/assets/logos/munjal.png'
     }
   },
 
-  // Monthly revenue data for financial year (April to March)
+  // Monthly cost savings achievement for financial year (April to March)
+  // FY26 Total Target: 156.8 Cr (aligned with financialOverviewData)
+  fy26Target: 156.8, // Total FY26 target from financialOverviewData
+  achievedYTD: 78.3, // Current achievement from financialOverviewData
+
+  // Calculate required monthly rate to achieve target
+  get requiredMonthlyRate() {
+    const remainingTarget = this.fy26Target - this.achievedYTD;
+    const remainingMonths = 3; // Assuming 3 months left in FY
+    return remainingTarget / remainingMonths;
+  },
+
+  // Calculate current achievement percentage
+  get currentAchievementPercentage() {
+    return ((this.achievedYTD / this.fy26Target) * 100).toFixed(1);
+  },
   monthlyData: [
     {
       month: 'Apr 2024',
       'hero-cycles': {
-        achieved: 58,
-        target: 67,
+        achieved: 2.8,
+        target: 3.5,
         projectsInPipeline: 12,
-        projectsDelivered: 8
+        projectsDelivered: 8,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 85,
-        target: 100,
+        achieved: 4.1,
+        target: 5.4,
         projectsInPipeline: 18,
-        projectsDelivered: 15
+        projectsDelivered: 15,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 18,
-        target: 25,
+        achieved: 1.9,
+        target: 2.4,
         projectsInPipeline: 6,
-        projectsDelivered: 4
+        projectsDelivered: 4,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 12,
-        target: 17,
+        achieved: 1.3,
+        target: 1.7,
         projectsInPipeline: 4,
-        projectsDelivered: 3
+        projectsDelivered: 3,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'May 2024',
       'hero-cycles': {
-        achieved: 62,
-        target: 67,
+        achieved: 3.4,
+        target: 3.5,
         projectsInPipeline: 10,
-        projectsDelivered: 9
+        projectsDelivered: 9,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 92,
-        target: 100,
+        achieved: 5.8,
+        target: 5.4,
         projectsInPipeline: 16,
-        projectsDelivered: 17
+        projectsDelivered: 17,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 21,
-        target: 25,
+        achieved: 2.2,
+        target: 2.4,
         projectsInPipeline: 5,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 14,
-        target: 17,
+        achieved: 1.6,
+        target: 1.7,
         projectsInPipeline: 3,
-        projectsDelivered: 4
+        projectsDelivered: 4,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Jun 2024',
       'hero-cycles': {
-        achieved: 65,
-        target: 67,
+        achieved: 3.7,
+        target: 3.5,
         projectsInPipeline: 9,
-        projectsDelivered: 10
+        projectsDelivered: 10,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 96,
-        target: 100,
+        achieved: 6.1,
+        target: 5.4,
         projectsInPipeline: 14,
-        projectsDelivered: 18
+        projectsDelivered: 18,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 23,
-        target: 25,
+        achieved: 2.6,
+        target: 2.4,
         projectsInPipeline: 4,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 15,
-        target: 17,
+        achieved: 1.8,
+        target: 1.7,
         projectsInPipeline: 2,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Jul 2024',
       'hero-cycles': {
-        achieved: 71,
-        target: 67,
+        achieved: 4.2,
+        target: 3.5,
         projectsInPipeline: 8,
-        projectsDelivered: 12
+        projectsDelivered: 12,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 105,
-        target: 100,
+        achieved: 6.8,
+        target: 5.4,
         projectsInPipeline: 12,
-        projectsDelivered: 21
+        projectsDelivered: 21,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 27,
-        target: 25,
+        achieved: 3.1,
+        target: 2.4,
         projectsInPipeline: 3,
-        projectsDelivered: 7
+        projectsDelivered: 7,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 18,
-        target: 17,
+        achieved: 1.9,
+        target: 1.7,
         projectsInPipeline: 2,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Aug 2024',
       'hero-cycles': {
-        achieved: 68,
-        target: 67,
+        achieved: 2.9,
+        target: 3.5,
         projectsInPipeline: 7,
-        projectsDelivered: 11
+        projectsDelivered: 11,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 98,
-        target: 100,
+        achieved: 4.8,
+        target: 5.4,
         projectsInPipeline: 13,
-        projectsDelivered: 19
+        projectsDelivered: 19,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 24,
-        target: 25,
+        achieved: 2.0,
+        target: 2.4,
         projectsInPipeline: 4,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 16,
-        target: 17,
+        achieved: 1.4,
+        target: 1.7,
         projectsInPipeline: 3,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Sep 2024',
       'hero-cycles': {
-        achieved: 73,
-        target: 67,
+        achieved: 3.8,
+        target: 3.5,
         projectsInPipeline: 6,
-        projectsDelivered: 13
+        projectsDelivered: 13,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 102,
-        target: 100,
+        achieved: 5.6,
+        target: 5.4,
         projectsInPipeline: 11,
-        projectsDelivered: 20
+        projectsDelivered: 20,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 26,
-        target: 25,
+        achieved: 2.3,
+        target: 2.4,
         projectsInPipeline: 3,
-        projectsDelivered: 7
+        projectsDelivered: 7,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 17,
-        target: 17,
+        achieved: 1.7,
+        target: 1.7,
         projectsInPipeline: 2,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Oct 2024',
       'hero-cycles': {
-        achieved: 76,
-        target: 67,
+        achieved: 3.2,
+        target: 3.5,
         projectsInPipeline: 5,
-        projectsDelivered: 14
+        projectsDelivered: 14,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 108,
-        target: 100,
+        achieved: 5.0,
+        target: 5.4,
         projectsInPipeline: 9,
-        projectsDelivered: 22
+        projectsDelivered: 22,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 28,
-        target: 25,
+        achieved: 2.6,
+        target: 2.4,
         projectsInPipeline: 2,
-        projectsDelivered: 8
+        projectsDelivered: 8,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 19,
-        target: 17,
+        achieved: 1.5,
+        target: 1.7,
         projectsInPipeline: 1,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Nov 2024',
       'hero-cycles': {
-        achieved: 64,
-        target: 67,
+        achieved: 2.5,
+        target: 3.5,
         projectsInPipeline: 8,
-        projectsDelivered: 10
+        projectsDelivered: 10,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 94,
-        target: 100,
+        achieved: 4.2,
+        target: 5.4,
         projectsInPipeline: 15,
-        projectsDelivered: 18
+        projectsDelivered: 18,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 22,
-        target: 25,
+        achieved: 1.8,
+        target: 2.4,
         projectsInPipeline: 5,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 15,
-        target: 17,
+        achieved: 1.3,
+        target: 1.7,
         projectsInPipeline: 4,
-        projectsDelivered: 4
+        projectsDelivered: 4,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Dec 2024',
       'hero-cycles': {
-        achieved: 85,
-        target: 67,
+        achieved: 4.1,
+        target: 3.5,
         projectsInPipeline: 4,
-        projectsDelivered: 17
+        projectsDelivered: 17,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 118,
-        target: 100,
+        achieved: 7.2,
+        target: 5.4,
         projectsInPipeline: 8,
-        projectsDelivered: 25
+        projectsDelivered: 25,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 32,
-        target: 25,
+        achieved: 3.0,
+        target: 2.4,
         projectsInPipeline: 2,
-        projectsDelivered: 9
+        projectsDelivered: 9,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 22,
-        target: 17,
+        achieved: 1.9,
+        target: 1.7,
         projectsInPipeline: 1,
-        projectsDelivered: 7
+        projectsDelivered: 7,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Jan 2025',
       'hero-cycles': {
-        achieved: 69,
-        target: 67,
+        achieved: 2.7,
+        target: 3.5,
         projectsInPipeline: 7,
-        projectsDelivered: 12
+        projectsDelivered: 12,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 101,
-        target: 100,
+        achieved: 4.6,
+        target: 5.4,
         projectsInPipeline: 12,
-        projectsDelivered: 20
+        projectsDelivered: 20,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 25,
-        target: 25,
+        achieved: 2.1,
+        target: 2.4,
         projectsInPipeline: 4,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 17,
-        target: 17,
+        achieved: 1.4,
+        target: 1.7,
         projectsInPipeline: 3,
-        projectsDelivered: 5
+        projectsDelivered: 5,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Feb 2025',
       'hero-cycles': {
-        achieved: 74,
-        target: 67,
+        achieved: 3.3,
+        target: 3.5,
         projectsInPipeline: 6,
-        projectsDelivered: 13
+        projectsDelivered: 13,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 106,
-        target: 100,
+        achieved: 5.3,
+        target: 5.4,
         projectsInPipeline: 10,
-        projectsDelivered: 21
+        projectsDelivered: 21,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 27,
-        target: 25,
+        achieved: 2.4,
+        target: 2.4,
         projectsInPipeline: 3,
-        projectsDelivered: 7
+        projectsDelivered: 7,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 18,
-        target: 17,
+        achieved: 1.6,
+        target: 1.7,
         projectsInPipeline: 2,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     },
     {
       month: 'Mar 2025',
       'hero-cycles': {
-        achieved: 78,
-        target: 67,
+        achieved: 3.5,
+        target: 3.5,
         projectsInPipeline: 5,
-        projectsDelivered: 15
+        projectsDelivered: 15,
+        savingsCategories: ['Process Optimization', 'Energy Efficiency']
       },
       'hero-motors': {
-        achieved: 112,
-        target: 100,
+        achieved: 5.9,
+        target: 5.4,
         projectsInPipeline: 8,
-        projectsDelivered: 23
+        projectsDelivered: 23,
+        savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
       },
       'hmc-hive': {
-        achieved: 29,
-        target: 25,
+        achieved: 2.5,
+        target: 2.4,
         projectsInPipeline: 2,
-        projectsDelivered: 8
+        projectsDelivered: 8,
+        savingsCategories: ['Digital Transformation', 'Automation']
       },
       munjal: {
-        achieved: 19,
-        target: 17,
+        achieved: 1.7,
+        target: 1.7,
         projectsInPipeline: 2,
-        projectsDelivered: 6
+        projectsDelivered: 6,
+        savingsCategories: ['Operational Excellence', 'Waste Reduction']
       }
     }
   ]
@@ -1640,6 +1703,209 @@ export const delayedProjectsData = [
     projectManager: 'Rohit Verma'
   }
 ].sort((a, b) => b.value - a.value);
+
+// Healthy Projects Data - Top performing projects across group companies
+export const healthyProjectsData = [
+  // Hero Motors Projects
+  {
+    id: 1001,
+    name: 'Advanced Electric Motor Production Line',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'Manufacturing',
+    value: 156.8,
+    status: 'on-track',
+    completionPercentage: 78,
+    projectManager: 'Arvind Singh',
+    timeline: 'Q1 2026',
+    healthScore: 95
+  },
+  {
+    id: 1002,
+    name: 'Sustainable Energy Initiative',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'Operations',
+    value: 98.5,
+    status: 'ahead',
+    completionPercentage: 85,
+    projectManager: 'Neha Kapoor',
+    timeline: 'Q4 2025',
+    healthScore: 92
+  },
+  {
+    id: 1003,
+    name: 'Digital Showroom Experience',
+    company: 'Hero Motors',
+    companyLogo: '/assets/logos/hero-motors.png',
+    department: 'Sales',
+    value: 67.3,
+    status: 'on-track',
+    completionPercentage: 62,
+    projectManager: 'Ravi Malhotra',
+    timeline: 'Q2 2026',
+    healthScore: 88
+  },
+
+  // Hero Cycles Projects
+  {
+    id: 2001,
+    name: 'Carbon Fiber Frame Manufacturing',
+    company: 'Hero Cycles',
+    companyLogo: '/assets/logos/hero-cycles.png',
+    department: 'R&D',
+    value: 134.7,
+    status: 'on-track',
+    completionPercentage: 72,
+    projectManager: 'Deepak Sharma',
+    timeline: 'Q1 2026',
+    healthScore: 94
+  },
+  {
+    id: 2002,
+    name: 'Smart Bicycle IoT Integration',
+    company: 'Hero Cycles',
+    companyLogo: '/assets/logos/hero-cycles.png',
+    department: 'IT',
+    value: 78.4,
+    status: 'ahead',
+    completionPercentage: 89,
+    projectManager: 'Anita Reddy',
+    timeline: 'Q4 2025',
+    healthScore: 96
+  },
+  {
+    id: 2003,
+    name: 'Global Export Hub Setup',
+    company: 'Hero Cycles',
+    companyLogo: '/assets/logos/hero-cycles.png',
+    department: 'Supply Chain',
+    value: 112.6,
+    status: 'on-track',
+    completionPercentage: 68,
+    projectManager: 'Suresh Patel',
+    timeline: 'Q2 2026',
+    healthScore: 90
+  },
+
+  // HMC Hive Projects
+  {
+    id: 3001,
+    name: 'Innovation Lab Infrastructure',
+    company: 'HMC Hive',
+    companyLogo: '/assets/logos/hmc-hive.png',
+    department: 'R&D',
+    value: 145.3,
+    status: 'on-track',
+    completionPercentage: 81,
+    projectManager: 'Kiran Mehta',
+    timeline: 'Q1 2026',
+    healthScore: 93
+  },
+  {
+    id: 3002,
+    name: 'AI-Powered Analytics Platform',
+    company: 'HMC Hive',
+    companyLogo: '/assets/logos/hmc-hive.png',
+    department: 'IT',
+    value: 92.8,
+    status: 'ahead',
+    completionPercentage: 91,
+    projectManager: 'Pooja Agrawal',
+    timeline: 'Q4 2025',
+    healthScore: 97
+  },
+  {
+    id: 3003,
+    name: 'Startup Incubation Program',
+    company: 'HMC Hive',
+    companyLogo: '/assets/logos/hmc-hive.png',
+    department: 'Business Development',
+    value: 56.7,
+    status: 'on-track',
+    completionPercentage: 74,
+    projectManager: 'Rahul Joshi',
+    timeline: 'Q1 2026',
+    healthScore: 89
+  },
+
+  // Munjal Projects
+  {
+    id: 4001,
+    name: 'Component Quality Automation',
+    company: 'Munjal',
+    companyLogo: '/assets/logos/munjal.png',
+    department: 'Quality',
+    value: 89.6,
+    status: 'on-track',
+    completionPercentage: 76,
+    projectManager: 'Vinod Kumar',
+    timeline: 'Q1 2026',
+    healthScore: 91
+  },
+  {
+    id: 4002,
+    name: 'Precision Engineering Setup',
+    company: 'Munjal',
+    companyLogo: '/assets/logos/munjal.png',
+    department: 'Manufacturing',
+    value: 124.5,
+    status: 'ahead',
+    completionPercentage: 83,
+    projectManager: 'Seema Gupta',
+    timeline: 'Q4 2025',
+    healthScore: 95
+  },
+  {
+    id: 4003,
+    name: 'Vendor Management System',
+    company: 'Munjal',
+    companyLogo: '/assets/logos/munjal.png',
+    department: 'Supply Chain',
+    value: 45.8,
+    status: 'on-track',
+    completionPercentage: 70,
+    projectManager: 'Ajay Verma',
+    timeline: 'Q2 2026',
+    healthScore: 87
+  }
+];
+
+// Company project statistics
+export const companyProjectStats = [
+  {
+    company: 'Hero Motors',
+    logo: '/assets/logos/hero-motors.png',
+    totalProjects: 42,
+    healthyProjects: 28,
+    delayedProjects: 8,
+    onHoldProjects: 6
+  },
+  {
+    company: 'Hero Cycles',
+    logo: '/assets/logos/hero-cycles.png',
+    totalProjects: 35,
+    healthyProjects: 24,
+    delayedProjects: 7,
+    onHoldProjects: 4
+  },
+  {
+    company: 'HMC Hive',
+    logo: '/assets/logos/hmc-hive.png',
+    totalProjects: 28,
+    healthyProjects: 20,
+    delayedProjects: 5,
+    onHoldProjects: 3
+  },
+  {
+    company: 'Munjal',
+    logo: '/assets/logos/munjal.png',
+    totalProjects: 18,
+    healthyProjects: 12,
+    delayedProjects: 4,
+    onHoldProjects: 2
+  }
+];
 
 // Business Excellence Dashboard Data
 

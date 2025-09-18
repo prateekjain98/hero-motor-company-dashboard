@@ -31,17 +31,17 @@ import {
   ChartContainer,
   ChartTooltip
 } from '@/components/ui/chart';
-import { companyRevenueData } from '@/constants/mock-api';
+import { businessExcellenceData } from '@/constants/mock-api';
 
 // Transform data for the chart
 const transformDataForChart = () => {
-  return companyRevenueData.monthlyData.map((monthData) => {
+  return businessExcellenceData.monthlyData.map((monthData) => {
     const chartPoint: Record<string, string | number> = {
       month: monthData.month
     };
 
-    // Add achieved revenue for each company
-    Object.keys(companyRevenueData.companies).forEach((companyKey) => {
+    // Add achieved cost savings for each business unit
+    Object.keys(businessExcellenceData.businessUnits).forEach((companyKey) => {
       const companyData = monthData[companyKey as keyof typeof monthData];
       if (typeof companyData === 'object' && companyData !== null) {
         chartPoint[companyKey] = companyData.achieved;
@@ -56,12 +56,14 @@ const transformDataForChart = () => {
 const createChartConfig = (): ChartConfig => {
   const config: ChartConfig = {};
 
-  Object.entries(companyRevenueData.companies).forEach(([key, company]) => {
-    config[key] = {
-      label: company.name,
-      color: company.color
-    };
-  });
+  Object.entries(businessExcellenceData.businessUnits).forEach(
+    ([key, company]) => {
+      config[key] = {
+        label: company.name,
+        color: company.color
+      };
+    }
+  );
 
   return config;
 };
@@ -69,7 +71,7 @@ const createChartConfig = (): ChartConfig => {
 // Enhanced custom tooltip component
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
-    const monthData = companyRevenueData.monthlyData.find(
+    const monthData = businessExcellenceData.monthlyData.find(
       (data) => data.month === label
     );
 
@@ -84,8 +86,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           {payload.map((entry: any, index: number) => {
             const companyKey = entry.dataKey;
             const company =
-              companyRevenueData.companies[
-                companyKey as keyof typeof companyRevenueData.companies
+              businessExcellenceData.businessUnits[
+                companyKey as keyof typeof businessExcellenceData.businessUnits
               ];
             const companyData =
               monthData?.[companyKey as keyof typeof monthData];
@@ -111,7 +113,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                   <div className='grid grid-cols-2 gap-3 text-xs'>
                     <div className='space-y-2'>
                       <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>Revenue:</span>
+                        <span className='text-muted-foreground'>Savings:</span>
                         <span className='text-foreground font-semibold'>
                           ₹{companyData.achieved} Cr
                         </span>
@@ -119,7 +121,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                       <div className='flex items-center justify-between'>
                         <span className='text-muted-foreground'>Target:</span>
                         <span className='text-muted-foreground font-medium'>
-                          ₹{(company.annualTarget / 12).toFixed(0)} Cr
+                          ₹{(company.annualTarget / 12).toFixed(1)} Cr
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>
@@ -138,6 +140,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                           {achievementPercentage}%
                         </span>
                       </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground'>Run Rate:</span>
+                        <span className='font-semibold text-amber-600'>
+                          ₹{((companyData.achieved * 12) / 9).toFixed(1)} Cr/yr
+                        </span>
+                      </div>
                     </div>
 
                     <div className='space-y-2'>
@@ -149,7 +157,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                           </span>
                         </div>
                         <span className='font-semibold text-blue-600'>
-                          {companyData.projectsInPipeline}
+                          {companyData.projectsInPipeline} projects
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>
@@ -160,7 +168,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                           </span>
                         </div>
                         <span className='font-semibold text-green-600'>
-                          {companyData.projectsDelivered}
+                          {companyData.projectsDelivered} projects
+                        </span>
+                      </div>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-muted-foreground'>Variance:</span>
+                        <span
+                          className={`font-semibold ${
+                            companyData.achieved >= company.annualTarget / 12
+                              ? 'text-green-600'
+                              : 'text-red-600'
+                          }`}
+                        >
+                          {companyData.achieved >= company.annualTarget / 12
+                            ? '+'
+                            : ''}
+                          {(
+                            companyData.achieved -
+                            company.annualTarget / 12
+                          ).toFixed(1)}{' '}
+                          Cr
                         </span>
                       </div>
                     </div>
@@ -178,7 +205,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function CompanyRevenueChart() {
+export function BusinessExcellenceChart() {
   const chartData = transformDataForChart();
   const chartConfig = createChartConfig();
 
@@ -187,7 +214,7 @@ export function CompanyRevenueChart() {
     return chartData.reduce((sum, month) => {
       return (
         sum +
-        Object.keys(companyRevenueData.companies).reduce(
+        Object.keys(businessExcellenceData.businessUnits).reduce(
           (monthSum, company) => {
             const value = month[company];
             return monthSum + (typeof value === 'number' ? value : 0);
@@ -199,7 +226,14 @@ export function CompanyRevenueChart() {
   }, [chartData]);
 
   // Calculate average monthly performance
-  const avgMonthlyRevenue = (totalRevenue / chartData.length).toFixed(0);
+  const avgMonthlySavings = (totalRevenue / chartData.length).toFixed(1);
+
+  // Calculate FY26 target achievement percentage
+  const targetAchievementPercentage =
+    businessExcellenceData.currentAchievementPercentage;
+
+  // Calculate required monthly rate to succeed
+  const requiredRate = businessExcellenceData.requiredMonthlyRate.toFixed(1);
 
   return (
     <Card className='from-background to-muted/20 h-full border-0 bg-gradient-to-br shadow-lg'>
@@ -208,15 +242,66 @@ export function CompanyRevenueChart() {
           <div className='bg-primary/10 rounded-lg p-2'>
             <IconTrendingUp className='text-primary h-6 w-6' />
           </div>
-          Group Companies Revenue Performance
+          Business Excellence Performance
         </CardTitle>
         <CardDescription className='text-muted-foreground text-base'>
-          Monthly revenue achievement across all group companies • Financial
-          Year 2024-25
+          Monthly cost savings achievement across all business units • FY26
+          Target: ₹{businessExcellenceData.fy26Target} Cr
         </CardDescription>
       </CardHeader>
 
       <CardContent className='px-6 pt-2'>
+        {/* Business Unit Performance Summary - Above chart */}
+        <div className='mb-6 grid w-full grid-cols-2 gap-4 lg:grid-cols-4'>
+          {Object.entries(businessExcellenceData.businessUnits).map(
+            ([key, company]) => {
+              const latestMonth = chartData[chartData.length - 1];
+              const latestSavings =
+                typeof latestMonth[key] === 'number'
+                  ? (latestMonth[key] as number)
+                  : 0;
+              const monthlyTarget = company.annualTarget / 12;
+              const achievement = (
+                (latestSavings / monthlyTarget) *
+                100
+              ).toFixed(1);
+
+              return (
+                <div
+                  key={key}
+                  className='bg-background/50 border-border/50 rounded-lg border p-3'
+                >
+                  <div className='mb-2 flex items-center gap-2'>
+                    <div
+                      className='h-3 w-3 rounded-full shadow-sm'
+                      style={{ backgroundColor: company.color }}
+                    />
+                    <span className='text-muted-foreground text-xs font-medium'>
+                      {company.name}
+                    </span>
+                  </div>
+                  <div className='space-y-1'>
+                    <div className='text-sm font-semibold'>
+                      ₹{latestSavings} Cr
+                    </div>
+                    <div
+                      className={`text-xs font-medium ${
+                        parseFloat(achievement) >= 100
+                          ? 'text-green-600'
+                          : parseFloat(achievement) >= 90
+                            ? 'text-yellow-600'
+                            : 'text-red-500'
+                      }`}
+                    >
+                      {achievement}% of target
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          )}
+        </div>
+
         <ChartContainer
           config={chartConfig}
           className='aspect-auto h-[450px] w-full'
@@ -232,7 +317,7 @@ export function CompanyRevenueChart() {
               }}
             >
               <defs>
-                {Object.entries(companyRevenueData.companies).map(
+                {Object.entries(businessExcellenceData.businessUnits).map(
                   ([key, company]) => (
                     <linearGradient
                       key={key}
@@ -281,8 +366,10 @@ export function CompanyRevenueChart() {
                 tickMargin={12}
                 className='text-xs font-medium'
                 tick={{ fontSize: 11 }}
+                domain={[0, 'dataMax + 2']}
+                ticks={[0, 2, 4, 6, 8, 10]}
                 label={{
-                  value: 'Revenue (₹ Crores)',
+                  value: 'Cost Savings (₹ Crores)',
                   angle: -90,
                   position: 'insideLeft',
                   style: {
@@ -295,10 +382,15 @@ export function CompanyRevenueChart() {
 
               {/* Reference line for average */}
               <ReferenceLine
-                y={parseInt(avgMonthlyRevenue) / 4}
-                stroke='#94a3b8'
-                strokeDasharray='5 5'
-                strokeOpacity={0.5}
+                y={parseFloat(requiredRate)}
+                stroke='#f59e0b'
+                strokeDasharray='8 4'
+                strokeOpacity={0.8}
+                label={{
+                  value: `Required Rate: ₹${requiredRate} Cr/month`,
+                  position: 'topRight',
+                  fontSize: 11
+                }}
               />
 
               <ChartTooltip content={<CustomTooltip />} />
@@ -311,7 +403,7 @@ export function CompanyRevenueChart() {
                 )}
               />
 
-              {Object.entries(companyRevenueData.companies).map(
+              {Object.entries(businessExcellenceData.businessUnits).map(
                 ([key, company]) => (
                   <Line
                     key={key}
@@ -341,75 +433,64 @@ export function CompanyRevenueChart() {
         </ChartContainer>
       </CardContent>
 
-      <CardFooter className='bg-muted/20 flex-col items-start gap-4 border-t pt-6 text-sm'>
-        <div className='flex w-full items-center gap-4'>
+      <CardFooter className='bg-muted/20 flex-col items-start gap-6 border-t pt-6 text-sm'>
+        {/* FY26 Target Achievement Overview */}
+        <div className='flex w-full items-center gap-6'>
           <div className='grid flex-1 auto-rows-min gap-2'>
             <div className='flex items-baseline gap-2 text-2xl leading-none font-bold tabular-nums'>
-              ₹{totalRevenue.toLocaleString()}
+              {targetAchievementPercentage}%
               <span className='text-muted-foreground text-sm font-normal'>
-                Cr Total Revenue
+                FY26 Target Achieved
               </span>
             </div>
             <div className='text-muted-foreground flex items-center gap-2 leading-none font-medium'>
-              Combined performance across{' '}
-              {Object.keys(companyRevenueData.companies).length} group companies
-              <IconTrendingUp className='h-4 w-4' />
+              ₹{businessExcellenceData.achievedYTD} Cr of ₹
+              {businessExcellenceData.fy26Target} Cr
+              <IconTarget className='h-4 w-4' />
             </div>
           </div>
+
           <div className='text-right'>
-            <div className='text-lg font-semibold'>₹{avgMonthlyRevenue} Cr</div>
-            <div className='text-muted-foreground text-xs'>Avg Monthly</div>
+            <div className='text-lg font-semibold text-amber-600'>
+              ₹{requiredRate} Cr
+            </div>
+            <div className='text-muted-foreground text-xs'>
+              Required Monthly Rate
+            </div>
+          </div>
+
+          <div className='text-right'>
+            <div className='text-lg font-semibold'>₹{avgMonthlySavings} Cr</div>
+            <div className='text-muted-foreground text-xs'>
+              Current Avg Monthly
+            </div>
           </div>
         </div>
 
-        <div className='grid w-full grid-cols-2 gap-4 lg:grid-cols-4'>
-          {Object.entries(companyRevenueData.companies).map(
-            ([key, company]) => {
-              const latestMonth = chartData[chartData.length - 1];
-              const latestRevenue =
-                typeof latestMonth[key] === 'number'
-                  ? (latestMonth[key] as number)
-                  : 0;
-              const monthlyTarget = company.annualTarget / 12;
-              const achievement = (
-                (latestRevenue / monthlyTarget) *
-                100
-              ).toFixed(1);
-
-              return (
-                <div
-                  key={key}
-                  className='bg-background/50 border-border/50 rounded-lg border p-3'
-                >
-                  <div className='mb-2 flex items-center gap-2'>
-                    <div
-                      className='h-3 w-3 rounded-full shadow-sm'
-                      style={{ backgroundColor: company.color }}
-                    />
-                    <span className='text-muted-foreground text-xs font-medium'>
-                      {company.name}
-                    </span>
-                  </div>
-                  <div className='space-y-1'>
-                    <div className='text-sm font-semibold'>
-                      ₹{latestRevenue} Cr
-                    </div>
-                    <div
-                      className={`text-xs font-medium ${
-                        parseFloat(achievement) >= 100
-                          ? 'text-green-600'
-                          : parseFloat(achievement) >= 90
-                            ? 'text-yellow-600'
-                            : 'text-red-500'
-                      }`}
-                    >
-                      {achievement}% of target
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-          )}
+        {/* Performance Status Indicator */}
+        <div className='w-full'>
+          <div className='mb-2 flex items-center justify-between'>
+            <span className='text-muted-foreground text-xs font-medium'>
+              Progress to FY26 Target
+            </span>
+            <span className='text-xs font-semibold'>
+              {targetAchievementPercentage}%
+            </span>
+          </div>
+          <div className='h-2 w-full rounded-full bg-slate-200'>
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                parseFloat(targetAchievementPercentage) >= 75
+                  ? 'bg-green-500'
+                  : parseFloat(targetAchievementPercentage) >= 50
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
+              }`}
+              style={{
+                width: `${Math.min(parseFloat(targetAchievementPercentage), 100)}%`
+              }}
+            />
+          </div>
         </div>
       </CardFooter>
     </Card>

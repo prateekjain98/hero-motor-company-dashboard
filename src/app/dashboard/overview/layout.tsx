@@ -3,17 +3,15 @@
 import PageContainer from '@/components/layout/page-container';
 import { useUserTypeStore, UserType } from '@/stores/user-type-store';
 import { FinancialOverviewCards } from '@/features/overview/components/financial-overview-cards';
-import { CompanyRevenueChart } from '@/features/overview/components/company-revenue-chart';
+import { BusinessExcellenceChart } from '@/features/overview/components/company-revenue-chart';
 import React from 'react';
 
 export default function OverViewLayout({
   sales,
-  pie_stats,
   bar_stats,
   area_stats
 }: {
   sales: React.ReactNode;
-  pie_stats: React.ReactNode;
   bar_stats: React.ReactNode;
   area_stats: React.ReactNode;
 }) {
@@ -25,22 +23,19 @@ export default function OverViewLayout({
       <FinancialOverviewCards />
 
       {/* Main Revenue Chart - Full Width */}
-      <CompanyRevenueChart />
+      <BusinessExcellenceChart />
 
       {/* Charts Grid - Better proportions */}
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
         {/* Left Column */}
-        <div className='space-y-4'>
-          {bar_stats}
-          {area_stats}
-        </div>
+        <div className='space-y-4'>{bar_stats}</div>
 
         {/* Right Column */}
-        <div className='space-y-4'>
-          {sales}
-          {pie_stats}
-        </div>
+        <div className='space-y-4'>{sales}</div>
       </div>
+
+      {/* Resource Efficiency Matrix - Full Width */}
+      {area_stats}
     </div>
   );
 
@@ -64,22 +59,19 @@ export default function OverViewLayout({
             <FinancialOverviewCards />
 
             {/* Main Revenue Chart - Full Width */}
-            <CompanyRevenueChart />
+            <BusinessExcellenceChart />
 
             {/* Charts Grid - Better proportions */}
             <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
               {/* Left Column */}
-              <div className='space-y-4'>
-                {bar_stats}
-                {area_stats}
-              </div>
+              <div className='space-y-4'>{bar_stats}</div>
 
               {/* Right Column */}
-              <div className='space-y-4'>
-                {sales}
-                {pie_stats}
-              </div>
+              <div className='space-y-4'>{sales}</div>
             </div>
+
+            {/* Resource Efficiency Matrix - Full Width */}
+            {area_stats}
           </div>
         );
       case UserType.BUSINESS_HEAD:

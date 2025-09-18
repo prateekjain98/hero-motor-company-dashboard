@@ -8,7 +8,8 @@ export const projectVelocityData = [
     activeProjects: 45,
     avgCycleTime: 18, // days
     targetCycleTime: 21, // days
-    blockedProjects: 3,
+    pendingApprovalProjects: 3,
+    delayedProjects: 2, // Projects stuck longer than target cycle time
     onTrackPercentage: 82,
     stageEfficiency: 87 // percentage
   },
@@ -18,7 +19,8 @@ export const projectVelocityData = [
     activeProjects: 38,
     avgCycleTime: 35,
     targetCycleTime: 30,
-    blockedProjects: 5,
+    pendingApprovalProjects: 5,
+    delayedProjects: 4, // Projects exceeding target cycle time
     onTrackPercentage: 71,
     stageEfficiency: 76
   },
@@ -28,7 +30,8 @@ export const projectVelocityData = [
     activeProjects: 42,
     avgCycleTime: 72,
     targetCycleTime: 60,
-    blockedProjects: 8,
+    pendingApprovalProjects: 8,
+    delayedProjects: 6, // Most delayed stage - development bottlenecks
     onTrackPercentage: 64,
     stageEfficiency: 68
   },
@@ -38,7 +41,8 @@ export const projectVelocityData = [
     activeProjects: 29,
     avgCycleTime: 28,
     targetCycleTime: 30,
-    blockedProjects: 2,
+    pendingApprovalProjects: 2,
+    delayedProjects: 1, // Testing delays are minimal
     onTrackPercentage: 89,
     stageEfficiency: 92
   },
@@ -48,7 +52,8 @@ export const projectVelocityData = [
     activeProjects: 18,
     avgCycleTime: 45,
     targetCycleTime: 42,
-    blockedProjects: 1,
+    pendingApprovalProjects: 1,
+    delayedProjects: 2, // Implementation slightly delayed
     onTrackPercentage: 94,
     stageEfficiency: 88
   },
@@ -58,7 +63,8 @@ export const projectVelocityData = [
     activeProjects: 12,
     avgCycleTime: 7,
     targetCycleTime: 7,
-    blockedProjects: 0,
+    pendingApprovalProjects: 0,
+    delayedProjects: 0, // Closure is on track
     onTrackPercentage: 100,
     stageEfficiency: 95
   }

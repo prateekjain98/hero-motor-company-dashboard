@@ -1,7 +1,7 @@
 import { delay } from '@/constants/mock-api';
-import { DelayedProjects } from '@/features/overview/components/delayed-projects';
+import { TopProjectsOverview } from '@/features/overview/components/top-projects-overview';
 
 export default async function Sales() {
   await delay(3000);
-  return <DelayedProjects />;
+  return <TopProjectsOverview />;
 }

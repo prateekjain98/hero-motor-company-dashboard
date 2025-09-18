@@ -1,1 +1,1 @@
-export { OEEMetricsChart as PieGraph } from './oee-metrics-chart';
+export { CompanyProjectDistribution as PieGraph } from './company-project-distribution';
