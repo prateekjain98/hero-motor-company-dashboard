@@ -11,7 +11,7 @@ export default function SignUpViewPage() {
   return (
     <div className='elegant-bg relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-5 lg:px-0'>
       <AuthLeftSection />
-      <div className='relative flex h-full items-center justify-center bg-white/50 p-4 backdrop-blur-sm lg:col-span-2 lg:p-8'>
+      <div className='relative flex h-full items-center justify-center bg-white/80 p-4 lg:col-span-2 lg:p-8'>
         <div className='animate-fade-in animate-delay-600 relative z-10 flex w-full max-w-md flex-col items-center justify-center'>
           <div className='w-full'>
             <ClerkSignUpForm

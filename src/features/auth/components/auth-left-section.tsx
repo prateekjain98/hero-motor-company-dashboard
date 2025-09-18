@@ -7,13 +7,16 @@ export default function AuthLeftSection() {
       <AuthBackgroundAnimation className='absolute inset-0'>
         <div className='relative z-20 flex h-full flex-col p-10 text-gray-800'>
           <div className='animate-fade-in-up relative z-20 mb-12 flex items-center text-xl font-bold'>
-            <div className='mr-3'>
+            <div className='relative z-30 mr-3 h-12 w-20'>
               <Image
                 src='/assets/logos/hmc.png'
                 alt='Hero Motors Company'
-                width={40}
-                height={40}
-                className='h-10 w-auto'
+                fill
+                className='object-contain'
+                priority
+                quality={100}
+                unoptimized
+                style={{ filter: 'none', isolation: 'isolate' }}
               />
             </div>
             <span className='bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent'>
@@ -31,42 +34,58 @@ export default function AuthLeftSection() {
                 Building excellence across industries
               </p>
             </div>
-            <div className='mx-auto grid max-w-md grid-cols-2 gap-6'>
+            <div className='relative z-30 mx-auto grid max-w-md grid-cols-2 gap-6'>
               <div className='logo-grid-item flex items-center justify-center rounded-2xl p-6 transition-all duration-300'>
-                <Image
-                  src='/assets/logos/hero-cycles.png'
-                  alt='Hero Cycles'
-                  width={48}
-                  height={48}
-                  className='h-12 w-auto object-contain'
-                />
+                <div className='relative h-16 w-24'>
+                  <Image
+                    src='/assets/logos/hero-cycles.png'
+                    alt='Hero Cycles'
+                    fill
+                    className='object-contain'
+                    quality={100}
+                    unoptimized
+                    style={{ filter: 'none', isolation: 'isolate' }}
+                  />
+                </div>
               </div>
               <div className='logo-grid-item flex items-center justify-center rounded-2xl p-6 transition-all duration-300'>
-                <Image
-                  src='/assets/logos/hero-motors.png'
-                  alt='Hero Motors'
-                  width={48}
-                  height={48}
-                  className='h-12 w-auto object-contain'
-                />
+                <div className='relative h-16 w-24'>
+                  <Image
+                    src='/assets/logos/hero-motors.png'
+                    alt='Hero Motors'
+                    fill
+                    className='object-contain'
+                    quality={100}
+                    unoptimized
+                    style={{ filter: 'none', isolation: 'isolate' }}
+                  />
+                </div>
               </div>
               <div className='logo-grid-item flex items-center justify-center rounded-2xl p-6 transition-all duration-300'>
-                <Image
-                  src='/assets/logos/hmc-hive.png'
-                  alt='HMC Hive'
-                  width={48}
-                  height={48}
-                  className='h-12 w-auto object-contain'
-                />
+                <div className='relative h-16 w-24'>
+                  <Image
+                    src='/assets/logos/hmc-hive.png'
+                    alt='HMC Hive'
+                    fill
+                    className='object-contain'
+                    quality={100}
+                    unoptimized
+                    style={{ filter: 'none', isolation: 'isolate' }}
+                  />
+                </div>
               </div>
               <div className='logo-grid-item flex items-center justify-center rounded-2xl p-6 transition-all duration-300'>
-                <Image
-                  src='/assets/logos/munjal.png'
-                  alt='Munjal'
-                  width={48}
-                  height={48}
-                  className='h-12 w-auto object-contain'
-                />
+                <div className='relative h-16 w-24'>
+                  <Image
+                    src='/assets/logos/munjal.png'
+                    alt='Munjal'
+                    fill
+                    className='object-contain'
+                    quality={100}
+                    unoptimized
+                    style={{ filter: 'none', isolation: 'isolate' }}
+                  />
+                </div>
               </div>
             </div>
           </div>

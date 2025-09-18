@@ -1369,7 +1369,7 @@ export const businessExcellenceData = {
   },
   monthlyData: [
     {
-      month: 'Apr 2024',
+      month: 'Oct 2023',
       'hero-cycles': {
         achieved: 2.1,
         target: 3.5,
@@ -1400,7 +1400,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'May 2024',
+      month: 'Nov 2023',
       'hero-cycles': {
         achieved: 2.7,
         target: 3.5,
@@ -1431,7 +1431,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Jun 2024',
+      month: 'Dec 2023',
       'hero-cycles': {
         achieved: 2.3,
         target: 3.5,
@@ -1462,7 +1462,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Jul 2024',
+      month: 'Jan 2024',
       'hero-cycles': {
         achieved: 3.1,
         target: 3.5,
@@ -1493,7 +1493,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Aug 2024',
+      month: 'Feb 2024',
       'hero-cycles': {
         achieved: 1.8,
         target: 3.5,
@@ -1524,7 +1524,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Sep 2024',
+      month: 'Mar 2024',
       'hero-cycles': {
         achieved: 2.6,
         target: 3.5,
@@ -1555,7 +1555,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Oct 2024',
+      month: 'Apr 2024',
       'hero-cycles': {
         achieved: 2.4,
         target: 3.5,
@@ -1586,7 +1586,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Nov 2024',
+      month: 'May 2024',
       'hero-cycles': {
         achieved: 1.9,
         target: 3.5,
@@ -1617,7 +1617,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Dec 2024',
+      month: 'Jun 2024',
       'hero-cycles': {
         achieved: 3.2,
         target: 3.5,
@@ -1648,7 +1648,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Jan 2025',
+      month: 'Jul 2024',
       'hero-cycles': {
         achieved: 2.0,
         target: 3.5,
@@ -1679,7 +1679,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Feb 2025',
+      month: 'Aug 2024',
       'hero-cycles': {
         achieved: 2.8,
         target: 3.5,
@@ -1710,7 +1710,7 @@ export const businessExcellenceData = {
       }
     },
     {
-      month: 'Mar 2025',
+      month: 'Sep 2024',
       'hero-cycles': {
         achieved: 2.9,
         target: 3.5,

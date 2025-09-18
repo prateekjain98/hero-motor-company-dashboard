@@ -71,13 +71,18 @@ export default function AppSidebar() {
         <SidebarGroup>
           <div className='mb-4 flex items-center px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0'>
             <div className='mr-2 group-data-[collapsible=icon]:mr-0'>
-              <Image
-                src='/assets/logos/hmc.png'
-                alt='Hero Motors Company'
-                width={32}
-                height={32}
-                className='h-8 w-auto'
-              />
+              <div className='relative h-10 w-20'>
+                <Image
+                  src='/assets/logos/hmc.png'
+                  alt='Hero Motors Company'
+                  fill
+                  className='object-contain'
+                  priority
+                  quality={100}
+                  unoptimized
+                  style={{ filter: 'none', isolation: 'isolate' }}
+                />
+              </div>
             </div>
             <span className='bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-sm font-semibold text-transparent group-data-[collapsible=icon]:hidden'>
               Hero Motors Company

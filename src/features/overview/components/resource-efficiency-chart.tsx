@@ -8,7 +8,8 @@ import {
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  Legend
 } from 'recharts';
 import {
   Card,
@@ -18,6 +19,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { resourceEfficiencyData } from '@/constants/business-excellence-data';
+import { businessExcellenceData } from '@/constants/mock-api';
 import {
   TrendingUp,
   TrendingDown,
@@ -31,11 +33,87 @@ import { cn } from '@/lib/utils';
 
 export function ResourceEfficiencyChart() {
   const [selectedMetric, setSelectedMetric] = React.useState<string | null>(
-    'paint'
+    'paintConsumption'
   );
-  const latestData = resourceEfficiencyData[resourceEfficiencyData.length - 1];
-  const previousData =
-    resourceEfficiencyData[resourceEfficiencyData.length - 2];
+
+  // Transform data for chart display by metric type
+  const transformDataForMetric = (metricType: string) => {
+    return resourceEfficiencyData.map((monthData) => {
+      const chartPoint: Record<string, string | number> = {
+        month: monthData.month
+      };
+
+      // Add metric data for each company
+      Object.keys(businessExcellenceData.businessUnits).forEach(
+        (companyKey) => {
+          const companyData = monthData[companyKey as keyof typeof monthData];
+          if (typeof companyData === 'object' && companyData !== null) {
+            chartPoint[companyKey] = companyData[
+              metricType as keyof typeof companyData
+            ] as number;
+          }
+        }
+      );
+
+      return chartPoint;
+    });
+  };
+
+  // Calculate aggregate metrics for summary cards
+  const calculateAggregateMetrics = () => {
+    const latestData =
+      resourceEfficiencyData[resourceEfficiencyData.length - 1];
+    const previousData =
+      resourceEfficiencyData[resourceEfficiencyData.length - 2];
+
+    const metrics = [
+      'paintConsumption',
+      'powderConsumption',
+      'powerCost',
+      'gasConsumption'
+    ];
+    const aggregatedMetrics: Record<string, any> = {};
+
+    metrics.forEach((metric) => {
+      let currentTotal = 0;
+      let previousTotal = 0;
+
+      Object.keys(businessExcellenceData.businessUnits).forEach(
+        (companyKey) => {
+          const currentCompanyData = latestData[
+            companyKey as keyof typeof latestData
+          ] as any;
+          const previousCompanyData = previousData[
+            companyKey as keyof typeof previousData
+          ] as any;
+
+          if (currentCompanyData && previousCompanyData) {
+            currentTotal += currentCompanyData[metric];
+            previousTotal += previousCompanyData[metric];
+          }
+        }
+      );
+
+      const change = (
+        ((currentTotal - previousTotal) / previousTotal) *
+        100
+      ).toFixed(1);
+      const isPositive = currentTotal < previousTotal; // Lower is better for efficiency metrics
+
+      aggregatedMetrics[metric] = {
+        current: currentTotal,
+        previous: previousTotal,
+        average:
+          currentTotal /
+          Object.keys(businessExcellenceData.businessUnits).length,
+        trend: { value: change, isPositive }
+      };
+    });
+
+    return aggregatedMetrics;
+  };
+
+  const aggregatedMetrics = calculateAggregateMetrics();
 
   // Custom tick formatter to show years properly
   const formatXAxisTick = (value: string, index: number) => {
@@ -51,70 +129,57 @@ export function ResourceEfficiencyChart() {
     return month;
   };
 
-  const calculateTrend = (
-    current: number,
-    previous: number,
-    inverse = false
-  ) => {
-    const change = (((current - previous) / previous) * 100).toFixed(1);
-    const isPositive = inverse ? current < previous : current > previous;
-    return { value: change, isPositive };
-  };
-
-  const costTrend = calculateTrend(
-    latestData.costPerUnit,
-    previousData.costPerUnit,
-    true
-  );
-
-  const paintTrend = calculateTrend(
-    latestData.paintConsumption,
-    previousData.paintConsumption,
-    true
-  );
-
-  const powderTrend = calculateTrend(
-    latestData.powderConsumption,
-    previousData.powderConsumption,
-    true
-  );
-
-  const powerTrend = calculateTrend(
-    latestData.powerCost,
-    previousData.powerCost,
-    true
-  );
-
-  const gasTrend = calculateTrend(
-    latestData.gasConsumption,
-    previousData.gasConsumption,
-    true
-  );
-
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const getMetricUnit = (metric: string) => {
+        switch (metric) {
+          case 'paintConsumption':
+            return 'ml/sqm';
+          case 'powderConsumption':
+            return 'gm/sqm';
+          case 'powerCost':
+            return 'INR/units';
+          case 'gasConsumption':
+            return 'm³/sqm';
+          default:
+            return '';
+        }
+      };
+
+      const getMetricSymbol = (metric: string) => {
+        return metric === 'powerCost' ? '₹' : '';
+      };
+
       return (
         <div className='bg-background rounded-lg border p-3 shadow-lg'>
           <p className='mb-2 text-sm font-semibold'>{label}</p>
           <div className='space-y-1'>
-            {payload.map((entry: any, index: number) => (
-              <div key={index} className='flex justify-between gap-4 text-xs'>
-                <span className='text-muted-foreground'>{entry.name}:</span>
-                <span className='font-medium' style={{ color: entry.color }}>
-                  {entry.name.includes('Cost') || entry.name.includes('INR')
-                    ? `₹${entry.value}`
-                    : entry.name.includes('%')
-                      ? `${entry.value}%`
-                      : entry.name.includes('ml/sqm')
-                        ? `${entry.value} ml/sqm`
-                        : entry.name.includes('gm/sqm')
-                          ? `${entry.value} gm/sqm`
-                          : entry.name.includes('m3/sqm')
-                            ? `${entry.value} m³/sqm`
-                            : entry.value}
-                </span>
-              </div>
-            ))}
+            {payload.map((entry: any, index: number) => {
+              const companyInfo =
+                businessExcellenceData.businessUnits[
+                  entry.dataKey as keyof typeof businessExcellenceData.businessUnits
+                ];
+              return (
+                <div
+                  key={index}
+                  className='flex items-center justify-between gap-4 text-xs'
+                >
+                  <div className='flex items-center gap-2'>
+                    <div
+                      className='h-2 w-2 rounded-full'
+                      style={{ backgroundColor: entry.color }}
+                    />
+                    <span className='text-muted-foreground'>
+                      {companyInfo?.name || entry.dataKey}:
+                    </span>
+                  </div>
+                  <span className='font-medium' style={{ color: entry.color }}>
+                    {getMetricSymbol(selectedMetric || '')}
+                    {entry.value} {getMetricUnit(selectedMetric || '')}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       );
@@ -154,11 +219,15 @@ export function ResourceEfficiencyChart() {
             <div
               className={cn(
                 'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
-                selectedMetric === 'paint' &&
+                selectedMetric === 'paintConsumption' &&
                   'bg-blue-50/50 ring-2 ring-blue-500 dark:bg-blue-950/10'
               )}
               onClick={() =>
-                setSelectedMetric(selectedMetric === 'paint' ? null : 'paint')
+                setSelectedMetric(
+                  selectedMetric === 'paintConsumption'
+                    ? null
+                    : 'paintConsumption'
+                )
               }
             >
               <div className='mb-1 flex items-center gap-2'>
@@ -167,31 +236,40 @@ export function ResourceEfficiencyChart() {
                 <div
                   className={cn(
                     'ml-auto flex items-center text-xs',
-                    paintTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                    aggregatedMetrics.paintConsumption.trend.isPositive
+                      ? 'text-green-600'
+                      : 'text-red-600'
                   )}
                 >
-                  {paintTrend.isPositive ? (
+                  {aggregatedMetrics.paintConsumption.trend.isPositive ? (
                     <TrendingDown className='mr-1 h-3 w-3' />
                   ) : (
                     <TrendingUp className='mr-1 h-3 w-3' />
                   )}
-                  {Math.abs(parseFloat(paintTrend.value))}%
+                  {Math.abs(
+                    parseFloat(aggregatedMetrics.paintConsumption.trend.value)
+                  )}
+                  %
                 </div>
               </div>
               <div className='text-xl font-bold'>
-                {latestData.paintConsumption}
+                {aggregatedMetrics.paintConsumption.average.toFixed(1)}
               </div>
-              <div className='text-muted-foreground text-xs'>ml/sqm</div>
+              <div className='text-muted-foreground text-xs'>ml/sqm avg</div>
             </div>
 
             <div
               className={cn(
                 'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
-                selectedMetric === 'powder' &&
+                selectedMetric === 'powderConsumption' &&
                   'bg-green-50/50 ring-2 ring-green-500 dark:bg-green-950/10'
               )}
               onClick={() =>
-                setSelectedMetric(selectedMetric === 'powder' ? null : 'powder')
+                setSelectedMetric(
+                  selectedMetric === 'powderConsumption'
+                    ? null
+                    : 'powderConsumption'
+                )
               }
             >
               <div className='mb-1 flex items-center gap-2'>
@@ -200,31 +278,38 @@ export function ResourceEfficiencyChart() {
                 <div
                   className={cn(
                     'ml-auto flex items-center text-xs',
-                    powderTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                    aggregatedMetrics.powderConsumption.trend.isPositive
+                      ? 'text-green-600'
+                      : 'text-red-600'
                   )}
                 >
-                  {powderTrend.isPositive ? (
+                  {aggregatedMetrics.powderConsumption.trend.isPositive ? (
                     <TrendingDown className='mr-1 h-3 w-3' />
                   ) : (
                     <TrendingUp className='mr-1 h-3 w-3' />
                   )}
-                  {Math.abs(parseFloat(powderTrend.value))}%
+                  {Math.abs(
+                    parseFloat(aggregatedMetrics.powderConsumption.trend.value)
+                  )}
+                  %
                 </div>
               </div>
               <div className='text-xl font-bold'>
-                {latestData.powderConsumption}
+                {aggregatedMetrics.powderConsumption.average.toFixed(1)}
               </div>
-              <div className='text-muted-foreground text-xs'>gm/sqm</div>
+              <div className='text-muted-foreground text-xs'>gm/sqm avg</div>
             </div>
 
             <div
               className={cn(
                 'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
-                selectedMetric === 'power' &&
+                selectedMetric === 'powerCost' &&
                   'bg-yellow-50/50 ring-2 ring-yellow-500 dark:bg-yellow-950/10'
               )}
               onClick={() =>
-                setSelectedMetric(selectedMetric === 'power' ? null : 'power')
+                setSelectedMetric(
+                  selectedMetric === 'powerCost' ? null : 'powerCost'
+                )
               }
             >
               <div className='mb-1 flex items-center gap-2'>
@@ -233,29 +318,38 @@ export function ResourceEfficiencyChart() {
                 <div
                   className={cn(
                     'ml-auto flex items-center text-xs',
-                    powerTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                    aggregatedMetrics.powerCost.trend.isPositive
+                      ? 'text-green-600'
+                      : 'text-red-600'
                   )}
                 >
-                  {powerTrend.isPositive ? (
+                  {aggregatedMetrics.powerCost.trend.isPositive ? (
                     <TrendingDown className='mr-1 h-3 w-3' />
                   ) : (
                     <TrendingUp className='mr-1 h-3 w-3' />
                   )}
-                  {Math.abs(parseFloat(powerTrend.value))}%
+                  {Math.abs(
+                    parseFloat(aggregatedMetrics.powerCost.trend.value)
+                  )}
+                  %
                 </div>
               </div>
-              <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
-              <div className='text-muted-foreground text-xs'>INR/units</div>
+              <div className='text-xl font-bold'>
+                ₹{aggregatedMetrics.powerCost.average.toFixed(2)}
+              </div>
+              <div className='text-muted-foreground text-xs'>INR/units avg</div>
             </div>
 
             <div
               className={cn(
                 'cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md',
-                selectedMetric === 'gases' &&
+                selectedMetric === 'gasConsumption' &&
                   'bg-cyan-50/50 ring-2 ring-cyan-500 dark:bg-cyan-950/10'
               )}
               onClick={() =>
-                setSelectedMetric(selectedMetric === 'gases' ? null : 'gases')
+                setSelectedMetric(
+                  selectedMetric === 'gasConsumption' ? null : 'gasConsumption'
+                )
               }
             >
               <div className='mb-1 flex items-center gap-2'>
@@ -264,31 +358,36 @@ export function ResourceEfficiencyChart() {
                 <div
                   className={cn(
                     'ml-auto flex items-center text-xs',
-                    gasTrend.isPositive ? 'text-green-600' : 'text-red-600'
+                    aggregatedMetrics.gasConsumption.trend.isPositive
+                      ? 'text-green-600'
+                      : 'text-red-600'
                   )}
                 >
-                  {gasTrend.isPositive ? (
+                  {aggregatedMetrics.gasConsumption.trend.isPositive ? (
                     <TrendingDown className='mr-1 h-3 w-3' />
                   ) : (
                     <TrendingUp className='mr-1 h-3 w-3' />
                   )}
-                  {Math.abs(parseFloat(gasTrend.value))}%
+                  {Math.abs(
+                    parseFloat(aggregatedMetrics.gasConsumption.trend.value)
+                  )}
+                  %
                 </div>
               </div>
               <div className='text-xl font-bold'>
-                {latestData.gasConsumption}
+                {aggregatedMetrics.gasConsumption.average.toFixed(3)}
               </div>
-              <div className='text-muted-foreground text-xs'>m3/sqm</div>
+              <div className='text-muted-foreground text-xs'>m³/sqm avg</div>
             </div>
           </div>
 
-          {/* Dynamic Chart - Only shows when a card is clicked */}
-          {selectedMetric === 'paint' && (
-            <div className='h-[320px] w-full'>
+          {/* Dynamic Chart - Shows company comparison for selected metric */}
+          {selectedMetric && (
+            <div className='mt-8 h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <BarChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                  data={transformDataForMetric(selectedMetric)}
+                  margin={{ top: 5, right: 30, bottom: 60, left: 5 }}
                 >
                   <CartesianGrid
                     strokeDasharray='3 3'
@@ -296,9 +395,12 @@ export function ResourceEfficiencyChart() {
                   />
                   <XAxis
                     dataKey='month'
-                    tick={{ fontSize: 11 }}
+                    tick={{ fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
+                    angle={-45}
+                    textAnchor='end'
+                    height={60}
                     tickFormatter={formatXAxisTick}
                   />
                   <YAxis
@@ -307,116 +409,34 @@ export function ResourceEfficiencyChart() {
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey='paintConsumption'
-                    fill='#3b82f6'
-                    name='Paint Consumption (ml/sqm)'
-                    radius={[2, 2, 0, 0]}
+                  <Legend
+                    wrapperStyle={{ paddingTop: '20px' }}
+                    iconType='rect'
+                    formatter={(value) => {
+                      const company =
+                        businessExcellenceData.businessUnits[
+                          value as keyof typeof businessExcellenceData.businessUnits
+                        ];
+                      return (
+                        <span style={{ color: '#374151', fontSize: '12px' }}>
+                          {company?.name || value}
+                        </span>
+                      );
+                    }}
                   />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-          {selectedMetric === 'powder' && (
-            <div className='h-[320px] w-full'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <BarChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
-                  />
-                  <XAxis
-                    dataKey='month'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={formatXAxisTick}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey='powderConsumption'
-                    fill='#22c55e'
-                    name='Powder Consumption (gm/sqm)'
-                    radius={[2, 2, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
 
-          {selectedMetric === 'power' && (
-            <div className='h-[320px] w-full'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <BarChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
-                  />
-                  <XAxis
-                    dataKey='month'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={formatXAxisTick}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey='powerCost'
-                    fill='#eab308'
-                    name='Power Cost (INR/units)'
-                    radius={[2, 2, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-
-          {selectedMetric === 'gases' && (
-            <div className='h-[320px] w-full'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <BarChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
-                  />
-                  <XAxis
-                    dataKey='month'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={formatXAxisTick}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey='gasConsumption'
-                    fill='#06b6d4'
-                    name='Gas Consumption (m3/sqm)'
-                    radius={[2, 2, 0, 0]}
-                  />
+                  {/* Render bars for each company */}
+                  {Object.entries(businessExcellenceData.businessUnits).map(
+                    ([key, company]) => (
+                      <Bar
+                        key={key}
+                        dataKey={key}
+                        fill={company.color}
+                        name={key}
+                        radius={[2, 2, 0, 0]}
+                      />
+                    )
+                  )}
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -424,14 +444,14 @@ export function ResourceEfficiencyChart() {
 
           {/* Instructions when no card is selected */}
           {!selectedMetric && (
-            <div className='flex h-[200px] items-center justify-center text-center'>
+            <div className='mt-8 flex h-[200px] items-center justify-center text-center'>
               <div className='space-y-2'>
                 <p className='text-muted-foreground text-lg'>
-                  Select a resource card above to view its trend
+                  Select a resource metric to view company comparison
                 </p>
                 <p className='text-muted-foreground text-sm'>
-                  Click on Paint, Powder, Power, or Gases to see detailed
-                  analytics
+                  Click on Paint, Powder, Power, or Gases to see performance
+                  across all business units
                 </p>
               </div>
             </div>

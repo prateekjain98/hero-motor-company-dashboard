@@ -144,103 +144,331 @@ export const oeeMetricsData = {
   ]
 };
 
-// 3. Resource Efficiency Trends (for Bar Chart with Multiple Metrics - 12 months data)
+// 3. Resource Efficiency Trends (for Bar Chart with Multiple Companies - 12 months data)
 export const resourceEfficiencyData = [
   {
-    month: 'Oct 2023',
-    paintConsumption: 215.4, // ml/sqm - Post-monsoon production restart
-    powderConsumption: 158.2, // gm/sqm - Higher consumption due to seasonal adjustments
-    powerCost: 11.45, // INR/units - Festive season power rates
-    gasConsumption: 0.058, // m3/sqm - Compressed air and process gases
-    costPerUnit: 1318 // INR
+    month: 'Oct 2024',
+    'hero-cycles': {
+      paintConsumption: 185.2, // ml/sqm - Optimized processes
+      powderConsumption: 142.8, // gm/sqm - Efficient coating systems
+      powerCost: 10.85, // INR/units - Energy-efficient operations
+      gasConsumption: 0.048 // m3/sqm - Controlled gas usage
+    },
+    'hero-motors': {
+      paintConsumption: 215.4, // ml/sqm - Higher volume production
+      powderConsumption: 158.2, // gm/sqm - Heavy-duty applications
+      powerCost: 11.45, // INR/units - High-power processes
+      gasConsumption: 0.058 // m3/sqm - Complex manufacturing
+    },
+    'hmc-hive': {
+      paintConsumption: 165.8, // ml/sqm - Precision coating
+      powderConsumption: 125.4, // gm/sqm - Advanced techniques
+      powerCost: 9.85, // INR/units - Automated efficiency
+      gasConsumption: 0.042 // m3/sqm - Smart systems
+    },
+    munjal: {
+      paintConsumption: 195.6, // ml/sqm - Standard operations
+      powderConsumption: 148.9, // gm/sqm - Traditional methods
+      powerCost: 10.65, // INR/units - Balanced approach
+      gasConsumption: 0.051 // m3/sqm - Regular processes
+    }
   },
   {
-    month: 'Nov 2023',
-    paintConsumption: 198.6, // Process stabilization after seasonal changes
-    powderConsumption: 142.3, // Gradual efficiency improvements
-    powerCost: 10.98,
-    gasConsumption: 0.051,
-    costPerUnit: 1289
+    month: 'Nov 2024',
+    'hero-cycles': {
+      paintConsumption: 172.6, // Process stabilization
+      powderConsumption: 138.3, // Improved efficiency
+      powerCost: 10.52, // Better energy management
+      gasConsumption: 0.045
+    },
+    'hero-motors': {
+      paintConsumption: 198.6, // Gradual optimization
+      powderConsumption: 142.3, // Efficiency improvements
+      powerCost: 10.98, // Maintained operations
+      gasConsumption: 0.051
+    },
+    'hmc-hive': {
+      paintConsumption: 158.9, // Advanced controls
+      powderConsumption: 122.7, // Smart application
+      powerCost: 9.68, // Automated systems
+      gasConsumption: 0.041
+    },
+    munjal: {
+      paintConsumption: 186.2, // Process improvements
+      powderConsumption: 145.8, // Better techniques
+      powerCost: 10.38, // Efficiency gains
+      gasConsumption: 0.048
+    }
   },
   {
-    month: 'Dec 2023',
-    paintConsumption: 188.9, // Year-end production optimization
-    powderConsumption: 136.7, // Best practices implementation
-    powerCost: 10.76,
-    gasConsumption: 0.048,
-    costPerUnit: 1254
+    month: 'Dec 2024',
+    'hero-cycles': {
+      paintConsumption: 168.9, // Year-end optimization
+      powderConsumption: 136.7, // Best practices implementation
+      powerCost: 10.35, // Reduced consumption
+      gasConsumption: 0.044
+    },
+    'hero-motors': {
+      paintConsumption: 188.9, // Production optimization
+      powderConsumption: 136.7, // Controlled usage
+      powerCost: 10.76, // Stable operations
+      gasConsumption: 0.048
+    },
+    'hmc-hive': {
+      paintConsumption: 155.4, // Maximum efficiency
+      powderConsumption: 119.8, // Optimal coating
+      powerCost: 9.45, // Best performance
+      gasConsumption: 0.039
+    },
+    munjal: {
+      paintConsumption: 182.7, // Improved processes
+      powderConsumption: 142.5, // Better control
+      powerCost: 10.15, // Enhanced efficiency
+      gasConsumption: 0.046
+    }
   },
   {
-    month: 'Jan 2024',
-    paintConsumption: 221.3, // New year production ramp-up
-    powderConsumption: 164.8, // Higher consumption due to new product lines
-    powerCost: 11.28, // Winter heating costs
-    gasConsumption: 0.059,
-    costPerUnit: 1334
+    month: 'Jan 2025',
+    'hero-cycles': {
+      paintConsumption: 195.3, // New year production ramp-up
+      powderConsumption: 148.8, // Higher volume
+      powerCost: 10.88, // Increased operations
+      gasConsumption: 0.049
+    },
+    'hero-motors': {
+      paintConsumption: 221.3, // Production increase
+      powderConsumption: 164.8, // Higher consumption
+      powerCost: 11.28, // Winter heating costs
+      gasConsumption: 0.059
+    },
+    'hmc-hive': {
+      paintConsumption: 162.5, // Controlled ramp-up
+      powderConsumption: 128.6, // Efficient scaling
+      powerCost: 9.65, // Managed increase
+      gasConsumption: 0.043
+    },
+    munjal: {
+      paintConsumption: 189.8, // Steady increase
+      powderConsumption: 148.2, // Volume scaling
+      powerCost: 10.52, // Regular operations
+      gasConsumption: 0.05
+    }
   },
   {
-    month: 'Feb 2024',
-    paintConsumption: 189.7, // Process optimization initiatives
-    powderConsumption: 138.4, // Efficiency measures taking effect
-    powerCost: 10.84,
-    gasConsumption: 0.049,
-    costPerUnit: 1267
+    month: 'Feb 2025',
+    'hero-cycles': {
+      paintConsumption: 176.7, // Process optimization
+      powderConsumption: 141.4, // Efficiency measures
+      powerCost: 10.58, // Improved systems
+      gasConsumption: 0.046
+    },
+    'hero-motors': {
+      paintConsumption: 189.7, // Optimization initiatives
+      powderConsumption: 138.4, // Better control
+      powerCost: 10.84, // Stable performance
+      gasConsumption: 0.049
+    },
+    'hmc-hive': {
+      paintConsumption: 159.2, // Advanced optimization
+      powderConsumption: 125.8, // Precision coating
+      powerCost: 9.52, // Maximum efficiency
+      gasConsumption: 0.042
+    },
+    munjal: {
+      paintConsumption: 184.5, // Process improvements
+      powderConsumption: 144.9, // Better techniques
+      powerCost: 10.28, // Enhanced operations
+      gasConsumption: 0.048
+    }
   },
   {
-    month: 'Mar 2024',
-    paintConsumption: 194.2, // End of fiscal year production push
-    powderConsumption: 144.6, // Increased volume but controlled usage
-    powerCost: 10.95,
-    gasConsumption: 0.052,
-    costPerUnit: 1278
+    month: 'Mar 2025',
+    'hero-cycles': {
+      paintConsumption: 182.2, // Fiscal year-end push
+      powderConsumption: 144.6, // Controlled increase
+      powerCost: 10.72, // Balanced operations
+      gasConsumption: 0.047
+    },
+    'hero-motors': {
+      paintConsumption: 194.2, // Production push
+      powderConsumption: 144.6, // Volume handling
+      powerCost: 10.95, // Increased activity
+      gasConsumption: 0.052
+    },
+    'hmc-hive': {
+      paintConsumption: 161.8, // Sustained efficiency
+      powderConsumption: 127.5, // Optimal performance
+      powerCost: 9.68, // Consistent results
+      gasConsumption: 0.043
+    },
+    munjal: {
+      paintConsumption: 187.4, // Final quarter push
+      powderConsumption: 146.8, // Volume management
+      powerCost: 10.45, // Stable operations
+      gasConsumption: 0.049
+    }
   },
   {
-    month: 'Apr 2024',
-    paintConsumption: 206.7, // ml/sqm - Spring production peak, maintenance completed
-    powderConsumption: 149.8, // gm/sqm - Slight increase due to higher production volume
-    powerCost: 10.89, // INR/units - Moderate electricity rates
-    gasConsumption: 0.054, // m3/sqm - Compressed air and process gases
-    costPerUnit: 1295 // INR
+    month: 'Apr 2025',
+    'hero-cycles': {
+      paintConsumption: 188.7, // New fiscal start
+      powderConsumption: 147.8, // Fresh operations
+      powerCost: 10.68, // Spring operations
+      gasConsumption: 0.048
+    },
+    'hero-motors': {
+      paintConsumption: 206.7, // Production peak
+      powderConsumption: 149.8, // Higher volume
+      powerCost: 10.89, // Moderate rates
+      gasConsumption: 0.054
+    },
+    'hmc-hive': {
+      paintConsumption: 164.2, // Maintained efficiency
+      powderConsumption: 129.8, // Consistent performance
+      powerCost: 9.78, // Stable operations
+      gasConsumption: 0.044
+    },
+    munjal: {
+      paintConsumption: 191.5, // Steady operations
+      powderConsumption: 148.5, // Regular production
+      powerCost: 10.58, // Balanced approach
+      gasConsumption: 0.05
+    }
   },
   {
-    month: 'May 2024',
-    paintConsumption: 178.3, // Process optimization showing results
-    powderConsumption: 132.6, // Efficiency improvements maintained
-    powerCost: 10.67,
-    gasConsumption: 0.047,
-    costPerUnit: 1245
+    month: 'May 2025',
+    'hero-cycles': {
+      paintConsumption: 165.3, // Process optimization
+      powderConsumption: 134.6, // Efficiency gains
+      powerCost: 10.22, // Improved processes
+      gasConsumption: 0.045
+    },
+    'hero-motors': {
+      paintConsumption: 178.3, // Optimization results
+      powderConsumption: 132.6, // Better efficiency
+      powerCost: 10.67, // Stable performance
+      gasConsumption: 0.047
+    },
+    'hmc-hive': {
+      paintConsumption: 155.8, // Maximum efficiency
+      powderConsumption: 124.8, // Best performance
+      powerCost: 9.45, // Optimal operations
+      gasConsumption: 0.041
+    },
+    munjal: {
+      paintConsumption: 176.4, // Good efficiency
+      powderConsumption: 138.2, // Improved control
+      powerCost: 10.28, // Better management
+      gasConsumption: 0.046
+    }
   },
   {
-    month: 'Jun 2024',
-    paintConsumption: 195.8, // Summer production ramp, quality improvements
-    powderConsumption: 145.9, // Higher volume but controlled consumption
-    powerCost: 11.23, // AC loads increase power costs
-    gasConsumption: 0.052,
-    costPerUnit: 1268
+    month: 'Jun 2025',
+    'hero-cycles': {
+      paintConsumption: 178.8, // Summer production
+      powderConsumption: 142.9, // Controlled increase
+      powerCost: 10.85, // AC loads impact
+      gasConsumption: 0.047
+    },
+    'hero-motors': {
+      paintConsumption: 195.8, // Summer ramp
+      powderConsumption: 145.9, // Higher volume
+      powerCost: 11.23, // Increased cooling
+      gasConsumption: 0.052
+    },
+    'hmc-hive': {
+      paintConsumption: 162.5, // Efficient cooling
+      powderConsumption: 128.5, // Smart systems
+      powerCost: 9.85, // Managed consumption
+      gasConsumption: 0.043
+    },
+    munjal: {
+      paintConsumption: 185.2, // Summer operations
+      powderConsumption: 144.8, // Regular production
+      powerCost: 10.68, // Standard rates
+      gasConsumption: 0.049
+    }
   },
   {
-    month: 'Jul 2024',
-    paintConsumption: 234.2, // Equipment malfunction caused spike
-    powderConsumption: 171.4, // Maintenance issues affected efficiency
-    powerCost: 11.85, // Summer peak rates
-    gasConsumption: 0.065, // Higher usage due to temperature control
-    costPerUnit: 1356
+    month: 'Jul 2025',
+    'hero-cycles': {
+      paintConsumption: 192.2, // Peak summer
+      powderConsumption: 148.4, // Higher consumption
+      powerCost: 11.15, // Summer rates
+      gasConsumption: 0.051
+    },
+    'hero-motors': {
+      paintConsumption: 234.2, // Peak operations
+      powderConsumption: 171.4, // Maximum production
+      powerCost: 11.85, // Peak rates
+      gasConsumption: 0.065
+    },
+    'hmc-hive': {
+      paintConsumption: 168.5, // Controlled operations
+      powderConsumption: 132.8, // Efficient systems
+      powerCost: 10.15, // Smart cooling
+      gasConsumption: 0.045
+    },
+    munjal: {
+      paintConsumption: 202.8, // Summer peak
+      powderConsumption: 155.6, // Higher usage
+      powerCost: 11.25, // Peak consumption
+      gasConsumption: 0.056
+    }
   },
   {
-    month: 'Aug 2024',
-    paintConsumption: 172.1, // Post-maintenance optimization
-    powderConsumption: 128.7, // Best efficiency achieved
-    powerCost: 10.42, // Improved processes reduce energy
-    gasConsumption: 0.043,
-    costPerUnit: 1198
+    month: 'Aug 2025',
+    'hero-cycles': {
+      paintConsumption: 158.1, // Post-maintenance
+      powderConsumption: 126.7, // Optimized efficiency
+      powerCost: 9.98, // Improved systems
+      gasConsumption: 0.042
+    },
+    'hero-motors': {
+      paintConsumption: 172.1, // Maintenance benefits
+      powderConsumption: 128.7, // Best efficiency
+      powerCost: 10.42, // Reduced energy
+      gasConsumption: 0.043
+    },
+    'hmc-hive': {
+      paintConsumption: 152.8, // Excellent performance
+      powderConsumption: 121.5, // Superior efficiency
+      powerCost: 9.15, // Maximum optimization
+      gasConsumption: 0.038
+    },
+    munjal: {
+      paintConsumption: 168.5, // Good performance
+      powderConsumption: 132.8, // Efficient operations
+      powerCost: 9.85, // Better control
+      gasConsumption: 0.044
+    }
   },
   {
-    month: 'Sep 2024',
-    paintConsumption: 165.3, // Sustained improvements
-    powderConsumption: 125.4, // Continued efficiency gains
-    powerCost: 10.28,
-    gasConsumption: 0.041,
-    costPerUnit: 1175
+    month: 'Sep 2025',
+    'hero-cycles': {
+      paintConsumption: 152.3, // Sustained improvements
+      powderConsumption: 123.4, // Continued gains
+      powerCost: 9.78, // Excellent efficiency
+      gasConsumption: 0.04
+    },
+    'hero-motors': {
+      paintConsumption: 165.3, // Sustained improvements
+      powderConsumption: 125.4, // Continued efficiency
+      powerCost: 10.28, // Good performance
+      gasConsumption: 0.041
+    },
+    'hmc-hive': {
+      paintConsumption: 149.8, // Best-in-class
+      powderConsumption: 119.2, // Outstanding efficiency
+      powerCost: 8.95, // Top performance
+      gasConsumption: 0.037
+    },
+    munjal: {
+      paintConsumption: 162.4, // Excellent results
+      powderConsumption: 128.9, // Good efficiency
+      powerCost: 9.68, // Strong performance
+      gasConsumption: 0.042
+    }
   }
 ];
 

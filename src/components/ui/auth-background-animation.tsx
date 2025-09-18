@@ -19,62 +19,72 @@ export const AuthBackgroundAnimation = ({
       <div className='absolute inset-0'>
         {/* First orb - dark red */}
         <div
-          className='animate-first absolute h-96 w-96 rounded-full opacity-30 blur-3xl'
+          className='animate-first absolute h-96 w-96 rounded-full opacity-20 blur-xl'
           style={{
             background:
-              'radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, rgba(220, 38, 38, 0) 70%)',
+              'radial-gradient(circle, rgba(220, 38, 38, 0.3) 0%, rgba(220, 38, 38, 0) 70%)',
             top: '10%',
-            left: '10%'
+            left: '10%',
+            zIndex: 1
           }}
         />
 
         {/* Second orb - medium red */}
         <div
-          className='animate-second absolute h-80 w-80 rounded-full opacity-25 blur-2xl'
+          className='animate-second absolute h-80 w-80 rounded-full opacity-15 blur-lg'
           style={{
             background:
-              'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, rgba(239, 68, 68, 0) 70%)',
+              'radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0) 70%)',
             top: '60%',
-            left: '60%'
+            left: '60%',
+            zIndex: 1
           }}
         />
 
         {/* Third orb - light red */}
         <div
-          className='animate-third absolute h-64 w-64 rounded-full opacity-20 blur-2xl'
+          className='animate-third absolute h-64 w-64 rounded-full opacity-12 blur-lg'
           style={{
             background:
-              'radial-gradient(circle, rgba(248, 113, 113, 0.3) 0%, rgba(248, 113, 113, 0) 70%)',
+              'radial-gradient(circle, rgba(248, 113, 113, 0.25) 0%, rgba(248, 113, 113, 0) 70%)',
             top: '30%',
-            left: '70%'
+            left: '70%',
+            zIndex: 1
           }}
         />
 
         {/* Fourth orb - lighter red */}
         <div
-          className='animate-fourth absolute h-72 w-72 rounded-full opacity-15 blur-xl'
+          className='animate-fourth absolute h-72 w-72 rounded-full opacity-10 blur-md'
           style={{
             background:
-              'radial-gradient(circle, rgba(252, 165, 165, 0.4) 0%, rgba(252, 165, 165, 0) 70%)',
+              'radial-gradient(circle, rgba(252, 165, 165, 0.3) 0%, rgba(252, 165, 165, 0) 70%)',
             top: '70%',
-            left: '20%'
+            left: '20%',
+            zIndex: 1
           }}
         />
 
         {/* Fifth orb - lightest red */}
         <div
-          className='animate-fifth absolute h-56 w-56 rounded-full opacity-10 blur-xl'
+          className='animate-fifth absolute h-56 w-56 rounded-full opacity-8 blur-md'
           style={{
             background:
-              'radial-gradient(circle, rgba(254, 202, 202, 0.5) 0%, rgba(254, 202, 202, 0) 70%)',
+              'radial-gradient(circle, rgba(254, 202, 202, 0.4) 0%, rgba(254, 202, 202, 0) 70%)',
             top: '40%',
-            left: '40%'
+            left: '40%',
+            zIndex: 1
           }}
         />
       </div>
 
       {/* Content */}
-      <div className='relative z-10 h-full w-full'>{children}</div>
+      <div
+        className='relative z-20 h-full w-full'
+        style={{ isolation: 'isolate' }}
+      >
+        {children}
+      </div>
     </div>
   );
 };

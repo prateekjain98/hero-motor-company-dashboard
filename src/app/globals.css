@@ -313,6 +313,8 @@
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  isolation: isolate;
+  will-change: transform;
 }
 
 .logo-grid-item:hover {

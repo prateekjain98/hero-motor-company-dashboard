@@ -258,8 +258,8 @@ export function BusinessExcellenceChart() {
           Business Excellence Performance
         </CardTitle>
         <CardDescription className='text-muted-foreground text-base'>
-          Monthly cost savings achievement across all business units • FY26
-          Target: ₹{businessExcellenceData.fy26Target} Cr
+          Monthly cost savings achievement across all business units • Last 12
+          Months Target: ₹{businessExcellenceData.fy26Target} Cr
         </CardDescription>
       </CardHeader>
 
