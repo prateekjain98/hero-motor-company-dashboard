@@ -148,56 +148,50 @@ export const oeeMetricsData = {
 export const resourceEfficiencyData = [
   {
     month: 'Apr 2024',
-    laborProductivity: 82.3, // units per person hour
-    energyIntensity: 2.45, // kWh per unit
-    materialYield: 91.2, // percentage
-    waterEfficiency: 88.5, // percentage
-    wasteRatio: 4.2, // percentage of production
+    paintConsumption: 185.2, // ml/sqm - Standard industrial coating
+    powderConsumption: 142.8, // gm/sqm - Medium thickness coating
+    powerCost: 10.85, // INR/units - Industrial electricity rate
+    gasConsumption: 0.045, // m3/sqm - Compressed air and process gases
     costPerUnit: 1250 // INR
   },
   {
     month: 'May 2024',
-    laborProductivity: 84.1,
-    energyIntensity: 2.38,
-    materialYield: 92.5,
-    waterEfficiency: 89.2,
-    wasteRatio: 3.9,
+    paintConsumption: 178.4,
+    powderConsumption: 138.6,
+    powerCost: 10.92,
+    gasConsumption: 0.043,
     costPerUnit: 1235
   },
   {
     month: 'Jun 2024',
-    laborProductivity: 83.7,
-    energyIntensity: 2.41,
-    materialYield: 91.8,
-    waterEfficiency: 88.9,
-    wasteRatio: 4.0,
+    paintConsumption: 182.1,
+    powderConsumption: 145.3,
+    powerCost: 11.15,
+    gasConsumption: 0.047,
     costPerUnit: 1242
   },
   {
     month: 'Jul 2024',
-    laborProductivity: 85.9,
-    energyIntensity: 2.32,
-    materialYield: 93.1,
-    waterEfficiency: 90.5,
-    wasteRatio: 3.6,
+    paintConsumption: 172.9,
+    powderConsumption: 135.7,
+    powerCost: 10.78,
+    gasConsumption: 0.041,
     costPerUnit: 1218
   },
   {
     month: 'Aug 2024',
-    laborProductivity: 86.4,
-    energyIntensity: 2.29,
-    materialYield: 93.8,
-    waterEfficiency: 91.2,
-    wasteRatio: 3.4,
+    paintConsumption: 168.5,
+    powderConsumption: 132.4,
+    powerCost: 10.65,
+    gasConsumption: 0.039,
     costPerUnit: 1205
   },
   {
     month: 'Sep 2024',
-    laborProductivity: 87.2,
-    energyIntensity: 2.25,
-    materialYield: 94.2,
-    waterEfficiency: 91.8,
-    wasteRatio: 3.2,
+    paintConsumption: 165.3,
+    powderConsumption: 129.8,
+    powerCost: 10.58,
+    gasConsumption: 0.038,
     costPerUnit: 1195
   }
 ];

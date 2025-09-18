@@ -64,24 +64,7 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-const renderActiveShape = (props: {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  fill: string;
-  payload: {
-    company: string;
-    projects: number;
-    budget: number;
-    efficiency: number;
-  };
-  percent: number;
-  value: number;
-}) => {
+const renderActiveShape = (props: any) => {
   const RADIAN = Math.PI / 180;
   const {
     cx,

@@ -251,10 +251,10 @@ export function ProjectVelocityChart() {
         </div>
 
         {/* Compact Performance Summary */}
-        <div className='mt-4 space-y-3 border-t px-4 pt-4'>
+        <div className='mt-3 space-y-3 border-t px-4 pt-3'>
           {/* Overall Metrics Row */}
           <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-4'>
+            <div className='flex items-center gap-6'>
               <div className='text-center'>
                 <div className='text-lg font-bold text-green-600'>
                   {healthyProjectsCount}
@@ -297,43 +297,39 @@ export function ProjectVelocityChart() {
             </div>
           </div>
 
-          {/* Stage Performance in Single Row */}
+          {/* Stage Performance - Simplified Layout */}
           <div>
             <div className='mb-2 text-sm font-medium'>Stage Performance</div>
-            <div className='space-y-2'>
+            <div className='grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs'>
               {enhancedData.map((stage) => (
-                <div key={stage.stage} className='flex items-center gap-3'>
-                  <div className='flex w-16 items-center gap-1'>
-                    <span className='text-xs font-medium'>{stage.stage}</span>
-                    <span className='text-muted-foreground text-xs'>
-                      ({stage.name})
-                    </span>
-                  </div>
-
-                  <div className='flex-1'>
-                    <div className='mb-1 flex justify-between text-xs'>
-                      <span className='text-muted-foreground'>
-                        {stage.avgCycleTime}d / {stage.targetCycleTime}d
-                      </span>
-                      <span
-                        className={cn(
-                          'font-medium',
-                          stage.isDelayed ? 'text-red-600' : 'text-green-600'
-                        )}
-                      >
-                        {stage.stageEfficiency}%
-                      </span>
-                    </div>
-                    <Progress value={stage.stageEfficiency} className='h-2' />
-                  </div>
-
-                  <div className='flex gap-1'>
+                <div
+                  key={stage.stage}
+                  className='flex items-center justify-between rounded border border-gray-100 px-2 py-1 dark:border-gray-800'
+                >
+                  <div className='flex items-center gap-2'>
                     <div
                       className={cn(
                         'h-2 w-2 rounded-full',
                         stage.isDelayed ? 'bg-red-500' : 'bg-green-500'
                       )}
                     />
+                    <span className='font-medium'>{stage.stage}</span>
+                    <span className='text-muted-foreground'>
+                      ({stage.name})
+                    </span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-muted-foreground'>
+                      {stage.avgCycleTime}d/{stage.targetCycleTime}d
+                    </span>
+                    <span
+                      className={cn(
+                        'font-medium',
+                        stage.isDelayed ? 'text-red-600' : 'text-green-600'
+                      )}
+                    >
+                      {stage.stageEfficiency}%
+                    </span>
                   </div>
                 </div>
               ))}
