@@ -236,7 +236,7 @@ export function BusinessExcellenceChart() {
   const requiredRate = businessExcellenceData.requiredMonthlyRate.toFixed(1);
 
   return (
-    <Card className='from-background to-muted/20 h-full border-0 bg-gradient-to-br shadow-lg'>
+    <Card className='h-full'>
       <CardHeader className='pb-6'>
         <CardTitle className='flex items-center gap-3 text-xl'>
           <div className='bg-primary/10 rounded-lg p-2'>

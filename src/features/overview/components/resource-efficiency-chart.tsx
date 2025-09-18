@@ -128,7 +128,7 @@ export function ResourceEfficiencyChart() {
             <TabsTrigger value='gases'>Gases</TabsTrigger>
           </TabsList>
 
-          <TabsContent value='resources' className='mt-4 space-y-4'>
+          <TabsContent value='paint' className='mt-4 space-y-4'>
             {/* KPI Cards */}
             <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
               <div className='rounded-lg border p-3'>
@@ -174,73 +174,8 @@ export function ResourceEfficiencyChart() {
               </div>
             </div>
 
-            {/* Resources Chart */}
+            {/* Paint Chart */}
             <div className='h-[280px] w-full'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <LineChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
-                  />
-                  <XAxis
-                    dataKey='month'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
-                  />
-                  <YAxis
-                    yAxisId='left'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    yAxisId='right'
-                    orientation='right'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Line
-                    yAxisId='left'
-                    type='monotone'
-                    dataKey='paintConsumption'
-                    stroke='#3b82f6'
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    name='Paint (ml/sqm)'
-                  />
-                  <Line
-                    yAxisId='left'
-                    type='monotone'
-                    dataKey='powderConsumption'
-                    stroke='#22c55e'
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    name='Powder (gm/sqm)'
-                  />
-                  <Line
-                    yAxisId='right'
-                    type='monotone'
-                    dataKey='gasConsumption'
-                    stroke='#06b6d4'
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    name='Gases (m3/sqm)'
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </TabsContent>
-
-          <TabsContent value='consumption' className='mt-4 space-y-4'>
-            <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <AreaChart
                   data={resourceEfficiencyData}
@@ -257,6 +192,91 @@ export function ResourceEfficiencyChart() {
                       <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
                       <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
                     </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray='3 3'
+                    stroke='hsl(var(--border))'
+                  />
+                  <XAxis
+                    dataKey='month'
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => value.split(' ')[0]}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area
+                    type='monotone'
+                    dataKey='paintConsumption'
+                    stroke='#3b82f6'
+                    strokeWidth={2}
+                    fill='url(#paintGradient)'
+                    name='Paint Consumption (ml/sqm)'
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
+
+          <TabsContent value='powder' className='mt-4 space-y-4'>
+            {/* KPI Cards */}
+            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Paintbrush className='h-4 w-4 text-blue-500' />
+                  <span className='text-muted-foreground text-xs'>Paint</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.paintConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>ml/sqm</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Package className='h-4 w-4 text-green-500' />
+                  <span className='text-muted-foreground text-xs'>Powder</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.powderConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>gm/sqm</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Zap className='h-4 w-4 text-yellow-500' />
+                  <span className='text-muted-foreground text-xs'>Power</span>
+                </div>
+                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
+                <div className='text-muted-foreground text-xs'>INR/units</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Wind className='h-4 w-4 text-cyan-500' />
+                  <span className='text-muted-foreground text-xs'>Gases</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.gasConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>m3/sqm</div>
+              </div>
+            </div>
+
+            {/* Powder Chart */}
+            <div className='h-[280px] w-full'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <AreaChart
+                  data={resourceEfficiencyData}
+                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                >
+                  <defs>
                     <linearGradient
                       id='powderGradient'
                       x1='0'
@@ -287,61 +307,82 @@ export function ResourceEfficiencyChart() {
                   <Tooltip content={<CustomTooltip />} />
                   <Area
                     type='monotone'
-                    dataKey='paintConsumption'
-                    stroke='#3b82f6'
-                    strokeWidth={2}
-                    fill='url(#paintGradient)'
-                    name='Paint Consumption'
-                  />
-                  <Area
-                    type='monotone'
                     dataKey='powderConsumption'
                     stroke='#22c55e'
                     strokeWidth={2}
                     fill='url(#powderGradient)'
-                    name='Powder Consumption'
+                    name='Powder Consumption (gm/sqm)'
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-
-            <div className='grid grid-cols-2 gap-3'>
-              <div className='rounded-lg border bg-blue-50/50 p-4 dark:bg-blue-950/10'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <div className='text-muted-foreground text-sm'>
-                      Paint Usage
-                    </div>
-                    <div className='mt-1 text-2xl font-bold'>
-                      {latestData.paintConsumption} ml/sqm
-                    </div>
-                  </div>
-                  <Paintbrush className='h-8 w-8 text-blue-500' />
-                </div>
-              </div>
-              <div className='rounded-lg border bg-green-50/50 p-4 dark:bg-green-950/10'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <div className='text-muted-foreground text-sm'>
-                      Powder Usage
-                    </div>
-                    <div className='mt-1 text-2xl font-bold'>
-                      {latestData.powderConsumption} gm/sqm
-                    </div>
-                  </div>
-                  <Package className='h-8 w-8 text-green-500' />
-                </div>
-              </div>
-            </div>
           </TabsContent>
 
-          <TabsContent value='cost' className='mt-4 space-y-4'>
-            <div className='h-[320px] w-full'>
+          <TabsContent value='power' className='mt-4 space-y-4'>
+            {/* KPI Cards */}
+            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Paintbrush className='h-4 w-4 text-blue-500' />
+                  <span className='text-muted-foreground text-xs'>Paint</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.paintConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>ml/sqm</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Package className='h-4 w-4 text-green-500' />
+                  <span className='text-muted-foreground text-xs'>Powder</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.powderConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>gm/sqm</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Zap className='h-4 w-4 text-yellow-500' />
+                  <span className='text-muted-foreground text-xs'>Power</span>
+                </div>
+                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
+                <div className='text-muted-foreground text-xs'>INR/units</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Wind className='h-4 w-4 text-cyan-500' />
+                  <span className='text-muted-foreground text-xs'>Gases</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.gasConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>m3/sqm</div>
+              </div>
+            </div>
+
+            {/* Power Chart */}
+            <div className='h-[280px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <LineChart
+                <AreaChart
                   data={resourceEfficiencyData}
                   margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
                 >
+                  <defs>
+                    <linearGradient
+                      id='powerGradient'
+                      x1='0'
+                      y1='0'
+                      x2='0'
+                      y2='1'
+                    >
+                      <stop offset='5%' stopColor='#eab308' stopOpacity={0.3} />
+                      <stop offset='95%' stopColor='#eab308' stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid
                     strokeDasharray='3 3'
                     stroke='hsl(var(--border))'
@@ -354,82 +395,116 @@ export function ResourceEfficiencyChart() {
                     tickFormatter={(value) => value.split(' ')[0]}
                   />
                   <YAxis
-                    yAxisId='left'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    yAxisId='right'
-                    orientation='right'
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Line
-                    yAxisId='left'
+                  <Area
                     type='monotone'
                     dataKey='powerCost'
                     stroke='#eab308'
                     strokeWidth={2}
-                    dot={{ r: 3 }}
+                    fill='url(#powerGradient)'
                     name='Power Cost (INR/units)'
                   />
-                  <Line
-                    yAxisId='right'
-                    type='monotone'
-                    dataKey='costPerUnit'
-                    stroke='#a855f7'
-                    strokeWidth={2}
-                    dot={{ r: 3 }}
-                    name='Total Cost/Unit (INR)'
-                  />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             </div>
+          </TabsContent>
 
-            <div className='grid grid-cols-2 gap-3'>
-              <div className='rounded-lg border bg-yellow-50/50 p-4 dark:bg-yellow-950/10'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <div className='text-muted-foreground text-sm'>
-                      Power Cost
-                    </div>
-                    <div className='mt-1 text-2xl font-bold'>
-                      ₹{latestData.powerCost}
-                    </div>
-                    <div className='text-muted-foreground text-xs'>
-                      per unit
-                    </div>
-                  </div>
-                  <Zap className='h-8 w-8 text-yellow-500' />
+          <TabsContent value='gases' className='mt-4 space-y-4'>
+            {/* KPI Cards */}
+            <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Paintbrush className='h-4 w-4 text-blue-500' />
+                  <span className='text-muted-foreground text-xs'>Paint</span>
                 </div>
-              </div>
-              <div
-                className={cn(
-                  'rounded-lg border p-4',
-                  latestData.costPerUnit <= 1200
-                    ? 'bg-green-50/50 dark:bg-green-950/10'
-                    : 'bg-orange-50/50 dark:bg-orange-950/10'
-                )}
-              >
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <div className='text-muted-foreground text-sm'>
-                      Total Cost/Unit
-                    </div>
-                    <div className='mt-1 text-2xl font-bold'>
-                      ₹{latestData.costPerUnit}
-                    </div>
-                    <div className='text-muted-foreground text-xs'>
-                      Target: ₹1200
-                    </div>
-                  </div>
-                  <IndianRupee className='h-8 w-8 text-purple-500' />
+                <div className='text-xl font-bold'>
+                  {latestData.paintConsumption}
                 </div>
+                <div className='text-muted-foreground text-xs'>ml/sqm</div>
               </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Package className='h-4 w-4 text-green-500' />
+                  <span className='text-muted-foreground text-xs'>Powder</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.powderConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>gm/sqm</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Zap className='h-4 w-4 text-yellow-500' />
+                  <span className='text-muted-foreground text-xs'>Power</span>
+                </div>
+                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
+                <div className='text-muted-foreground text-xs'>INR/units</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Wind className='h-4 w-4 text-cyan-500' />
+                  <span className='text-muted-foreground text-xs'>Gases</span>
+                </div>
+                <div className='text-xl font-bold'>
+                  {latestData.gasConsumption}
+                </div>
+                <div className='text-muted-foreground text-xs'>m3/sqm</div>
+              </div>
+            </div>
+
+            {/* Gases Chart */}
+            <div className='h-[280px] w-full'>
+              <ResponsiveContainer width='100%' height='100%'>
+                <AreaChart
+                  data={resourceEfficiencyData}
+                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id='gasGradient'
+                      x1='0'
+                      y1='0'
+                      x2='0'
+                      y2='1'
+                    >
+                      <stop offset='5%' stopColor='#06b6d4' stopOpacity={0.3} />
+                      <stop offset='95%' stopColor='#06b6d4' stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray='3 3'
+                    stroke='hsl(var(--border))'
+                  />
+                  <XAxis
+                    dataKey='month'
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => value.split(' ')[0]}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area
+                    type='monotone'
+                    dataKey='gasConsumption'
+                    stroke='#06b6d4'
+                    strokeWidth={2}
+                    fill='url(#gasGradient)'
+                    name='Gas Consumption (m3/sqm)'
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </TabsContent>
         </Tabs>
