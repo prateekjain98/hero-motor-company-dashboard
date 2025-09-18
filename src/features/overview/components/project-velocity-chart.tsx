@@ -80,14 +80,13 @@ export function ProjectVelocityChart() {
   // Generate stage distribution based on companyPerformanceData for consistency
   const getRealisticStageData = () => {
     if (selectedCompany === 'all') {
-      // Sum all projects from companyPerformanceData by stage
+      // Sum active projects from companyPerformanceData by stage (L0-L4 only)
       const stageTotals = {
         L0: 0,
         L1: 0,
         L2: 0,
         L3: 0,
-        L4: 0,
-        L5: 0
+        L4: 0
       };
 
       companyPerformanceData.forEach((company) => {
@@ -96,7 +95,7 @@ export function ProjectVelocityChart() {
         stageTotals.L2 += company.l2;
         stageTotals.L3 += company.l3;
         stageTotals.L4 += company.l4;
-        stageTotals.L5 += company.l5;
+        // Exclude L5 (completed projects) from active pipeline
       });
 
       return [
@@ -129,12 +128,6 @@ export function ProjectVelocityChart() {
           activeProjects: stageTotals.L4,
           pendingApprovalProjects: Math.floor(stageTotals.L4 * 0.08),
           delayedProjects: Math.floor(stageTotals.L4 * 0.15)
-        },
-        {
-          stage: 'L5',
-          activeProjects: stageTotals.L5,
-          pendingApprovalProjects: 0,
-          delayedProjects: 0
         }
       ];
     } else {
@@ -177,12 +170,6 @@ export function ProjectVelocityChart() {
           activeProjects: companyData.l4,
           pendingApprovalProjects: Math.floor(companyData.l4 * 0.08),
           delayedProjects: Math.floor(companyData.l4 * 0.15)
-        },
-        {
-          stage: 'L5',
-          activeProjects: companyData.l5,
-          pendingApprovalProjects: 0,
-          delayedProjects: 0
         }
       ];
     }
@@ -341,7 +328,7 @@ export function ProjectVelocityChart() {
             <div className='flex items-center justify-between'>
               <CardTitle className='flex items-center gap-2 text-base'>
                 <ChevronRight className='h-4 w-4 text-gray-600' />
-                Project Pipeline Analytics
+                Active Project Pipeline (L0-L4)
               </CardTitle>
               <Select
                 value={selectedCompany}

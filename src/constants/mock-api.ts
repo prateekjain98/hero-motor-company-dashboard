@@ -1984,41 +1984,37 @@ export const healthyProjectsData = [
   }
 ];
 
-// Company project statistics
-export const companyProjectStats = [
-  {
-    company: 'Hero Motors',
-    logo: '/assets/logos/hero-motors.png',
-    totalProjects: 42,
-    healthyProjects: 28,
-    delayedProjects: 8,
-    onHoldProjects: 6
-  },
-  {
-    company: 'Hero Cycles',
-    logo: '/assets/logos/hero-cycles.png',
-    totalProjects: 35,
-    healthyProjects: 24,
-    delayedProjects: 7,
-    onHoldProjects: 4
-  },
-  {
-    company: 'HMC Hive',
-    logo: '/assets/logos/hmc-hive.png',
-    totalProjects: 28,
-    healthyProjects: 20,
-    delayedProjects: 5,
-    onHoldProjects: 3
-  },
-  {
-    company: 'Munjal',
-    logo: '/assets/logos/munjal.png',
-    totalProjects: 18,
-    healthyProjects: 12,
-    delayedProjects: 4,
-    onHoldProjects: 2
-  }
-];
+// Company project statistics - derived from companyPerformanceData for consistency
+export const companyProjectStats = companyPerformanceData.map((company) => {
+  const totalProjects =
+    company.l0 + company.l1 + company.l2 + company.l3 + company.l4 + company.l5;
+  const activeProjects =
+    company.l0 + company.l1 + company.l2 + company.l3 + company.l4; // Exclude L5 (completed)
+  const completedProjects = company.l5;
+
+  // Calculate realistic healthy/delayed breakdown based on project lifecycle
+  const healthyProjects = Math.floor(totalProjects * 0.68); // ~68% healthy
+  const delayedProjects = Math.floor(totalProjects * 0.22); // ~22% delayed
+  const onHoldProjects = totalProjects - healthyProjects - delayedProjects; // remainder on hold
+
+  const logoMap: { [key: string]: string } = {
+    'Hero Motors': '/assets/logos/hero-motors.png',
+    'Hero Cycles': '/assets/logos/hero-cycles.png',
+    'HMC Hive': '/assets/logos/hmc-hive.png',
+    'Munjal Kiru': '/assets/logos/munjal.png'
+  };
+
+  return {
+    company: company.company === 'Munjal Kiru' ? 'Munjal' : company.company,
+    logo: logoMap[company.company],
+    totalProjects,
+    activeProjects, // New field to distinguish from total
+    completedProjects,
+    healthyProjects,
+    delayedProjects,
+    onHoldProjects
+  };
+});
 
 // Business Excellence Dashboard Data
 

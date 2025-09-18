@@ -119,11 +119,11 @@ export function TopProjectsOverview() {
           <div>
             <CardTitle className='flex items-center gap-2 text-base'>
               <ChevronRight className='h-4 w-4 text-gray-600' />
-              Top Projects Overview
+              Active Projects Overview
             </CardTitle>
             <CardDescription className='mt-1 text-xs'>
               {totalProjects} total projects • {totalHealthy} healthy •{' '}
-              {totalDelayed} delayed
+              {totalDelayed} at risk • excluding completed projects
             </CardDescription>
           </div>
           <div className='flex gap-2'>
