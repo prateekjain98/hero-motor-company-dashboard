@@ -83,7 +83,7 @@ export default function OverViewLayout({
           </div>
         );
       case UserType.BUSINESS_HEAD:
-        return renderPlaceholderDashboard('Business Head Dashboard');
+        return renderPlaceholderDashboard('Function Head Dashboard');
       case UserType.PROJECT_MANAGER:
         return renderPlaceholderDashboard('Project Manager Dashboard');
       default:
@@ -96,8 +96,8 @@ export default function OverViewLayout({
       <div className='flex flex-1 flex-col space-y-4'>
         {/* Header Section */}
         <div className='flex items-center justify-between'>
-          <h2 className='text-3xl font-bold tracking-tight'>
-            Hi, Welcome back 👋
+          <h2 className='mb-4 text-xl font-bold tracking-tight'>
+            Hi, Welcome to Business Excellence Dashboard 👋
           </h2>
         </div>
 
