@@ -28,9 +28,10 @@ import {
   Zap,
   Droplet,
   Package,
-  Users,
+  Paintbrush,
   IndianRupee,
-  Activity
+  Activity,
+  Wind
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -65,11 +66,17 @@ export function ResourceEfficiencyChart() {
               <div key={index} className='flex justify-between gap-4 text-xs'>
                 <span className='text-muted-foreground'>{entry.name}:</span>
                 <span className='font-medium' style={{ color: entry.color }}>
-                  {entry.name.includes('Cost')
+                  {entry.name.includes('Cost') || entry.name.includes('INR')
                     ? `₹${entry.value}`
                     : entry.name.includes('%')
                       ? `${entry.value}%`
-                      : entry.value}
+                      : entry.name.includes('ml/sqm')
+                        ? `${entry.value} ml/sqm`
+                        : entry.name.includes('gm/sqm')
+                          ? `${entry.value} gm/sqm`
+                          : entry.name.includes('m3/sqm')
+                            ? `${entry.value} m³/sqm`
+                            : entry.value}
                 </span>
               </div>
             ))}
@@ -113,67 +120,61 @@ export function ResourceEfficiencyChart() {
       </CardHeader>
 
       <CardContent className='pb-6'>
-        <Tabs defaultValue='overview' className='w-full'>
+        <Tabs defaultValue='paint' className='w-full'>
           <TabsList className='grid w-full grid-cols-4'>
-            <TabsTrigger value='overview'>Overview</TabsTrigger>
-            <TabsTrigger value='productivity'>Productivity</TabsTrigger>
-            <TabsTrigger value='sustainability'>Sustainability</TabsTrigger>
-            <TabsTrigger value='cost'>Cost</TabsTrigger>
+            <TabsTrigger value='paint'>Paint</TabsTrigger>
+            <TabsTrigger value='powder'>Powder</TabsTrigger>
+            <TabsTrigger value='power'>Power</TabsTrigger>
+            <TabsTrigger value='gases'>Gases</TabsTrigger>
           </TabsList>
 
-          <TabsContent value='overview' className='mt-4 space-y-4'>
+          <TabsContent value='resources' className='mt-4 space-y-4'>
             {/* KPI Cards */}
             <div className='grid grid-cols-2 gap-3 lg:grid-cols-4'>
               <div className='rounded-lg border p-3'>
                 <div className='mb-1 flex items-center gap-2'>
-                  <Users className='h-4 w-4 text-blue-500' />
-                  <span className='text-muted-foreground text-xs'>
-                    Productivity
-                  </span>
+                  <Paintbrush className='h-4 w-4 text-blue-500' />
+                  <span className='text-muted-foreground text-xs'>Paint</span>
                 </div>
                 <div className='text-xl font-bold'>
-                  {latestData.laborProductivity}
+                  {latestData.paintConsumption}
                 </div>
-                <div className='text-muted-foreground text-xs'>units/hour</div>
-              </div>
-
-              <div className='rounded-lg border p-3'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <Zap className='h-4 w-4 text-yellow-500' />
-                  <span className='text-muted-foreground text-xs'>Energy</span>
-                </div>
-                <div className='text-xl font-bold'>
-                  {latestData.energyIntensity}
-                </div>
-                <div className='text-muted-foreground text-xs'>kWh/unit</div>
+                <div className='text-muted-foreground text-xs'>ml/sqm</div>
               </div>
 
               <div className='rounded-lg border p-3'>
                 <div className='mb-1 flex items-center gap-2'>
                   <Package className='h-4 w-4 text-green-500' />
-                  <span className='text-muted-foreground text-xs'>Yield</span>
+                  <span className='text-muted-foreground text-xs'>Powder</span>
                 </div>
                 <div className='text-xl font-bold'>
-                  {latestData.materialYield}%
+                  {latestData.powderConsumption}
                 </div>
-                <div className='text-muted-foreground text-xs'>efficiency</div>
+                <div className='text-muted-foreground text-xs'>gm/sqm</div>
               </div>
 
               <div className='rounded-lg border p-3'>
                 <div className='mb-1 flex items-center gap-2'>
-                  <IndianRupee className='h-4 w-4 text-purple-500' />
-                  <span className='text-muted-foreground text-xs'>
-                    Cost/Unit
-                  </span>
+                  <Zap className='h-4 w-4 text-yellow-500' />
+                  <span className='text-muted-foreground text-xs'>Power</span>
+                </div>
+                <div className='text-xl font-bold'>₹{latestData.powerCost}</div>
+                <div className='text-muted-foreground text-xs'>INR/units</div>
+              </div>
+
+              <div className='rounded-lg border p-3'>
+                <div className='mb-1 flex items-center gap-2'>
+                  <Wind className='h-4 w-4 text-cyan-500' />
+                  <span className='text-muted-foreground text-xs'>Gases</span>
                 </div>
                 <div className='text-xl font-bold'>
-                  ₹{latestData.costPerUnit}
+                  {latestData.gasConsumption}
                 </div>
-                <div className='text-muted-foreground text-xs'>per unit</div>
+                <div className='text-muted-foreground text-xs'>m3/sqm</div>
               </div>
             </div>
 
-            {/* Overview Chart */}
+            {/* Resources Chart */}
             <div className='h-[280px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart
@@ -192,6 +193,14 @@ export function ResourceEfficiencyChart() {
                     tickFormatter={(value) => value.split(' ')[0]}
                   />
                   <YAxis
+                    yAxisId='left'
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    yAxisId='right'
+                    orientation='right'
                     tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
@@ -199,27 +208,38 @@ export function ResourceEfficiencyChart() {
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
                   <Line
+                    yAxisId='left'
                     type='monotone'
-                    dataKey='laborProductivity'
+                    dataKey='paintConsumption'
                     stroke='#3b82f6'
                     strokeWidth={2}
                     dot={{ r: 3 }}
-                    name='Productivity'
+                    name='Paint (ml/sqm)'
                   />
                   <Line
+                    yAxisId='left'
                     type='monotone'
-                    dataKey='materialYield'
+                    dataKey='powderConsumption'
                     stroke='#22c55e'
                     strokeWidth={2}
                     dot={{ r: 3 }}
-                    name='Material Yield %'
+                    name='Powder (gm/sqm)'
+                  />
+                  <Line
+                    yAxisId='right'
+                    type='monotone'
+                    dataKey='gasConsumption'
+                    stroke='#06b6d4'
+                    strokeWidth={2}
+                    dot={{ r: 3 }}
+                    name='Gases (m3/sqm)'
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
 
-          <TabsContent value='productivity' className='mt-4 space-y-4'>
+          <TabsContent value='consumption' className='mt-4 space-y-4'>
             <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <AreaChart
@@ -228,7 +248,7 @@ export function ResourceEfficiencyChart() {
                 >
                   <defs>
                     <linearGradient
-                      id='productivityGradient'
+                      id='paintGradient'
                       x1='0'
                       y1='0'
                       x2='0'
@@ -236,6 +256,16 @@ export function ResourceEfficiencyChart() {
                     >
                       <stop offset='5%' stopColor='#3b82f6' stopOpacity={0.3} />
                       <stop offset='95%' stopColor='#3b82f6' stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient
+                      id='powderGradient'
+                      x1='0'
+                      y1='0'
+                      x2='0'
+                      y2='1'
+                    >
+                      <stop offset='5%' stopColor='#22c55e' stopOpacity={0.3} />
+                      <stop offset='95%' stopColor='#22c55e' stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
@@ -257,32 +287,55 @@ export function ResourceEfficiencyChart() {
                   <Tooltip content={<CustomTooltip />} />
                   <Area
                     type='monotone'
-                    dataKey='laborProductivity'
+                    dataKey='paintConsumption'
                     stroke='#3b82f6'
                     strokeWidth={2}
-                    fill='url(#productivityGradient)'
-                    name='Labor Productivity'
+                    fill='url(#paintGradient)'
+                    name='Paint Consumption'
+                  />
+                  <Area
+                    type='monotone'
+                    dataKey='powderConsumption'
+                    stroke='#22c55e'
+                    strokeWidth={2}
+                    fill='url(#powderGradient)'
+                    name='Powder Consumption'
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
 
-            <div className='rounded-lg border bg-blue-50/50 p-4 dark:bg-blue-950/10'>
-              <div className='flex items-center justify-between'>
-                <div>
-                  <div className='text-muted-foreground text-sm'>
-                    Current Performance
+            <div className='grid grid-cols-2 gap-3'>
+              <div className='rounded-lg border bg-blue-50/50 p-4 dark:bg-blue-950/10'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <div className='text-muted-foreground text-sm'>
+                      Paint Usage
+                    </div>
+                    <div className='mt-1 text-2xl font-bold'>
+                      {latestData.paintConsumption} ml/sqm
+                    </div>
                   </div>
-                  <div className='mt-1 text-2xl font-bold'>
-                    {latestData.laborProductivity} units/hr
-                  </div>
+                  <Paintbrush className='h-8 w-8 text-blue-500' />
                 </div>
-                <Activity className='h-8 w-8 text-blue-500' />
+              </div>
+              <div className='rounded-lg border bg-green-50/50 p-4 dark:bg-green-950/10'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <div className='text-muted-foreground text-sm'>
+                      Powder Usage
+                    </div>
+                    <div className='mt-1 text-2xl font-bold'>
+                      {latestData.powderConsumption} gm/sqm
+                    </div>
+                  </div>
+                  <Package className='h-8 w-8 text-green-500' />
+                </div>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value='sustainability' className='mt-4 space-y-4'>
+          <TabsContent value='cost' className='mt-4 space-y-4'>
             <div className='h-[320px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
                 <LineChart
@@ -318,138 +371,63 @@ export function ResourceEfficiencyChart() {
                   <Line
                     yAxisId='left'
                     type='monotone'
-                    dataKey='energyIntensity'
+                    dataKey='powerCost'
                     stroke='#eab308'
                     strokeWidth={2}
                     dot={{ r: 3 }}
-                    name='Energy (kWh)'
+                    name='Power Cost (INR/units)'
                   />
                   <Line
                     yAxisId='right'
                     type='monotone'
-                    dataKey='waterEfficiency'
-                    stroke='#06b6d4'
+                    dataKey='costPerUnit'
+                    stroke='#a855f7'
                     strokeWidth={2}
                     dot={{ r: 3 }}
-                    name='Water Eff %'
-                  />
-                  <Line
-                    yAxisId='right'
-                    type='monotone'
-                    dataKey='wasteRatio'
-                    stroke='#ef4444'
-                    strokeWidth={2}
-                    strokeDasharray='5 5'
-                    dot={{ r: 3 }}
-                    name='Waste %'
+                    name='Total Cost/Unit (INR)'
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            <div className='grid grid-cols-3 gap-3'>
-              <div className='rounded-lg border bg-yellow-50/50 p-3 text-center dark:bg-yellow-950/10'>
-                <Zap className='mx-auto mb-1 h-5 w-5 text-yellow-500' />
-                <div className='text-lg font-bold'>
-                  {latestData.energyIntensity}
-                </div>
-                <div className='text-muted-foreground text-xs'>kWh/unit</div>
-              </div>
-              <div className='rounded-lg border bg-cyan-50/50 p-3 text-center dark:bg-cyan-950/10'>
-                <Droplet className='mx-auto mb-1 h-5 w-5 text-cyan-500' />
-                <div className='text-lg font-bold'>
-                  {latestData.waterEfficiency}%
-                </div>
-                <div className='text-muted-foreground text-xs'>efficiency</div>
-              </div>
-              <div className='rounded-lg border bg-red-50/50 p-3 text-center dark:bg-red-950/10'>
-                <Package className='mx-auto mb-1 h-5 w-5 text-red-500' />
-                <div className='text-lg font-bold'>
-                  {latestData.wasteRatio}%
-                </div>
-                <div className='text-muted-foreground text-xs'>waste</div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value='cost' className='mt-4 space-y-4'>
-            <div className='h-[320px] w-full'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart
-                  data={resourceEfficiencyData}
-                  margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-                >
-                  <defs>
-                    <linearGradient
-                      id='costGradient'
-                      x1='0'
-                      y1='0'
-                      x2='0'
-                      y2='1'
-                    >
-                      <stop offset='5%' stopColor='#a855f7' stopOpacity={0.3} />
-                      <stop offset='95%' stopColor='#a855f7' stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
-                  />
-                  <XAxis
-                    dataKey='month'
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => value.split(' ')[0]}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area
-                    type='monotone'
-                    dataKey='costPerUnit'
-                    stroke='#a855f7'
-                    strokeWidth={2}
-                    fill='url(#costGradient)'
-                    name='Cost per Unit'
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div
-              className={cn(
-                'rounded-lg border p-4',
-                latestData.costPerUnit <= 1200
-                  ? 'bg-green-50/50 dark:bg-green-950/10'
-                  : 'bg-orange-50/50 dark:bg-orange-950/10'
-              )}
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <div className='text-muted-foreground text-sm'>
-                    Cost per Unit
+            <div className='grid grid-cols-2 gap-3'>
+              <div className='rounded-lg border bg-yellow-50/50 p-4 dark:bg-yellow-950/10'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <div className='text-muted-foreground text-sm'>
+                      Power Cost
+                    </div>
+                    <div className='mt-1 text-2xl font-bold'>
+                      ₹{latestData.powerCost}
+                    </div>
+                    <div className='text-muted-foreground text-xs'>
+                      per unit
+                    </div>
                   </div>
-                  <div className='mt-1 text-3xl font-bold'>
-                    ₹{latestData.costPerUnit}
-                  </div>
+                  <Zap className='h-8 w-8 text-yellow-500' />
                 </div>
-                <div className='text-right'>
-                  <div className='text-muted-foreground text-sm'>vs Target</div>
-                  <div
-                    className={cn(
-                      'mt-1 text-2xl font-bold',
-                      latestData.costPerUnit <= 1200
-                        ? 'text-green-600'
-                        : 'text-orange-600'
-                    )}
-                  >
-                    {latestData.costPerUnit <= 1200 ? '-' : '+'}₹
-                    {Math.abs(latestData.costPerUnit - 1200)}
+              </div>
+              <div
+                className={cn(
+                  'rounded-lg border p-4',
+                  latestData.costPerUnit <= 1200
+                    ? 'bg-green-50/50 dark:bg-green-950/10'
+                    : 'bg-orange-50/50 dark:bg-orange-950/10'
+                )}
+              >
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <div className='text-muted-foreground text-sm'>
+                      Total Cost/Unit
+                    </div>
+                    <div className='mt-1 text-2xl font-bold'>
+                      ₹{latestData.costPerUnit}
+                    </div>
+                    <div className='text-muted-foreground text-xs'>
+                      Target: ₹1200
+                    </div>
                   </div>
+                  <IndianRupee className='h-8 w-8 text-purple-500' />
                 </div>
               </div>
             </div>

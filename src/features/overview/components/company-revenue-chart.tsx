@@ -388,7 +388,7 @@ export function BusinessExcellenceChart() {
                 strokeOpacity={0.8}
                 label={{
                   value: `Required Rate: ₹${requiredRate} Cr/month`,
-                  position: 'topRight',
+                  position: 'topRight' as any,
                   fontSize: 11
                 }}
               />

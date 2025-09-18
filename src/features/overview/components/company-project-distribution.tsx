@@ -221,7 +221,7 @@ export function CompanyProjectDistribution() {
             >
               <Label
                 content={({ viewBox }) => {
-                  const { cx = 0, cy = 0 } = viewBox || {};
+                  const { cx = 0, cy = 0 } = (viewBox as any) || {};
                   return (
                     <text
                       x={cx}
