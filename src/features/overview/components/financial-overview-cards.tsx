@@ -305,7 +305,7 @@ export function FinancialOverviewCards() {
               <div className='mb-2 flex gap-1'>
                 <div className='relative h-4 flex-1 overflow-hidden rounded bg-blue-500'>
                   <span className='absolute inset-0 flex items-center justify-center text-[10px] font-medium text-white'>
-                    ₹{data.identifiedPipeline}
+                    ₹{data.identifiedPipeline} CR
                   </span>
                 </div>
                 <div
@@ -316,7 +316,7 @@ export function FinancialOverviewCards() {
                   }}
                 >
                   <span className='absolute inset-0 flex items-center justify-center text-[10px] font-medium text-white'>
-                    ₹{data.yetToIdentify}
+                    ₹{data.yetToIdentify} CR
                   </span>
                 </div>
               </div>
@@ -328,9 +328,7 @@ export function FinancialOverviewCards() {
                 </span>
                 <span className='flex items-center gap-1'>
                   <div className='h-2 w-2 rounded-sm bg-amber-400' />
-                  <span className='text-muted-foreground'>
-                    Gap: ₹{data.yetToIdentify} CR
-                  </span>
+                  <span className='text-muted-foreground'>Gap</span>
                 </span>
               </div>
             </div>

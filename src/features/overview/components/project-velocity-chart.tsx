@@ -533,7 +533,7 @@ export function ProjectVelocityChart() {
       <CardContent className='flex flex-1 flex-col px-0 pt-0'>
         {/* Main Chart - Increased height */}
         <div className='flex-1 px-4'>
-          <ResponsiveContainer width='100%' height='100%' minHeight={280}>
+          <ResponsiveContainer width='100%' height='100%' minHeight={160}>
             <BarChart
               data={enhancedData}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -621,7 +621,7 @@ export function ProjectVelocityChart() {
         </div>
 
         {/* Compact Performance Summary */}
-        <div className='mt-3 space-y-3 border-t px-4 pt-3'>
+        <div className='mt-4 space-y-4 border-t px-4 pt-4'>
           {/* Overall Metrics Row */}
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-6'>
@@ -667,14 +667,14 @@ export function ProjectVelocityChart() {
             </div>
           </div>
 
-          {/* Stage Performance - Simplified Layout */}
-          <div>
-            <div className='mb-2 text-sm font-medium'>Stage Performance</div>
-            <div className='grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs'>
+          {/* Stage Performance - Expanded Layout */}
+          <div className='space-y-3'>
+            <div className='text-sm font-medium'>Stage Performance</div>
+            <div className='grid grid-cols-1 gap-y-2 text-sm'>
               {enhancedData.map((stage) => (
                 <div
                   key={stage.stage}
-                  className='flex items-center justify-between rounded border border-gray-100 px-2 py-1 dark:border-gray-800'
+                  className='flex items-center justify-between rounded border border-gray-100 px-3 py-2 dark:border-gray-800'
                 >
                   <div className='flex items-center gap-2'>
                     <div
