@@ -50,19 +50,29 @@ export function BusinessExcellenceChart() {
       : businessExcellenceData.monthlyData.lastYear;
   };
 
-  // Transform data for the chart
+  // Transform data for the chart with cumulative calculations
   const transformDataForChart = () => {
-    return getDataForFY().map((monthData) => {
+    const data = getDataForFY();
+    const cumulativeData: Record<string, number> = {};
+
+    // Initialize cumulative totals for each company
+    Object.keys(businessExcellenceData.businessUnits).forEach((companyKey) => {
+      cumulativeData[companyKey] = 0;
+    });
+
+    return data.map((monthData) => {
       const chartPoint: Record<string, string | number> = {
         month: monthData.month
       };
 
-      // Add achieved cost savings for each business unit
+      // Add cumulative cost savings for each business unit
       Object.keys(businessExcellenceData.businessUnits).forEach(
         (companyKey) => {
           const companyData = monthData[companyKey as keyof typeof monthData];
           if (typeof companyData === 'object' && companyData !== null) {
-            chartPoint[companyKey] = companyData.achieved;
+            // Add current month's savings to cumulative total
+            cumulativeData[companyKey] += companyData.achieved;
+            chartPoint[companyKey] = cumulativeData[companyKey];
           }
         }
       );
@@ -87,7 +97,7 @@ export function BusinessExcellenceChart() {
     return config;
   };
 
-  // Enhanced custom tooltip component
+  // Enhanced custom tooltip component for cumulative data
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const monthData = getDataForFY().find((data) => data.month === label);
@@ -108,10 +118,12 @@ export function BusinessExcellenceChart() {
                 ];
               const companyData =
                 monthData?.[companyKey as keyof typeof monthData];
+              const cumulativeValue = entry.value; // This is the cumulative total
 
               if (typeof companyData === 'object' && companyData !== null) {
-                const achievementPercentage = (
-                  (companyData.achieved / (company.annualTarget / 12)) *
+                const monthlyAchievement = companyData.achieved;
+                const targetProgress = (
+                  (cumulativeValue / company.annualTarget) *
                   100
                 ).toFixed(1);
 
@@ -131,41 +143,51 @@ export function BusinessExcellenceChart() {
                       <div className='space-y-2'>
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground'>
-                            Savings:
+                            Monthly{' '}
+                            {monthlyAchievement >= 0 ? 'Savings' : 'Adjustment'}
+                            :
                           </span>
-                          <span className='text-foreground font-semibold'>
-                            ₹{companyData.achieved} Cr
-                          </span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>Target:</span>
-                          <span className='text-muted-foreground font-medium'>
-                            ₹{(company.annualTarget / 12).toFixed(1)} Cr
+                          <span
+                            className={`font-semibold ${
+                              monthlyAchievement >= 0
+                                ? 'text-foreground'
+                                : 'text-red-600'
+                            }`}
+                          >
+                            {monthlyAchievement >= 0 ? '₹' : '-₹'}
+                            {Math.abs(monthlyAchievement)} Cr
                           </span>
                         </div>
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground'>
-                            Achievement:
+                            Cumulative Total:
+                          </span>
+                          <span className='text-foreground font-bold text-blue-600'>
+                            ₹{cumulativeValue.toFixed(1)} Cr
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Annual Target:
+                          </span>
+                          <span className='text-muted-foreground font-medium'>
+                            ₹{company.annualTarget} Cr
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Progress:
                           </span>
                           <span
                             className={`font-semibold ${
-                              parseFloat(achievementPercentage) >= 100
+                              parseFloat(targetProgress) >= 100
                                 ? 'text-green-600'
-                                : parseFloat(achievementPercentage) >= 90
+                                : parseFloat(targetProgress) >= 75
                                   ? 'text-yellow-600'
                                   : 'text-red-500'
                             }`}
                           >
-                            {achievementPercentage}%
-                          </span>
-                        </div>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground'>
-                            Run Rate:
-                          </span>
-                          <span className='font-semibold text-amber-600'>
-                            ₹{((companyData.achieved * 12) / 9).toFixed(1)}{' '}
-                            Cr/yr
+                            {targetProgress}%
                           </span>
                         </div>
                       </div>
@@ -195,22 +217,13 @@ export function BusinessExcellenceChart() {
                         </div>
                         <div className='flex items-center justify-between'>
                           <span className='text-muted-foreground'>
-                            Variance:
+                            Remaining:
                           </span>
-                          <span
-                            className={`font-semibold ${
-                              companyData.achieved >= company.annualTarget / 12
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                            }`}
-                          >
-                            {companyData.achieved >= company.annualTarget / 12
-                              ? '+'
-                              : ''}
-                            {(
-                              companyData.achieved -
-                              company.annualTarget / 12
-                            ).toFixed(1)}{' '}
+                          <span className='font-semibold text-amber-600'>
+                            ₹
+                            {(company.annualTarget - cumulativeValue).toFixed(
+                              1
+                            )}{' '}
                             Cr
                           </span>
                         </div>
@@ -246,24 +259,23 @@ export function BusinessExcellenceChart() {
     return month;
   };
 
-  // Calculate total revenue for the period
-  const totalRevenue = React.useMemo(() => {
-    return chartData.reduce((sum, month) => {
-      return (
-        sum +
-        Object.keys(businessExcellenceData.businessUnits).reduce(
-          (monthSum, company) => {
-            const value = month[company];
-            return monthSum + (typeof value === 'number' ? value : 0);
-          },
-          0
-        )
-      );
-    }, 0);
+  // Calculate current cumulative total across all companies
+  const currentCumulativeTotal = React.useMemo(() => {
+    const latestMonth = chartData[chartData.length - 1];
+    return Object.keys(businessExcellenceData.businessUnits).reduce(
+      (total, company) => {
+        const value = latestMonth[company];
+        return total + (typeof value === 'number' ? value : 0);
+      },
+      0
+    );
   }, [chartData]);
 
-  // Calculate average monthly performance
-  const avgMonthlySavings = (totalRevenue / chartData.length).toFixed(1);
+  // Calculate current cumulative average per company
+  const avgCumulativeSavings = (
+    currentCumulativeTotal /
+    Object.keys(businessExcellenceData.businessUnits).length
+  ).toFixed(1);
 
   // Calculate FY26 target achievement percentage
   const targetAchievementPercentage =
@@ -284,7 +296,7 @@ export function BusinessExcellenceChart() {
               Business Excellence Performance
             </CardTitle>
             <CardDescription className='text-muted-foreground text-base'>
-              Monthly cost savings achievement across all business units •
+              Cumulative cost savings achievement across all business units •
               Target: ₹{businessExcellenceData.fy26Target} Cr
             </CardDescription>
           </div>
@@ -312,13 +324,12 @@ export function BusinessExcellenceChart() {
           {Object.entries(businessExcellenceData.businessUnits).map(
             ([key, company]) => {
               const latestMonth = chartData[chartData.length - 1];
-              const latestSavings =
+              const cumulativeSavings =
                 typeof latestMonth[key] === 'number'
                   ? (latestMonth[key] as number)
                   : 0;
-              const monthlyTarget = company.annualTarget / 12;
-              const achievement = (
-                (latestSavings / monthlyTarget) *
+              const targetProgress = (
+                (cumulativeSavings / company.annualTarget) *
                 100
               ).toFixed(1);
 
@@ -338,18 +349,18 @@ export function BusinessExcellenceChart() {
                   </div>
                   <div className='space-y-1'>
                     <div className='text-sm font-semibold'>
-                      ₹{latestSavings} Cr
+                      ₹{cumulativeSavings.toFixed(1)} Cr
                     </div>
                     <div
                       className={`text-xs font-medium ${
-                        parseFloat(achievement) >= 100
+                        parseFloat(targetProgress) >= 100
                           ? 'text-green-600'
-                          : parseFloat(achievement) >= 90
+                          : parseFloat(targetProgress) >= 75
                             ? 'text-yellow-600'
                             : 'text-red-500'
                       }`}
                     >
-                      {achievement}% of target
+                      {targetProgress}% of annual target
                     </div>
                   </div>
                 </div>
@@ -423,10 +434,10 @@ export function BusinessExcellenceChart() {
                 tickMargin={12}
                 className='text-xs font-medium'
                 tick={{ fontSize: 11 }}
-                domain={[0, 6]}
-                ticks={[0, 1, 2, 3, 4, 5, 6]}
+                domain={[-5, 40]}
+                ticks={[-5, 0, 5, 10, 15, 20, 25, 30, 35, 40]}
                 label={{
-                  value: 'Cost Savings (₹ Crores)',
+                  value: 'Cumulative Cost Savings (₹ Crores)',
                   angle: -90,
                   position: 'insideLeft',
                   style: {
@@ -437,14 +448,28 @@ export function BusinessExcellenceChart() {
                 }}
               />
 
-              {/* Reference line for average */}
+              {/* Reference line at zero */}
               <ReferenceLine
-                y={parseFloat(requiredRate)}
+                y={0}
+                stroke='#6b7280'
+                strokeDasharray='4 2'
+                strokeOpacity={0.6}
+                label={{
+                  value: 'Baseline',
+                  position: 'topLeft' as any,
+                  fontSize: 10,
+                  offset: 10
+                }}
+              />
+
+              {/* Reference line for 6-month cumulative target */}
+              <ReferenceLine
+                y={businessExcellenceData.fy26Target * 0.5}
                 stroke='#f59e0b'
                 strokeDasharray='8 4'
                 strokeOpacity={0.8}
                 label={{
-                  value: `Required Rate: ₹${requiredRate} Cr/month`,
+                  value: `6-Month Target: ₹${(businessExcellenceData.fy26Target * 0.5).toFixed(1)} Cr`,
                   position: 'topRight' as any,
                   fontSize: 11
                 }}
@@ -495,13 +520,17 @@ export function BusinessExcellenceChart() {
         <div className='flex w-full items-center gap-6'>
           <div className='grid flex-1 auto-rows-min gap-2'>
             <div className='flex items-baseline gap-2 text-2xl leading-none font-bold tabular-nums'>
-              {targetAchievementPercentage}%
+              {(
+                (currentCumulativeTotal / businessExcellenceData.fy26Target) *
+                100
+              ).toFixed(1)}
+              %
               <span className='text-muted-foreground text-sm font-normal'>
                 FY26 Target Achieved
               </span>
             </div>
             <div className='text-muted-foreground flex items-center gap-2 leading-none font-medium'>
-              ₹{businessExcellenceData.achievedYTD} Cr of ₹
+              ₹{currentCumulativeTotal.toFixed(1)} Cr of ₹
               {businessExcellenceData.fy26Target} Cr
               <IconTarget className='h-4 w-4' />
             </div>
@@ -509,17 +538,23 @@ export function BusinessExcellenceChart() {
 
           <div className='text-right'>
             <div className='text-lg font-semibold text-amber-600'>
-              ₹{requiredRate} Cr
+              ₹
+              {(
+                businessExcellenceData.fy26Target - currentCumulativeTotal
+              ).toFixed(1)}{' '}
+              Cr
             </div>
             <div className='text-muted-foreground text-xs'>
-              Required Monthly Rate
+              Remaining to Target
             </div>
           </div>
 
           <div className='text-right'>
-            <div className='text-lg font-semibold'>₹{avgMonthlySavings} Cr</div>
+            <div className='text-lg font-semibold'>
+              ₹{avgCumulativeSavings} Cr
+            </div>
             <div className='text-muted-foreground text-xs'>
-              Current Avg Monthly
+              Avg per Business Unit
             </div>
           </div>
         </div>
@@ -528,23 +563,32 @@ export function BusinessExcellenceChart() {
         <div className='w-full'>
           <div className='mb-2 flex items-center justify-between'>
             <span className='text-muted-foreground text-xs font-medium'>
-              Progress to FY26 Target
+              Cumulative Progress to FY26 Target
             </span>
             <span className='text-xs font-semibold'>
-              {targetAchievementPercentage}%
+              {(
+                (currentCumulativeTotal / businessExcellenceData.fy26Target) *
+                100
+              ).toFixed(1)}
+              %
             </span>
           </div>
           <div className='h-2 w-full rounded-full bg-slate-200'>
             <div
               className={`h-full rounded-full transition-all duration-500 ${
-                parseFloat(targetAchievementPercentage) >= 75
+                (currentCumulativeTotal / businessExcellenceData.fy26Target) *
+                  100 >=
+                75
                   ? 'bg-green-500'
-                  : parseFloat(targetAchievementPercentage) >= 50
+                  : (currentCumulativeTotal /
+                        businessExcellenceData.fy26Target) *
+                        100 >=
+                      50
                     ? 'bg-yellow-500'
                     : 'bg-red-500'
               }`}
               style={{
-                width: `${Math.min(parseFloat(targetAchievementPercentage), 100)}%`
+                width: `${Math.min((currentCumulativeTotal / businessExcellenceData.fy26Target) * 100, 100)}%`
               }}
             />
           </div>

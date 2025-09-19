@@ -295,14 +295,14 @@ export function ProjectVelocityChart() {
   // Enhanced data with calculated metrics
   const enhancedData = dynamicProjectData.map((stage) => {
     const totalProjects = stage.activeProjects || 1; // Avoid division by zero
-    const healthyProjects =
+    const onTrackProjects =
       stage.activeProjects -
       stage.pendingApprovalProjects -
       stage.delayedProjects;
 
     // Calculate value segments based on project proportions
-    const healthyValue =
-      (healthyProjects / totalProjects) * (stage.stageValue || 0);
+    const onTrackValue =
+      (onTrackProjects / totalProjects) * (stage.stageValue || 0);
     const pendingValue =
       (stage.pendingApprovalProjects / totalProjects) * (stage.stageValue || 0);
     const delayedValue =
@@ -310,8 +310,8 @@ export function ProjectVelocityChart() {
 
     return {
       ...stage,
-      healthyProjects,
-      healthyValue: Math.max(0, healthyValue),
+      onTrackProjects,
+      onTrackValue: Math.max(0, onTrackValue),
       pendingValue: Math.max(0, pendingValue),
       delayedValue: Math.max(0, delayedValue),
       isDelayed: stage.avgCycleTime > stage.targetCycleTime,
@@ -333,8 +333,8 @@ export function ProjectVelocityChart() {
       enhancedData.length
   );
 
-  const healthyProjectsCount = enhancedData.reduce(
-    (sum, stage) => sum + stage.healthyProjects,
+  const onTrackProjectsCount = enhancedData.reduce(
+    (sum, stage) => sum + stage.onTrackProjects,
     0
   );
 
@@ -357,14 +357,14 @@ export function ProjectVelocityChart() {
         targetCycleTime: number;
         pendingApprovalProjects: number;
         delayedProjects: number;
-        healthyProjects: number;
+        onTrackProjects: number;
         delayPercentage: number;
         stageEfficiency: number;
         stageValue?: number;
         monthlyValue?: number;
         lastMonthImplemented?: number;
         actuarialValue?: number;
-        healthyValue?: number;
+        onTrackValue?: number;
         pendingValue?: number;
         delayedValue?: number;
       };
@@ -416,10 +416,10 @@ export function ProjectVelocityChart() {
             <hr className='my-2' />
 
             <div className='flex justify-between gap-4'>
-              <span className='text-muted-foreground'>Healthy:</span>
+              <span className='text-muted-foreground'>On Track:</span>
               <span className='font-medium text-green-600'>
-                {data.healthyProjects} projects (₹
-                {(data.healthyValue || 0).toFixed(1)} CR)
+                {data.onTrackProjects} projects (₹
+                {(data.onTrackValue || 0).toFixed(1)} CR)
               </span>
             </div>
             <div className='flex justify-between gap-4'>
@@ -560,20 +560,20 @@ export function ProjectVelocityChart() {
                     fill: 'hsl(var(--muted-foreground))'
                   }
                 }}
-                domain={[0, 'dataMax + 20']}
-                tickCount={6}
+                domain={[0, 'dataMax + 2']}
+                tickCount={5}
               />
               <Tooltip content={<CustomTooltip />} />
 
               <Bar
-                dataKey='healthyValue'
+                dataKey='onTrackValue'
                 stackId='a'
                 fill='#22c55e'
-                name='Healthy Value'
+                name='On Track Value'
                 radius={[0, 0, 0, 0]}
               >
                 <LabelList
-                  dataKey='healthyValue'
+                  dataKey='onTrackValue'
                   position='center'
                   fontSize={10}
                   fill='white'
@@ -627,9 +627,9 @@ export function ProjectVelocityChart() {
             <div className='flex items-center gap-6'>
               <div className='text-center'>
                 <div className='text-lg font-bold text-green-600'>
-                  {healthyProjectsCount}
+                  {onTrackProjectsCount}
                 </div>
-                <div className='text-muted-foreground text-xs'>Healthy</div>
+                <div className='text-muted-foreground text-xs'>On Track</div>
               </div>
               <div className='text-center'>
                 <div className='text-lg font-bold text-yellow-600'>

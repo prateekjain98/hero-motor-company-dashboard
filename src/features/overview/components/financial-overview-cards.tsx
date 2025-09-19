@@ -195,7 +195,7 @@ export function FinancialOverviewCards() {
             <div className='mt-3 flex h-12 items-center justify-between border-t pt-3'>
               <div className='flex items-center gap-1'>
                 <span className='text-muted-foreground text-[11px]'>
-                  Run Rate
+                  Required for Target
                 </span>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -203,15 +203,15 @@ export function FinancialOverviewCards() {
                   </TooltipTrigger>
                   <TooltipContent side='top' className='max-w-xs'>
                     <p className='text-xs'>
-                      Current monthly pace of achievement. Calculated as YTD
-                      achievement ÷ months elapsed. Helps predict if you&apos;re
-                      on track to meet annual targets at this rate.
+                      Amount still needed to achieve the annual target.
+                      Calculated as FY26 Target - Achieved YTD. This is what the
+                      pipeline opportunities should cover.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
               <span className='text-xs font-semibold'>
-                ₹{monthlyRunRate} CR/mo
+                ₹{data.remainingTarget.toFixed(1)} CR
               </span>
             </div>
           </div>
@@ -339,7 +339,7 @@ export function FinancialOverviewCards() {
             <div className='mt-3 flex h-12 items-center justify-between border-t pt-3'>
               <div className='flex items-center gap-1'>
                 <span className='text-muted-foreground text-[11px]'>
-                  Required for Target
+                  Run Rate
                 </span>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -347,15 +347,15 @@ export function FinancialOverviewCards() {
                   </TooltipTrigger>
                   <TooltipContent side='top' className='max-w-xs'>
                     <p className='text-xs'>
-                      Amount still needed to achieve the annual target.
-                      Calculated as FY26 Target - Achieved YTD. This is what the
-                      pipeline opportunities should cover.
+                      Current monthly pace of achievement. Calculated as YTD
+                      achievement ÷ months elapsed. Helps predict if you&apos;re
+                      on track to meet annual targets at this rate.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
               <span className='text-xs font-semibold'>
-                ₹{data.remainingTarget.toFixed(1)} CR
+                ₹{monthlyRunRate} CR/mo
               </span>
             </div>
           </div>

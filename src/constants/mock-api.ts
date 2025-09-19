@@ -1372,28 +1372,28 @@ export const businessExcellenceData = {
       {
         month: 'Apr 2025',
         'hero-cycles': {
-          achieved: 2.8,
+          achieved: 1.8, // Slow start - post-annual planning
           target: 3.5,
           projectsInPipeline: 10,
           projectsDelivered: 12,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 4.2,
+          achieved: 3.1, // Below target - supply chain challenges
           target: 5.4,
           projectsInPipeline: 15,
           projectsDelivered: 18,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 2.1,
+          achieved: 2.9, // Strong start - digital initiatives
           target: 2.4,
           projectsInPipeline: 5,
           projectsDelivered: 7,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.4,
+          achieved: 0.8, // Underperformance - operational issues
           target: 1.7,
           projectsInPipeline: 3,
           projectsDelivered: 5,
@@ -1403,28 +1403,28 @@ export const businessExcellenceData = {
       {
         month: 'May 2025',
         'hero-cycles': {
-          achieved: 3.1,
+          achieved: 4.2, // Recovery momentum
           target: 3.5,
           projectsInPipeline: 9,
           projectsDelivered: 13,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 4.8,
+          achieved: 6.8, // Exceptional month - major supply chain improvements
           target: 5.4,
           projectsInPipeline: 13,
           projectsDelivered: 19,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 2.3,
+          achieved: 1.1, // Dip due to system implementation
           target: 2.4,
           projectsInPipeline: 4,
           projectsDelivered: 8,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.6,
+          achieved: 2.3, // Strong recovery
           target: 1.7,
           projectsInPipeline: 2,
           projectsDelivered: 6,
@@ -1434,28 +1434,28 @@ export const businessExcellenceData = {
       {
         month: 'Jun 2025',
         'hero-cycles': {
-          achieved: 2.9,
+          achieved: 2.1, // Market slowdown impact
           target: 3.5,
           projectsInPipeline: 8,
           projectsDelivered: 14,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 4.5,
+          achieved: 2.8, // Normalization after exceptional May
           target: 5.4,
           projectsInPipeline: 12,
           projectsDelivered: 20,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 2.2,
+          achieved: 3.6, // System implementations paying off
           target: 2.4,
           projectsInPipeline: 3,
           projectsDelivered: 9,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.5,
+          achieved: 1.0, // Temporary setback
           target: 1.7,
           projectsInPipeline: 2,
           projectsDelivered: 7,
@@ -1465,28 +1465,28 @@ export const businessExcellenceData = {
       {
         month: 'Jul 2025',
         'hero-cycles': {
-          achieved: 3.4,
+          achieved: 5.2, // Peak season performance
           target: 3.5,
           projectsInPipeline: 7,
           projectsDelivered: 15,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 5.1,
+          achieved: 7.6, // Outstanding performance - new efficiency programs
           target: 5.4,
           projectsInPipeline: 10,
           projectsDelivered: 22,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 2.4,
+          achieved: 1.8, // Maintenance downtime impact
           target: 2.4,
           projectsInPipeline: 2,
           projectsDelivered: 10,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.7,
+          achieved: 2.6, // Excellent month - waste reduction initiatives
           target: 1.7,
           projectsInPipeline: 1,
           projectsDelivered: 8,
@@ -1496,28 +1496,28 @@ export const businessExcellenceData = {
       {
         month: 'Aug 2025',
         'hero-cycles': {
-          achieved: 2.6,
+          achieved: -0.4, // Negative adjustment due to previous over-estimation
           target: 3.5,
           projectsInPipeline: 6,
           projectsDelivered: 14,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 4.3,
+          achieved: 3.9, // Cooling off after July peak
           target: 5.4,
           projectsInPipeline: 11,
           projectsDelivered: 21,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 1.9,
+          achieved: 4.1, // Major digital transformation milestone
           target: 2.4,
           projectsInPipeline: 3,
           projectsDelivered: 9,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.2,
+          achieved: 0.3, // Challenging month
           target: 1.7,
           projectsInPipeline: 2,
           projectsDelivered: 7,
@@ -1527,28 +1527,28 @@ export const businessExcellenceData = {
       {
         month: 'Sep 2025',
         'hero-cycles': {
-          achieved: 3.2,
+          achieved: 6.1, // Strong recovery and festival season prep
           target: 3.5,
           projectsInPipeline: 5,
           projectsDelivered: 16,
           savingsCategories: ['Process Optimization', 'Energy Efficiency']
         },
         'hero-motors': {
-          achieved: 4.9,
+          achieved: 5.8, // Solid performance - consistent operations
           target: 5.4,
           projectsInPipeline: 9,
           projectsDelivered: 23,
           savingsCategories: ['Supply Chain', 'Manufacturing Efficiency']
         },
         'hmc-hive': {
-          achieved: 2.1,
+          achieved: 2.7, // Steady performance
           target: 2.4,
           projectsInPipeline: 2,
           projectsDelivered: 11,
           savingsCategories: ['Digital Transformation', 'Automation']
         },
         munjal: {
-          achieved: 1.4,
+          achieved: 3.2, // Exceptional turnaround
           target: 1.7,
           projectsInPipeline: 1,
           projectsDelivered: 8,
@@ -1589,7 +1589,7 @@ export const businessExcellenceData = {
         }
       },
       {
-        month: 'Nov 2023',
+        month: 'Nov 2024',
         'hero-cycles': {
           achieved: 2.7,
           target: 3.5,
