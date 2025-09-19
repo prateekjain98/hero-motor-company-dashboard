@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  Legend
+  Legend,
+  ReferenceLine
 } from 'recharts';
 import {
   Card,
@@ -18,6 +19,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { resourceEfficiencyData } from '@/constants/business-excellence-data';
 import { businessExcellenceData } from '@/constants/mock-api';
 import {
@@ -35,10 +43,18 @@ export function ResourceEfficiencyChart() {
   const [selectedMetric, setSelectedMetric] = React.useState<string | null>(
     'paintConsumption'
   );
+  const [selectedFY, setSelectedFY] = React.useState<string>('Current FY');
+
+  // Get the correct dataset based on selected FY
+  const getDataForFY = () => {
+    return selectedFY === 'Current FY'
+      ? resourceEfficiencyData.currentFY
+      : resourceEfficiencyData.lastYear;
+  };
 
   // Transform data for chart display by metric type
   const transformDataForMetric = (metricType: string) => {
-    return resourceEfficiencyData.map((monthData) => {
+    return getDataForFY().map((monthData) => {
       const chartPoint: Record<string, string | number> = {
         month: monthData.month
       };
@@ -61,10 +77,9 @@ export function ResourceEfficiencyChart() {
 
   // Calculate aggregate metrics for summary cards
   const calculateAggregateMetrics = () => {
-    const latestData =
-      resourceEfficiencyData[resourceEfficiencyData.length - 1];
-    const previousData =
-      resourceEfficiencyData[resourceEfficiencyData.length - 2];
+    const currentData = getDataForFY();
+    const latestData = currentData[currentData.length - 1];
+    const previousData = currentData[currentData.length - 2];
 
     const metrics = [
       'paintConsumption',
@@ -118,8 +133,8 @@ export function ResourceEfficiencyChart() {
   // Custom tick formatter to show years properly
   const formatXAxisTick = (value: string, index: number) => {
     const [month, year] = value.split(' ');
-    const prevValue =
-      index > 0 ? resourceEfficiencyData[index - 1]?.month : null;
+    const currentData = getDataForFY();
+    const prevValue = index > 0 ? currentData[index - 1]?.month : null;
     const prevYear = prevValue ? prevValue.split(' ')[1] : null;
 
     // Show year only when it changes or for the first item
@@ -194,12 +209,24 @@ export function ResourceEfficiencyChart() {
           <div>
             <CardTitle>Resource Efficiency Metrics</CardTitle>
             <CardDescription>
-              Operational performance and sustainability indicators
+              Operational performance and sustainability indicators • Last 12
+              Months
             </CardDescription>
           </div>
           <div className='text-right'>
-            <div className='text-sm font-semibold text-blue-600'>12 months</div>
-            <div className='text-muted-foreground text-xs'>Historical Data</div>
+            <Select value={selectedFY} onValueChange={setSelectedFY}>
+              <SelectTrigger className='w-64'>
+                <SelectValue placeholder='Select Period' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='Current FY'>
+                  Current FY (Apr 25 - Sep 25)
+                </SelectItem>
+                <SelectItem value='Last Year'>
+                  Last Year (Oct 24 - Sep 25)
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardHeader>
@@ -209,8 +236,8 @@ export function ResourceEfficiencyChart() {
           {/* Instruction text */}
           <div className='mb-4 text-center'>
             <p className='text-muted-foreground text-sm'>
-              Click on any metric card below to view its 12-month trend in the
-              chart
+              Click on any metric card below to view company trends over the
+              last 12 months
             </p>
           </div>
 
@@ -383,61 +410,141 @@ export function ResourceEfficiencyChart() {
 
           {/* Dynamic Chart - Shows company comparison for selected metric */}
           {selectedMetric && (
-            <div className='mt-8 h-[320px] w-full'>
+            <div className='mt-8 h-[450px] w-full'>
               <ResponsiveContainer width='100%' height='100%'>
-                <BarChart
+                <LineChart
                   data={transformDataForMetric(selectedMetric)}
-                  margin={{ top: 5, right: 30, bottom: 60, left: 5 }}
+                  margin={{
+                    top: 20,
+                    right: 30,
+                    left: 20,
+                    bottom: 80
+                  }}
                 >
+                  <defs>
+                    {Object.entries(businessExcellenceData.businessUnits).map(
+                      ([key, company]) => (
+                        <linearGradient
+                          key={key}
+                          id={`gradient-${key}`}
+                          x1='0'
+                          y1='0'
+                          x2='0'
+                          y2='1'
+                        >
+                          <stop
+                            offset='0%'
+                            stopColor={company.color}
+                            stopOpacity={0.8}
+                          />
+                          <stop
+                            offset='100%'
+                            stopColor={company.color}
+                            stopOpacity={0.1}
+                          />
+                        </linearGradient>
+                      )
+                    )}
+                  </defs>
+
                   <CartesianGrid
                     strokeDasharray='3 3'
-                    stroke='hsl(var(--border))'
+                    className='stroke-muted/30'
+                    vertical={false}
                   />
+
                   <XAxis
                     dataKey='month'
-                    tick={{ fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
+                    tickMargin={12}
                     angle={-45}
                     textAnchor='end'
-                    height={60}
+                    height={80}
+                    className='text-xs font-medium'
+                    tick={{ fontSize: 11 }}
                     tickFormatter={formatXAxisTick}
                   />
+
                   <YAxis
-                    tick={{ fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
+                    tickMargin={12}
+                    className='text-xs font-medium'
+                    tick={{ fontSize: 11 }}
+                    domain={
+                      selectedMetric === 'paintConsumption'
+                        ? [80, 250]
+                        : selectedMetric === 'powderConsumption'
+                          ? [70, 200]
+                          : selectedMetric === 'powerCost'
+                            ? [6, 16]
+                            : [0.02, 0.09]
+                    }
+                    label={{
+                      value:
+                        selectedMetric === 'paintConsumption'
+                          ? 'Paint Consumption (ml/sqm)'
+                          : selectedMetric === 'powderConsumption'
+                            ? 'Powder Consumption (gm/sqm)'
+                            : selectedMetric === 'powerCost'
+                              ? 'Power Cost (INR/units)'
+                              : 'Gas Consumption (m³/sqm)',
+                      angle: -90,
+                      position: 'insideLeft',
+                      style: {
+                        textAnchor: 'middle',
+                        fontSize: '12px',
+                        fontWeight: 500
+                      }
+                    }}
                   />
+
                   <Tooltip content={<CustomTooltip />} />
+
                   <Legend
-                    wrapperStyle={{ paddingTop: '20px' }}
-                    iconType='rect'
+                    wrapperStyle={{ paddingTop: '24px' }}
+                    iconType='line'
                     formatter={(value) => {
                       const company =
                         businessExcellenceData.businessUnits[
                           value as keyof typeof businessExcellenceData.businessUnits
                         ];
                       return (
-                        <span style={{ color: '#374151', fontSize: '12px' }}>
+                        <span className='text-sm font-medium'>
                           {company?.name || value}
                         </span>
                       );
                     }}
                   />
 
-                  {/* Render bars for each company */}
+                  {/* Render lines for each company */}
                   {Object.entries(businessExcellenceData.businessUnits).map(
                     ([key, company]) => (
-                      <Bar
+                      <Line
                         key={key}
+                        type='monotone'
                         dataKey={key}
-                        fill={company.color}
+                        stroke={company.color}
+                        strokeWidth={3}
+                        dot={{
+                          fill: company.color,
+                          strokeWidth: 2,
+                          r: 5,
+                          className: 'drop-shadow-sm'
+                        }}
+                        activeDot={{
+                          r: 7,
+                          stroke: company.color,
+                          strokeWidth: 3,
+                          fill: '#ffffff',
+                          className: 'drop-shadow-md'
+                        }}
                         name={key}
-                        radius={[2, 2, 0, 0]}
                       />
                     )
                   )}
-                </BarChart>
+                </LineChart>
               </ResponsiveContainer>
             </div>
           )}
@@ -447,10 +554,10 @@ export function ResourceEfficiencyChart() {
             <div className='mt-8 flex h-[200px] items-center justify-center text-center'>
               <div className='space-y-2'>
                 <p className='text-muted-foreground text-lg'>
-                  Select a resource metric to view company comparison
+                  Select a resource metric to view company trends
                 </p>
                 <p className='text-muted-foreground text-sm'>
-                  Click on Paint, Powder, Power, or Gases to see performance
+                  Click on Paint, Powder, Power, or Gases to see line trends
                   across all business units
                 </p>
               </div>

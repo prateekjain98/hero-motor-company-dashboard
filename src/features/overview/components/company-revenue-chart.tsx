@@ -27,192 +27,216 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
   ChartConfig,
   ChartContainer,
   ChartTooltip
 } from '@/components/ui/chart';
 import { businessExcellenceData } from '@/constants/mock-api';
 
-// Transform data for the chart
-const transformDataForChart = () => {
-  return businessExcellenceData.monthlyData.map((monthData) => {
-    const chartPoint: Record<string, string | number> = {
-      month: monthData.month
-    };
-
-    // Add achieved cost savings for each business unit
-    Object.keys(businessExcellenceData.businessUnits).forEach((companyKey) => {
-      const companyData = monthData[companyKey as keyof typeof monthData];
-      if (typeof companyData === 'object' && companyData !== null) {
-        chartPoint[companyKey] = companyData.achieved;
-      }
-    });
-
-    return chartPoint;
-  });
-};
-
-// Create chart configuration with enhanced styling
-const createChartConfig = (): ChartConfig => {
-  const config: ChartConfig = {};
-
-  Object.entries(businessExcellenceData.businessUnits).forEach(
-    ([key, company]) => {
-      config[key] = {
-        label: company.name,
-        color: company.color
-      };
-    }
-  );
-
-  return config;
-};
-
-// Enhanced custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    const monthData = businessExcellenceData.monthlyData.find(
-      (data) => data.month === label
-    );
-
-    return (
-      <div className='bg-background/95 border-border min-w-[320px] rounded-xl border p-5 shadow-2xl backdrop-blur-sm'>
-        <div className='mb-4 flex items-center gap-2'>
-          <IconTarget className='text-primary h-4 w-4' />
-          <p className='text-foreground text-base font-semibold'>{label}</p>
-        </div>
-
-        <div className='space-y-4'>
-          {payload.map((entry: any, index: number) => {
-            const companyKey = entry.dataKey;
-            const company =
-              businessExcellenceData.businessUnits[
-                companyKey as keyof typeof businessExcellenceData.businessUnits
-              ];
-            const companyData =
-              monthData?.[companyKey as keyof typeof monthData];
-
-            if (typeof companyData === 'object' && companyData !== null) {
-              const achievementPercentage = (
-                (companyData.achieved / (company.annualTarget / 12)) *
-                100
-              ).toFixed(1);
-
-              return (
-                <div key={index} className='bg-muted/30 rounded-lg p-3'>
-                  <div className='mb-3 flex items-center gap-3'>
-                    <div
-                      className='h-4 w-4 rounded-full shadow-sm'
-                      style={{ backgroundColor: company.color }}
-                    />
-                    <span className='text-foreground text-sm font-semibold'>
-                      {company.name}
-                    </span>
-                  </div>
-
-                  <div className='grid grid-cols-2 gap-3 text-xs'>
-                    <div className='space-y-2'>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>Savings:</span>
-                        <span className='text-foreground font-semibold'>
-                          ₹{companyData.achieved} Cr
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>Target:</span>
-                        <span className='text-muted-foreground font-medium'>
-                          ₹{(company.annualTarget / 12).toFixed(1)} Cr
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>
-                          Achievement:
-                        </span>
-                        <span
-                          className={`font-semibold ${
-                            parseFloat(achievementPercentage) >= 100
-                              ? 'text-green-600'
-                              : parseFloat(achievementPercentage) >= 90
-                                ? 'text-yellow-600'
-                                : 'text-red-500'
-                          }`}
-                        >
-                          {achievementPercentage}%
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>Run Rate:</span>
-                        <span className='font-semibold text-amber-600'>
-                          ₹{((companyData.achieved * 12) / 9).toFixed(1)} Cr/yr
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className='space-y-2'>
-                      <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-1'>
-                          <IconClipboardList className='text-muted-foreground h-3 w-3' />
-                          <span className='text-muted-foreground'>
-                            Pipeline:
-                          </span>
-                        </div>
-                        <span className='font-semibold text-blue-600'>
-                          {companyData.projectsInPipeline} projects
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-1'>
-                          <IconBuilding className='text-muted-foreground h-3 w-3' />
-                          <span className='text-muted-foreground'>
-                            Delivered:
-                          </span>
-                        </div>
-                        <span className='font-semibold text-green-600'>
-                          {companyData.projectsDelivered} projects
-                        </span>
-                      </div>
-                      <div className='flex items-center justify-between'>
-                        <span className='text-muted-foreground'>Variance:</span>
-                        <span
-                          className={`font-semibold ${
-                            companyData.achieved >= company.annualTarget / 12
-                              ? 'text-green-600'
-                              : 'text-red-600'
-                          }`}
-                        >
-                          {companyData.achieved >= company.annualTarget / 12
-                            ? '+'
-                            : ''}
-                          {(
-                            companyData.achieved -
-                            company.annualTarget / 12
-                          ).toFixed(1)}{' '}
-                          Cr
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-            return null;
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
 export function BusinessExcellenceChart() {
+  const [selectedFY, setSelectedFY] = React.useState<string>('Current FY');
+
+  // Get the correct dataset based on selected FY
+  const getDataForFY = () => {
+    return selectedFY === 'Current FY'
+      ? businessExcellenceData.monthlyData.currentFY
+      : businessExcellenceData.monthlyData.lastYear;
+  };
+
+  // Transform data for the chart
+  const transformDataForChart = () => {
+    return getDataForFY().map((monthData) => {
+      const chartPoint: Record<string, string | number> = {
+        month: monthData.month
+      };
+
+      // Add achieved cost savings for each business unit
+      Object.keys(businessExcellenceData.businessUnits).forEach(
+        (companyKey) => {
+          const companyData = monthData[companyKey as keyof typeof monthData];
+          if (typeof companyData === 'object' && companyData !== null) {
+            chartPoint[companyKey] = companyData.achieved;
+          }
+        }
+      );
+
+      return chartPoint;
+    });
+  };
+
+  // Create chart configuration with enhanced styling
+  const createChartConfig = (): ChartConfig => {
+    const config: ChartConfig = {};
+
+    Object.entries(businessExcellenceData.businessUnits).forEach(
+      ([key, company]) => {
+        config[key] = {
+          label: company.name,
+          color: company.color
+        };
+      }
+    );
+
+    return config;
+  };
+
+  // Enhanced custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const monthData = getDataForFY().find((data) => data.month === label);
+
+      return (
+        <div className='bg-background/95 border-border min-w-[320px] rounded-xl border p-5 shadow-2xl backdrop-blur-sm'>
+          <div className='mb-4 flex items-center gap-2'>
+            <IconTarget className='text-primary h-4 w-4' />
+            <p className='text-foreground text-base font-semibold'>{label}</p>
+          </div>
+
+          <div className='space-y-4'>
+            {payload.map((entry: any, index: number) => {
+              const companyKey = entry.dataKey;
+              const company =
+                businessExcellenceData.businessUnits[
+                  companyKey as keyof typeof businessExcellenceData.businessUnits
+                ];
+              const companyData =
+                monthData?.[companyKey as keyof typeof monthData];
+
+              if (typeof companyData === 'object' && companyData !== null) {
+                const achievementPercentage = (
+                  (companyData.achieved / (company.annualTarget / 12)) *
+                  100
+                ).toFixed(1);
+
+                return (
+                  <div key={index} className='bg-muted/30 rounded-lg p-3'>
+                    <div className='mb-3 flex items-center gap-3'>
+                      <div
+                        className='h-4 w-4 rounded-full shadow-sm'
+                        style={{ backgroundColor: company.color }}
+                      />
+                      <span className='text-foreground text-sm font-semibold'>
+                        {company.name}
+                      </span>
+                    </div>
+
+                    <div className='grid grid-cols-2 gap-3 text-xs'>
+                      <div className='space-y-2'>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Savings:
+                          </span>
+                          <span className='text-foreground font-semibold'>
+                            ₹{companyData.achieved} Cr
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>Target:</span>
+                          <span className='text-muted-foreground font-medium'>
+                            ₹{(company.annualTarget / 12).toFixed(1)} Cr
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Achievement:
+                          </span>
+                          <span
+                            className={`font-semibold ${
+                              parseFloat(achievementPercentage) >= 100
+                                ? 'text-green-600'
+                                : parseFloat(achievementPercentage) >= 90
+                                  ? 'text-yellow-600'
+                                  : 'text-red-500'
+                            }`}
+                          >
+                            {achievementPercentage}%
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Run Rate:
+                          </span>
+                          <span className='font-semibold text-amber-600'>
+                            ₹{((companyData.achieved * 12) / 9).toFixed(1)}{' '}
+                            Cr/yr
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className='space-y-2'>
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center gap-1'>
+                            <IconClipboardList className='text-muted-foreground h-3 w-3' />
+                            <span className='text-muted-foreground'>
+                              Pipeline:
+                            </span>
+                          </div>
+                          <span className='font-semibold text-blue-600'>
+                            {companyData.projectsInPipeline} projects
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center gap-1'>
+                            <IconBuilding className='text-muted-foreground h-3 w-3' />
+                            <span className='text-muted-foreground'>
+                              Delivered:
+                            </span>
+                          </div>
+                          <span className='font-semibold text-green-600'>
+                            {companyData.projectsDelivered} projects
+                          </span>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground'>
+                            Variance:
+                          </span>
+                          <span
+                            className={`font-semibold ${
+                              companyData.achieved >= company.annualTarget / 12
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                          >
+                            {companyData.achieved >= company.annualTarget / 12
+                              ? '+'
+                              : ''}
+                            {(
+                              companyData.achieved -
+                              company.annualTarget / 12
+                            ).toFixed(1)}{' '}
+                            Cr
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const chartData = transformDataForChart();
   const chartConfig = createChartConfig();
 
   // Custom tick formatter to show years properly
   const formatXAxisTick = (value: string, index: number) => {
     const [month, year] = value.split(' ');
-    const prevValue = index > 0 ? chartData[index - 1]?.month : null;
+    const currentData = getDataForFY();
+    const prevValue = index > 0 ? currentData[index - 1]?.month : null;
     const prevYear = prevValue ? prevValue.toString().split(' ')[1] : null;
 
     // Show year only when it changes or for the first item
@@ -251,16 +275,35 @@ export function BusinessExcellenceChart() {
   return (
     <Card className='h-full'>
       <CardHeader className='pb-6'>
-        <CardTitle className='flex items-center gap-3 text-xl'>
-          <div className='bg-primary/10 rounded-lg p-2'>
-            <IconTrendingUp className='text-primary h-6 w-6' />
+        <div className='flex items-start justify-between'>
+          <div>
+            <CardTitle className='flex items-center gap-3 text-xl'>
+              <div className='bg-primary/10 rounded-lg p-2'>
+                <IconTrendingUp className='text-primary h-6 w-6' />
+              </div>
+              Business Excellence Performance
+            </CardTitle>
+            <CardDescription className='text-muted-foreground text-base'>
+              Monthly cost savings achievement across all business units •
+              Target: ₹{businessExcellenceData.fy26Target} Cr
+            </CardDescription>
           </div>
-          Business Excellence Performance
-        </CardTitle>
-        <CardDescription className='text-muted-foreground text-base'>
-          Monthly cost savings achievement across all business units • Last 12
-          Months Target: ₹{businessExcellenceData.fy26Target} Cr
-        </CardDescription>
+          <div className='text-right'>
+            <Select value={selectedFY} onValueChange={setSelectedFY}>
+              <SelectTrigger className='w-64'>
+                <SelectValue placeholder='Select Period' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='Current FY'>
+                  Current FY (Apr 25 - Sep 25)
+                </SelectItem>
+                <SelectItem value='Last Year'>
+                  Last Year (Oct 24 - Sep 25)
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent className='px-6 pt-2'>

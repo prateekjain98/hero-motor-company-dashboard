@@ -80,13 +80,14 @@ export function ProjectVelocityChart() {
   // Generate stage distribution based on companyPerformanceData for consistency
   const getRealisticStageData = () => {
     if (selectedCompany === 'all') {
-      // Sum active projects from companyPerformanceData by stage (L0-L4 only)
+      // Sum projects from companyPerformanceData by stage (including L5)
       const stageTotals = {
         L0: 0,
         L1: 0,
         L2: 0,
         L3: 0,
-        L4: 0
+        L4: 0,
+        L5: 0
       };
 
       companyPerformanceData.forEach((company) => {
@@ -95,39 +96,58 @@ export function ProjectVelocityChart() {
         stageTotals.L2 += company.l2;
         stageTotals.L3 += company.l3;
         stageTotals.L4 += company.l4;
-        // Exclude L5 (completed projects) from active pipeline
+        stageTotals.L5 += company.l5; // Include L5 (Actuarial stage)
       });
 
+      // Total pipeline value: 12.5 + 15.2 + 18.7 + 14.8 + 11.3 + 6.3 = 78.8 CR
+      // This aligns with financialOverviewData: 156.8 CR target - 78 CR achieved = 78.8 CR remaining
       return [
         {
           stage: 'L0',
           activeProjects: stageTotals.L0,
           pendingApprovalProjects: Math.floor(stageTotals.L0 * 0.08),
-          delayedProjects: Math.floor(stageTotals.L0 * 0.05)
+          delayedProjects: Math.floor(stageTotals.L0 * 0.05),
+          stageValue: 12.5 // Early pipeline - concept stage (aligns with financialOverviewData)
         },
         {
           stage: 'L1',
           activeProjects: stageTotals.L1,
           pendingApprovalProjects: Math.floor(stageTotals.L1 * 0.12),
-          delayedProjects: Math.floor(stageTotals.L1 * 0.08)
+          delayedProjects: Math.floor(stageTotals.L1 * 0.08),
+          stageValue: 15.2 // Planning stage pipeline (aligns with financialOverviewData)
         },
         {
           stage: 'L2',
           activeProjects: stageTotals.L2,
           pendingApprovalProjects: Math.floor(stageTotals.L2 * 0.15),
-          delayedProjects: Math.floor(stageTotals.L2 * 0.1)
+          delayedProjects: Math.floor(stageTotals.L2 * 0.1),
+          stageValue: 18.7 // Development stage pipeline (aligns with financialOverviewData)
         },
         {
           stage: 'L3',
           activeProjects: stageTotals.L3,
           pendingApprovalProjects: Math.floor(stageTotals.L3 * 0.1),
-          delayedProjects: Math.floor(stageTotals.L3 * 0.12)
+          delayedProjects: Math.floor(stageTotals.L3 * 0.12),
+          stageValue: 14.8, // Implementation stage pipeline (aligns with financialOverviewData)
+          monthlyValue: 8.7
         },
         {
           stage: 'L4',
           activeProjects: stageTotals.L4,
           pendingApprovalProjects: Math.floor(stageTotals.L4 * 0.08),
-          delayedProjects: Math.floor(stageTotals.L4 * 0.15)
+          delayedProjects: Math.floor(stageTotals.L4 * 0.15),
+          stageValue: 11.3, // Implemented stage pipeline (aligns with financialOverviewData)
+          monthlyValue: 15.3,
+          lastMonthImplemented: 15.3
+        },
+        {
+          stage: 'L5',
+          activeProjects: stageTotals.L5,
+          pendingApprovalProjects: 0,
+          delayedProjects: 0,
+          stageValue: 6.3, // Actuarial stage - completed projects (aligns with financialOverviewData)
+          monthlyValue: 22.1,
+          actuarialValue: 22.1
         }
       ];
     } else {
@@ -140,36 +160,69 @@ export function ProjectVelocityChart() {
 
       if (!companyData) return [];
 
+      // Company-specific financial targets (proportional to their size from financialOverviewData)
+      const companyMultipliers = {
+        'hero-motors': {
+          factor: 0.57,
+          monthly: { l3: 4.9, l4: 8.7, l5: 12.6 }
+        }, // ~57% of total (90/156.8)
+        'hero-cycles': { factor: 0.26, monthly: { l3: 2.3, l4: 3.9, l5: 5.7 } }, // ~26% of total (40/156.8)
+        'hmc-hive': { factor: 0.1, monthly: { l3: 0.9, l4: 1.5, l5: 2.2 } }, // ~10% of total (16/156.8)
+        munjal: { factor: 0.07, monthly: { l3: 0.6, l4: 1.2, l5: 1.6 } } // ~7% of total (10.8/156.8)
+      };
+
+      const multiplier =
+        companyMultipliers[
+          selectedCompany as keyof typeof companyMultipliers
+        ] || companyMultipliers['hero-motors'];
+
       return [
         {
           stage: 'L0',
           activeProjects: companyData.l0,
           pendingApprovalProjects: Math.floor(companyData.l0 * 0.08),
-          delayedProjects: Math.floor(companyData.l0 * 0.05)
+          delayedProjects: Math.floor(companyData.l0 * 0.05),
+          stageValue: 12.5 * multiplier.factor // Proportional to company size
         },
         {
           stage: 'L1',
           activeProjects: companyData.l1,
           pendingApprovalProjects: Math.floor(companyData.l1 * 0.12),
-          delayedProjects: Math.floor(companyData.l1 * 0.08)
+          delayedProjects: Math.floor(companyData.l1 * 0.08),
+          stageValue: 15.2 * multiplier.factor // Proportional to company size
         },
         {
           stage: 'L2',
           activeProjects: companyData.l2,
           pendingApprovalProjects: Math.floor(companyData.l2 * 0.15),
-          delayedProjects: Math.floor(companyData.l2 * 0.1)
+          delayedProjects: Math.floor(companyData.l2 * 0.1),
+          stageValue: 18.7 * multiplier.factor // Proportional to company size
         },
         {
           stage: 'L3',
           activeProjects: companyData.l3,
           pendingApprovalProjects: Math.floor(companyData.l3 * 0.1),
-          delayedProjects: Math.floor(companyData.l3 * 0.12)
+          delayedProjects: Math.floor(companyData.l3 * 0.12),
+          stageValue: 14.8 * multiplier.factor, // Proportional to company size
+          monthlyValue: multiplier.monthly.l3
         },
         {
           stage: 'L4',
           activeProjects: companyData.l4,
           pendingApprovalProjects: Math.floor(companyData.l4 * 0.08),
-          delayedProjects: Math.floor(companyData.l4 * 0.15)
+          delayedProjects: Math.floor(companyData.l4 * 0.15),
+          stageValue: 11.3 * multiplier.factor, // Proportional to company size
+          monthlyValue: multiplier.monthly.l4,
+          lastMonthImplemented: multiplier.monthly.l4
+        },
+        {
+          stage: 'L5',
+          activeProjects: companyData.l5,
+          pendingApprovalProjects: 0,
+          delayedProjects: 0,
+          stageValue: 6.3 * multiplier.factor, // Proportional to company size
+          monthlyValue: multiplier.monthly.l5,
+          actuarialValue: multiplier.monthly.l5
         }
       ];
     }
@@ -185,7 +238,11 @@ export function ProjectVelocityChart() {
       ...stageData,
       activeProjects: stageInfo?.activeProjects || 0,
       pendingApprovalProjects: stageInfo?.pendingApprovalProjects || 0,
-      delayedProjects: stageInfo?.delayedProjects || 0
+      delayedProjects: stageInfo?.delayedProjects || 0,
+      stageValue: stageInfo?.stageValue || 0,
+      monthlyValue: stageInfo?.monthlyValue,
+      lastMonthImplemented: stageInfo?.lastMonthImplemented,
+      actuarialValue: stageInfo?.actuarialValue
     };
   });
 
@@ -202,24 +259,73 @@ export function ProjectVelocityChart() {
     0
   );
 
+  // Calculate meaningful executive metrics
+  const totalPipelineValue = dynamicProjectData.reduce(
+    (sum, stage) => sum + (stage.stageValue || 0),
+    0
+  );
+
+  // Find bottleneck stage (highest pending approval ratio)
+  const bottleneckStage = dynamicProjectData.reduce((worst, current) => {
+    const currentRatio =
+      current.activeProjects > 0
+        ? current.pendingApprovalProjects / current.activeProjects
+        : 0;
+    const worstRatio =
+      worst.activeProjects > 0
+        ? worst.pendingApprovalProjects / worst.activeProjects
+        : 0;
+    return currentRatio > worstRatio ? current : worst;
+  }, dynamicProjectData[0]);
+
+  // Calculate pipeline efficiency (projects on track vs total)
+  const totalActiveWithPending = dynamicProjectData.reduce(
+    (sum, stage) => sum + stage.activeProjects + stage.pendingApprovalProjects,
+    0
+  );
+  const pipelineEfficiency =
+    totalActiveWithPending > 0
+      ? Math.round(
+          ((totalActiveWithPending - pendingApprovalProjects) /
+            totalActiveWithPending) *
+            100
+        )
+      : 0;
+
   // Enhanced data with calculated metrics
-  const enhancedData = dynamicProjectData.map((stage) => ({
-    ...stage,
-    healthyProjects:
+  const enhancedData = dynamicProjectData.map((stage) => {
+    const totalProjects = stage.activeProjects || 1; // Avoid division by zero
+    const healthyProjects =
       stage.activeProjects -
       stage.pendingApprovalProjects -
-      stage.delayedProjects,
-    isDelayed: stage.avgCycleTime > stage.targetCycleTime,
-    delayPercentage:
-      stage.avgCycleTime > stage.targetCycleTime
-        ? Math.round(
-            ((stage.avgCycleTime - stage.targetCycleTime) /
-              stage.targetCycleTime) *
-              100
-          )
-        : 0,
-    efficiency: stage.stageEfficiency
-  }));
+      stage.delayedProjects;
+
+    // Calculate value segments based on project proportions
+    const healthyValue =
+      (healthyProjects / totalProjects) * (stage.stageValue || 0);
+    const pendingValue =
+      (stage.pendingApprovalProjects / totalProjects) * (stage.stageValue || 0);
+    const delayedValue =
+      (stage.delayedProjects / totalProjects) * (stage.stageValue || 0);
+
+    return {
+      ...stage,
+      healthyProjects,
+      healthyValue: Math.max(0, healthyValue),
+      pendingValue: Math.max(0, pendingValue),
+      delayedValue: Math.max(0, delayedValue),
+      isDelayed: stage.avgCycleTime > stage.targetCycleTime,
+      delayPercentage:
+        stage.avgCycleTime > stage.targetCycleTime
+          ? Math.round(
+              ((stage.avgCycleTime - stage.targetCycleTime) /
+                stage.targetCycleTime) *
+                100
+            )
+          : 0,
+      efficiency: stage.stageEfficiency
+    };
+  });
 
   // Calculate overall metrics
   const overallEfficiency = Math.round(
@@ -254,6 +360,13 @@ export function ProjectVelocityChart() {
         healthyProjects: number;
         delayPercentage: number;
         stageEfficiency: number;
+        stageValue?: number;
+        monthlyValue?: number;
+        lastMonthImplemented?: number;
+        actuarialValue?: number;
+        healthyValue?: number;
+        pendingValue?: number;
+        delayedValue?: number;
       };
     }>;
     label?: string;
@@ -269,22 +382,58 @@ export function ProjectVelocityChart() {
             </p>
           </div>
           <div className='space-y-1 text-xs'>
+            {/* Stage Value - Always show */}
+            {data.stageValue && (
+              <div className='flex justify-between gap-4'>
+                <span className='text-muted-foreground'>Stage Value:</span>
+                <span className='font-medium text-blue-600'>
+                  ₹{data.stageValue.toFixed(1)} CR
+                </span>
+              </div>
+            )}
+
+            {/* Special information for L4 and L5 */}
+            {data.stage === 'L4' && data.lastMonthImplemented && (
+              <div className='flex justify-between gap-4'>
+                <span className='text-muted-foreground'>
+                  Last Month Implemented:
+                </span>
+                <span className='font-medium text-green-600'>
+                  ₹{data.lastMonthImplemented} CR
+                </span>
+              </div>
+            )}
+
+            {data.stage === 'L5' && data.actuarialValue && (
+              <div className='flex justify-between gap-4'>
+                <span className='text-muted-foreground'>Actuarial Value:</span>
+                <span className='font-medium text-purple-600'>
+                  ₹{data.actuarialValue} CR
+                </span>
+              </div>
+            )}
+
+            <hr className='my-2' />
+
             <div className='flex justify-between gap-4'>
-              <span className='text-muted-foreground'>Healthy Projects:</span>
+              <span className='text-muted-foreground'>Healthy:</span>
               <span className='font-medium text-green-600'>
-                {data.healthyProjects}
+                {data.healthyProjects} projects (₹
+                {(data.healthyValue || 0).toFixed(1)} CR)
               </span>
             </div>
             <div className='flex justify-between gap-4'>
-              <span className='text-muted-foreground'>Pending Approval:</span>
+              <span className='text-muted-foreground'>Pending:</span>
               <span className='font-medium text-yellow-600'>
-                {data.pendingApprovalProjects}
+                {data.pendingApprovalProjects} projects (₹
+                {(data.pendingValue || 0).toFixed(1)} CR)
               </span>
             </div>
             <div className='flex justify-between gap-4'>
-              <span className='text-muted-foreground'>Delayed Projects:</span>
+              <span className='text-muted-foreground'>Delayed:</span>
               <span className='font-medium text-red-600'>
-                {data.delayedProjects}
+                {data.delayedProjects} projects (₹
+                {(data.delayedValue || 0).toFixed(1)} CR)
               </span>
             </div>
             <hr className='my-2' />
@@ -328,7 +477,7 @@ export function ProjectVelocityChart() {
             <div className='flex items-center justify-between'>
               <CardTitle className='flex items-center gap-2 text-base'>
                 <ChevronRight className='h-4 w-4 text-gray-600' />
-                Active Project Pipeline (L0-L4)
+                Project Pipeline (L0-L5)
               </CardTitle>
               <Select
                 value={selectedCompany}
@@ -348,32 +497,34 @@ export function ProjectVelocityChart() {
                 </SelectContent>
               </Select>
             </div>
+            <CardDescription className='mt-1 text-xs'>
+              Stage progression from concept to launch • {totalProjects}{' '}
+              projects in pipeline
+            </CardDescription>
             <div className='mt-3 flex gap-2'>
               <Badge
                 variant='outline'
-                className='bg-blue-50 dark:bg-blue-950/20'
+                className='bg-indigo-50 dark:bg-indigo-950/20'
               >
-                <Activity className='mr-1 h-3 w-3 text-blue-600' />
-                {totalProjects} In Pipeline
+                <TrendingUp className='mr-1 h-3 w-3 text-indigo-600' />₹
+                {totalPipelineValue.toFixed(1)} Cr Value
               </Badge>
               {pendingApprovalProjects > 0 && (
                 <Badge
                   variant='outline'
-                  className='bg-yellow-50 dark:bg-yellow-950/20'
+                  className='bg-amber-50 dark:bg-amber-950/20'
                 >
-                  <HourglassIcon className='mr-1 h-3 w-3 text-yellow-600' />
-                  {pendingApprovalProjects} Pending
+                  <HourglassIcon className='mr-1 h-3 w-3 text-amber-600' />
+                  {bottleneckStage?.stage || 'L2'} Bottleneck
                 </Badge>
               )}
-              {delayedProjects > 0 && (
-                <Badge
-                  variant='outline'
-                  className='bg-red-50 dark:bg-red-950/20'
-                >
-                  <AlertCircle className='mr-1 h-3 w-3 text-red-600' />
-                  {delayedProjects} Delayed
-                </Badge>
-              )}
+              <Badge
+                variant='outline'
+                className='bg-emerald-50 dark:bg-emerald-950/20'
+              >
+                <Activity className='mr-1 h-3 w-3 text-emerald-600' />
+                {pipelineEfficiency}% Efficiency
+              </Badge>
             </div>
           </div>
         </div>
@@ -398,30 +549,73 @@ export function ProjectVelocityChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tickFormatter={(value) => `₹${value.toFixed(0)}`}
+                label={{
+                  value: 'Value (₹ Crores)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  style: {
+                    textAnchor: 'middle',
+                    fontSize: '10px',
+                    fill: 'hsl(var(--muted-foreground))'
+                  }
+                }}
+                domain={[0, 'dataMax + 20']}
+                tickCount={6}
               />
               <Tooltip content={<CustomTooltip />} />
 
               <Bar
-                dataKey='healthyProjects'
+                dataKey='healthyValue'
                 stackId='a'
                 fill='#22c55e'
-                name='Healthy'
+                name='Healthy Value'
                 radius={[0, 0, 0, 0]}
-              />
+              >
+                <LabelList
+                  dataKey='healthyValue'
+                  position='center'
+                  fontSize={10}
+                  fill='white'
+                  formatter={(value: number) =>
+                    value > 5 ? `₹${value.toFixed(0)}` : ''
+                  }
+                />
+              </Bar>
               <Bar
-                dataKey='pendingApprovalProjects'
+                dataKey='pendingValue'
                 stackId='a'
                 fill='#eab308'
-                name='Pending Approval'
+                name='Pending Value'
                 radius={[0, 0, 0, 0]}
-              />
+              >
+                <LabelList
+                  dataKey='pendingValue'
+                  position='center'
+                  fontSize={10}
+                  fill='white'
+                  formatter={(value: number) =>
+                    value > 3 ? `₹${value.toFixed(0)}` : ''
+                  }
+                />
+              </Bar>
               <Bar
-                dataKey='delayedProjects'
+                dataKey='delayedValue'
                 stackId='a'
                 fill='#ef4444'
-                name='Delayed'
+                name='Delayed Value'
                 radius={[2, 2, 0, 0]}
-              />
+              >
+                <LabelList
+                  dataKey='delayedValue'
+                  position='center'
+                  fontSize={10}
+                  fill='white'
+                  formatter={(value: number) =>
+                    value > 3 ? `₹${value.toFixed(0)}` : ''
+                  }
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

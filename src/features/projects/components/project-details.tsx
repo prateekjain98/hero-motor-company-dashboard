@@ -66,8 +66,8 @@ export default function ProjectDetails({ project }: ProjectDetailsProps) {
     const { approver_type, required_approvers, completed_approvers } =
       project.pending_approval;
 
-    // PMO can always approve
-    if (currentUserType === 'pmo') return true;
+    // Group can always approve
+    if (currentUserType === 'group') return true;
 
     // For multi-approval scenarios
     if (required_approvers && required_approvers.length > 1) {

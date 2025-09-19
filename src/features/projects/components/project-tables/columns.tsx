@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/tooltip';
 import Image from 'next/image';
 
-// Company Group component for PMO view
+// Company Group component for Group view
 const CompanyGroupIcon = ({ companyGroup }: { companyGroup: string }) => {
   const getCompanyInfo = (group: string) => {
     switch (group) {
@@ -67,8 +67,8 @@ const CompanyGroupIcon = ({ companyGroup }: { companyGroup: string }) => {
 export const createColumns = (
   currentUserType: UserType
 ): ColumnDef<Project>[] => [
-  // Company Group column (only for PMO)
-  ...(currentUserType === UserType.PMO
+  // Company Group column (only for Group)
+  ...(currentUserType === UserType.GROUP
     ? [
         {
           id: 'company_group',

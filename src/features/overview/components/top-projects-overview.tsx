@@ -12,7 +12,8 @@ import { Progress } from '@/components/ui/progress';
 import {
   healthyProjectsData,
   delayedProjectsData,
-  companyProjectStats
+  companyProjectStats,
+  companyPerformanceData
 } from '@/constants/mock-api';
 import Image from 'next/image';
 import {
@@ -88,6 +89,24 @@ export function TopProjectsOverview() {
     0
   );
 
+  // Calculate meaningful executive metrics
+  const avgHealthScore = Math.round(
+    healthyProjectsData.reduce((sum, project) => sum + project.healthScore, 0) /
+      healthyProjectsData.length
+  );
+
+  const avgDelayDays = Math.round(
+    delayedProjectsData.reduce((sum, project) => sum + project.delayedDays, 0) /
+      delayedProjectsData.length
+  );
+
+  const avgBudgetEfficiency = Math.round(
+    companyPerformanceData.reduce(
+      (sum, company) => sum + company.efficiency,
+      0
+    ) / companyPerformanceData.length
+  );
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ahead':
@@ -116,28 +135,40 @@ export function TopProjectsOverview() {
     <Card className='flex h-full flex-col overflow-hidden'>
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>
-          <div>
-            <CardTitle className='flex items-center gap-2 text-base'>
-              <ChevronRight className='h-4 w-4 text-gray-600' />
-              Active Projects Overview
-            </CardTitle>
+          <div className='flex-1'>
+            <div className='flex items-center justify-between'>
+              <CardTitle className='flex items-center gap-2 text-base'>
+                <ChevronRight className='h-4 w-4 text-gray-600' />
+                Active Projects Overview
+              </CardTitle>
+            </div>
             <CardDescription className='mt-1 text-xs'>
-              {totalProjects} total projects • {totalHealthy} healthy •{' '}
-              {totalDelayed} at risk • excluding completed projects
+              Performance insights across {projectsOverview.length} companies •{' '}
+              {totalProjects} active projects
             </CardDescription>
-          </div>
-          <div className='flex gap-2'>
-            <Badge
-              variant='outline'
-              className='bg-green-50 dark:bg-green-950/20'
-            >
-              <CheckCircle2 className='mr-1 h-3 w-3 text-green-600' />
-              Top Healthy
-            </Badge>
-            <Badge variant='outline' className='bg-red-50 dark:bg-red-950/20'>
-              <AlertTriangle className='mr-1 h-3 w-3 text-red-600' />
-              Top Delayed
-            </Badge>
+            <div className='mt-3 flex gap-2'>
+              <Badge
+                variant='outline'
+                className='bg-emerald-50 dark:bg-emerald-950/20'
+              >
+                <CheckCircle2 className='mr-1 h-3 w-3 text-emerald-600' />
+                {avgHealthScore}% Avg Health
+              </Badge>
+              <Badge
+                variant='outline'
+                className='bg-orange-50 dark:bg-orange-950/20'
+              >
+                <AlertTriangle className='mr-1 h-3 w-3 text-orange-600' />
+                {avgDelayDays}d Avg Delay
+              </Badge>
+              <Badge
+                variant='outline'
+                className='bg-blue-50 dark:bg-blue-950/20'
+              >
+                <TrendingUp className='mr-1 h-3 w-3 text-blue-600' />
+                {avgBudgetEfficiency}% Budget Efficiency
+              </Badge>
+            </div>
           </div>
         </div>
       </CardHeader>

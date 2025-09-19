@@ -109,8 +109,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
     const { approver_type, required_approvers, completed_approvers } =
       data.pending_approval;
 
-    // PMO can always approve
-    if (currentUserType === 'pmo') return true;
+    // Group can always approve
+    if (currentUserType === 'group') return true;
 
     // For multi-approval scenarios
     if (required_approvers && required_approvers.length > 1) {
