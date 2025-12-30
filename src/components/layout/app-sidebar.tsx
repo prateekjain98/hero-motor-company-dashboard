@@ -28,7 +28,7 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { navItems } from '@/constants/data';
+import * as NavData from '@/constants/data';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@clerk/nextjs';
 import {
@@ -58,14 +58,42 @@ export default function AppSidebar() {
   const { user } = useUser();
   const router = useRouter();
 
+  // Determine which dashboard is active based on the URL
+  // Default to Business Excellence
+  let currentDashboard = 'Business Excellence';
+  let currentNavItems = NavData.businessExcellenceNavItems;
+
+  if (pathname.includes('/dashboard/international-compliances')) {
+    currentDashboard = 'International Compliances';
+    currentNavItems = NavData.internationalCompliancesNavItems;
+  } else if (pathname.includes('/dashboard/treasury-management')) {
+    currentDashboard = 'Treasury Management';
+    currentNavItems = NavData.treasuryManagementNavItems;
+  }
+
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [isOpen]);
 
+  const handleDashboardChange = (dashboard: string) => {
+    switch (dashboard) {
+      case 'International Compliances':
+        router.push('/dashboard/international-compliances');
+        break;
+      case 'Treasury Management':
+        router.push('/dashboard/treasury-management');
+        break;
+      case 'Business Excellence':
+      default:
+        router.push('/dashboard/overview');
+        break;
+    }
+  };
+
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        {/* Organization selector removed as requested */}
+        {/* Header content removed/empty as per original design */}
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
@@ -88,8 +116,73 @@ export default function AppSidebar() {
               Hero Motors Company
             </span>
           </div>
+
+          <div className='mb-4 flex px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0'>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className='hover:bg-sidebar-accent border-sidebar-border flex w-full cursor-pointer items-center gap-2 rounded-md border px-2 py-2 transition-colors group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2'>
+                  <div className='flex h-5 w-5 items-center justify-center'>
+                    <IconChevronsDown className='size-4' />
+                  </div>
+                  <div className='grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden'>
+                    <span className='truncate font-medium'>
+                      {currentDashboard}
+                    </span>
+                  </div>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className='w-[200px] rounded-lg'
+                align='start'
+                side='bottom'
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className='text-muted-foreground text-xs'>
+                  Switch Dashboard
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => handleDashboardChange('Business Excellence')}
+                  className='gap-2 p-2'
+                >
+                  <div className='flex h-6 w-6 items-center justify-center rounded-sm border'>
+                    <Icons.dashboard className='h-4 w-4' />
+                  </div>
+                  Business Excellence
+                  {currentDashboard === 'Business Excellence' && (
+                    <IconChevronRight className='ml-auto h-4 w-4' />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleDashboardChange('International Compliances')
+                  }
+                  className='gap-2 p-2'
+                >
+                  <div className='flex h-6 w-6 items-center justify-center rounded-sm border'>
+                    <Icons.post className='h-4 w-4' />
+                  </div>
+                  Intl. Compliances
+                  {currentDashboard === 'International Compliances' && (
+                    <IconChevronRight className='ml-auto h-4 w-4' />
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDashboardChange('Treasury Management')}
+                  className='gap-2 p-2'
+                >
+                  <div className='flex h-6 w-6 items-center justify-center rounded-sm border'>
+                    <Icons.billing className='h-4 w-4' />
+                  </div>
+                  Treasury Management
+                  {currentDashboard === 'Treasury Management' && (
+                    <IconChevronRight className='ml-auto h-4 w-4' />
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <SidebarMenu>
-            {navItems.map((item) => {
+            {currentNavItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible

@@ -87,7 +87,8 @@ export type ResourceUsageEntry = {
 };
 
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
-export const navItems: NavItem[] = [
+//Info: The following data is used for the sidebar navigation and Cmd K bar.
+export const businessExcellenceNavItems: NavItem[] = [
   {
     title: 'Dashboard',
     url: '/dashboard/overview',
@@ -113,6 +114,64 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   }
 ];
+
+export const internationalCompliancesNavItems: NavItem[] = [
+  {
+    title: 'Overview',
+    url: '/dashboard/international-compliances',
+    icon: 'dashboard',
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Audit Reports',
+    url: '/dashboard/international-compliances/audit-reports',
+    icon: 'post',
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Global Standards',
+    url: '/dashboard/international-compliances/global-standards',
+    icon: 'settings',
+    isActive: false,
+    items: []
+  }
+];
+
+export const treasuryManagementNavItems: NavItem[] = [
+  {
+    title: 'Overview',
+    url: '/dashboard/treasury-management',
+    icon: 'dashboard',
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Cash Flow',
+    url: '/dashboard/treasury-management/cash-flow',
+    icon: 'billing',
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Forex',
+    url: '/dashboard/treasury-management/forex',
+    icon: 'kanban',
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Investments',
+    url: '/dashboard/treasury-management/investments',
+    icon: 'billing',
+    isActive: false,
+    items: []
+  }
+];
+
+// Default export for backward compatibility if needed, though we should update consumers
+export const navItems = businessExcellenceNavItems;
 
 export interface SaleUser {
   id: number;
