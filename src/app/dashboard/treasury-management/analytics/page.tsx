@@ -1297,7 +1297,7 @@ export default function AnalyticsPage() {
       content +=
         'TRANSFER BY TYPE\nType,Count,Value (CR),Avg Value,Avg Time (hrs)\n';
       transferByType.forEach((t) => {
-        content += `${t.type},${t.count},${t.value},${t.avgValue},${t.avgExecutionTime}\n`;
+        content += `${t.type},${t.count},${t.value},${t.avgValue},${t.avgTAT}\n`;
       });
       content += '\nDEBT PORTFOLIO\nType,Amount (CR),Rate (%),Tenure\n';
       debtMix.forEach((d) => {
