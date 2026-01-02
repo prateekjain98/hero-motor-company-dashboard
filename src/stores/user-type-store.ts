@@ -5,14 +5,16 @@ export enum UserType {
   GROUP = 'group',
   BU_CFO = 'bu-cfo',
   FUNCTION_HEAD = 'function-head',
-  PROJECT_MANAGER = 'project-manager'
+  PROJECT_MANAGER = 'project-manager',
+  TREASURY_EXECUTIVE = 'treasury-executive'
 }
 
 export const USER_TYPE_LABELS = {
   [UserType.GROUP]: 'Group',
-  [UserType.BU_CFO]: 'BU CFO',
+  [UserType.BU_CFO]: 'CFO',
   [UserType.FUNCTION_HEAD]: 'Function Head',
-  [UserType.PROJECT_MANAGER]: 'Project Manager'
+  [UserType.PROJECT_MANAGER]: 'Project Manager',
+  [UserType.TREASURY_EXECUTIVE]: 'Treasury Executive'
 } as const;
 
 export type UserTypeState = {

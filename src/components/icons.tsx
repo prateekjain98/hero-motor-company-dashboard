@@ -33,7 +33,8 @@ import {
   IconBrandGithub,
   IconBox,
   IconFolderOpen,
-  IconToolsKitchen2
+  IconToolsKitchen2,
+  IconChartBar
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
@@ -72,5 +73,6 @@ export const Icons = {
   check: IconCheck,
   box: IconBox,
   folder: IconFolderOpen,
-  tools: IconToolsKitchen2
+  tools: IconToolsKitchen2,
+  analytics: IconChartBar
 };

@@ -148,23 +148,33 @@ export const treasuryManagementNavItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Cash Flow',
-    url: '/dashboard/treasury-management/cash-flow',
+    title: 'Transactions',
+    url: '/dashboard/treasury-management/transactions',
     icon: 'billing',
     isActive: false,
     items: []
   },
   {
-    title: 'Forex',
-    url: '/dashboard/treasury-management/forex',
-    icon: 'kanban',
+    title: 'Digital Library',
+    url: '/dashboard/treasury-management/digital-library',
+    icon: 'folder',
     isActive: false,
     items: []
   },
   {
-    title: 'Investments',
-    url: '/dashboard/treasury-management/investments',
-    icon: 'billing',
+    title: 'Analytics',
+    url: '/dashboard/treasury-management/analytics',
+    icon: 'analytics',
+    isActive: false,
+    items: []
+  }
+];
+
+export const treasuryManagementBottomNavItems: NavItem[] = [
+  {
+    title: 'Settings',
+    url: '/dashboard/treasury-management/settings',
+    icon: 'settings',
     isActive: false,
     items: []
   }

@@ -4,7 +4,8 @@ import PageContainer from '@/components/layout/page-container';
 import { useUserTypeStore, UserType } from '@/stores/user-type-store';
 import { FinancialOverviewCards } from '@/features/overview/components/financial-overview-cards';
 import { BusinessExcellenceChart } from '@/features/overview/components/company-revenue-chart';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function OverViewLayout({
   sales,
@@ -16,6 +17,14 @@ export default function OverViewLayout({
   area_stats: React.ReactNode;
 }) {
   const { currentUserType } = useUserTypeStore();
+  const router = useRouter();
+
+  // Redirect to Treasury Executive portal when Treasury Executive is selected
+  useEffect(() => {
+    if (currentUserType === UserType.TREASURY_EXECUTIVE) {
+      router.push('/dashboard/treasury-executive');
+    }
+  }, [currentUserType, router]);
 
   const renderGroupDashboard = () => (
     <div className='space-y-6'>
@@ -78,6 +87,17 @@ export default function OverViewLayout({
         return renderPlaceholderDashboard('Function Head Dashboard');
       case UserType.PROJECT_MANAGER:
         return renderPlaceholderDashboard('Project Manager Dashboard');
+      case UserType.TREASURY_EXECUTIVE:
+        return (
+          <div className='text-muted-foreground flex h-64 items-center justify-center'>
+            <div className='text-center'>
+              <h3 className='text-lg font-medium'>
+                Redirecting to Treasury Executive Portal...
+              </h3>
+              <p className='text-sm'>Please wait</p>
+            </div>
+          </div>
+        );
       default:
         return renderGroupDashboard();
     }

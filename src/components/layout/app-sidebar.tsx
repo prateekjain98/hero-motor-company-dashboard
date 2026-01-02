@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import * as NavData from '@/constants/data';
+import { NavItem } from '@/types';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@clerk/nextjs';
 import {
@@ -59,16 +60,24 @@ export default function AppSidebar() {
   const router = useRouter();
 
   // Determine which dashboard is active based on the URL
-  // Default to Business Excellence
-  let currentDashboard = 'Business Excellence';
-  let currentNavItems = NavData.businessExcellenceNavItems;
+  // Default to Treasury Management
+  let currentDashboard = 'Treasury Management';
+  let currentNavItems = NavData.treasuryManagementNavItems;
+  let currentBottomNavItems: NavItem[] =
+    NavData.treasuryManagementBottomNavItems;
 
   if (pathname.includes('/dashboard/international-compliances')) {
     currentDashboard = 'International Compliances';
     currentNavItems = NavData.internationalCompliancesNavItems;
-  } else if (pathname.includes('/dashboard/treasury-management')) {
-    currentDashboard = 'Treasury Management';
-    currentNavItems = NavData.treasuryManagementNavItems;
+    currentBottomNavItems = [];
+  } else if (
+    pathname.includes('/dashboard/overview') ||
+    pathname.includes('/dashboard/projects') ||
+    pathname.includes('/dashboard/resources')
+  ) {
+    currentDashboard = 'Business Excellence';
+    currentNavItems = NavData.businessExcellenceNavItems;
+    currentBottomNavItems = [];
   }
 
   React.useEffect(() => {
@@ -237,6 +246,31 @@ export default function AppSidebar() {
             })}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Bottom Nav Items (e.g., Settings) */}
+        {currentBottomNavItems.length > 0 && (
+          <SidebarGroup className='mt-auto'>
+            <SidebarMenu>
+              {currentBottomNavItems.map((item) => {
+                const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={pathname === item.url}
+                    >
+                      <Link href={item.url}>
+                        <Icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
